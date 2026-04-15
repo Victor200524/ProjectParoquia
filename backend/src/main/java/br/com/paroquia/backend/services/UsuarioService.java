@@ -16,8 +16,14 @@ public class UsuarioService {
         return usuarioRepository.findAll();
     }
 
+    // Faz parte do login e da busca do usuário através do email
     public Usuario getUserEmail(String email) {
         return usuarioRepository.findByEmailUsuario(email);
+    }
+    // Serve somente para o login
+    public boolean verificarLogin(String email, String senha) {
+        Usuario usuario = usuarioRepository.findByEmailUsuario(email);
+        return usuario != null && usuario.getSenhaUsuario().equals(senha);
     }
 
     public Usuario getUserId(Long idUsuario){
@@ -42,4 +48,5 @@ public class UsuarioService {
         }
         return false;
     }
+
 }

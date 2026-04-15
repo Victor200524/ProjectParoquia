@@ -1,9 +1,8 @@
 package br.com.paroquia.backend.entities;
 
 import jakarta.persistence.*;
-import jdk.jfr.Enabled;
 
-@Enabled
+@Entity
 @Table(name = "pastoral")
 public class Pastoral {
     @Id

@@ -31,17 +31,26 @@ public class UsuarioRestController {
         return  ResponseEntity.status(HttpStatus.NOT_FOUND).body("Email: " + emailUsuario + " não encontrado!");
     }
 
+    @GetMapping(value = "/loginUsuario")
+    public ResponseEntity<Object> loginUsuario(@RequestBody Usuario usuario){
+        if(usuarioService.getUserEmail(usuario.getEmailUsuario()) != null){
+            if(usuarioService.verificarLogin(usuario.getEmailUsuario(), usuario.getSenhaUsuario()))
+                return ResponseEntity.status(HttpStatus.ACCEPTED).body("Login efetuado com sucesso");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Senha incorreta!");
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Email incorreto!");
+    }
+
     @PostMapping(value = "/gravarUsuario")
     public ResponseEntity<Object> gravarUsuario(@RequestBody Usuario usuario) {
-        try {
-            Usuario novoUsuario = usuarioService.saveUsuario(usuario);
-            if(usuario != null)
+        if(usuario != null){
+            if(usuarioService.getUserEmail(usuario.getEmailUsuario()) == null){
+                Usuario novoUsuario = usuarioService.saveUsuario(usuario);
                 return ResponseEntity.status(HttpStatus.CREATED).body("Usuário: " + usuario.getNomeUsuario() + " cadastrado com sucesso!");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Dados insuficientes para gravar o usuário!");
-        } catch (Exception e) {
-            System.out.println("Erro ao gravar usuário: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Não foi possível gravar o usuário. Erro: " + e.getMessage());
+            }
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Usuário ja cadastrado com esse e-mail: " + usuario.getEmailUsuario());
         }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Dados insuficientes para gravar o usuário!");
     }
     
     @PutMapping(value = "/alterarUsuario/{idUsuario}")
