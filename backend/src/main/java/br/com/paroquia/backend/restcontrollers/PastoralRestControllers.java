@@ -29,6 +29,31 @@ public class PastoralRestControllers {
         Pastoral pastoral = pastoralService.getNamePastoral(nomePastoral);
         if (pastoral != null)
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(pastoral);
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Pastorais não encontrada");
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Pastoral não encontrada");
     }
+
+    @PostMapping(value = "/gravarPastoral")
+    public ResponseEntity<Object> gravarPastoral(@RequestBody Pastoral pastoral){
+        try {
+            if(pastoral != null){
+                pastoralService.salvarPastoral(pastoral);
+                return ResponseEntity.status(HttpStatus.ACCEPTED).body("Pastoral cadastrada: " + pastoral.getNomePastoral());
+            }
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Dados insuficientes para cadastro!");
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao gravar a Pastoral!");
+        }
+    }
+
+    @PutMapping(value = "/alterarPastoral/{idPastoral}")
+    public ResponseEntity<Object> alterarPastoral(@PathVariable Long idPastoral,@RequestBody Pastoral pastoralAtualizada){
+        Pastoral pastoralExistente = pastoralService.getIdPastoral(idPastoral);
+        if(pastoralExistente != null){
+            pastoralAtualizada.setIdPastoral(pastoralExistente.getIdPastoral());
+            pastoralService.salvarPastoral(pastoralAtualizada);
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body("Pastoral alterada com sucesso!");
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Pastoral não encontrada");
+    }
+
 }
