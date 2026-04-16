@@ -69,7 +69,7 @@ public class UsuarioRestController {
 
     @DeleteMapping(value = "/deletarUsuario/{idUsuario}")
     public ResponseEntity<Object> deletarUsuario(@PathVariable Long idUsuario){
-        if(usuarioService.deletarUsuario(idUsuario))
+        if(usuarioService.excluirUsuario(idUsuario))
             return ResponseEntity.status(HttpStatus.ACCEPTED).body("Usuário deletado com sucesso");
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao deletar o usuário!");
     }

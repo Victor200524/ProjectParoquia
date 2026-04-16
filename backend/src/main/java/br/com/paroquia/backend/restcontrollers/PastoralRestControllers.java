@@ -19,7 +19,7 @@ public class PastoralRestControllers {
     @GetMapping(value ="/todasPastoral")
     public ResponseEntity<Object> buscarTodasPastorais(){
         List<Pastoral> pastoralList = pastoralService.getAllPastoral();
-        if(pastoralList != null)
+        if(pastoralList != null && !pastoralList.isEmpty())
             return ResponseEntity.ok(pastoralList);
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Pastorais não cadastradas");
     }
@@ -37,7 +37,7 @@ public class PastoralRestControllers {
         try {
             if(pastoral != null){
                 pastoralService.salvarPastoral(pastoral);
-                return ResponseEntity.status(HttpStatus.ACCEPTED).body("Pastoral cadastrada: " + pastoral.getNomePastoral());
+                return ResponseEntity.status(HttpStatus.CREATED).body("Pastoral cadastrada: " + pastoral.getNomePastoral());
             }
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Dados insuficientes para cadastro!");
         }catch (Exception e){
@@ -56,4 +56,10 @@ public class PastoralRestControllers {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Pastoral não encontrada");
     }
 
+    @DeleteMapping(value = "excluirPastoral/{idPastoral}")
+    public ResponseEntity<Object> deletarUsuario(@PathVariable Long idPastoral){
+        if(pastoralService.excluirPastoral(idPastoral))
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body("Pastoral deletado com sucesso");
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao deletar as pastoral!");
+    }
 }

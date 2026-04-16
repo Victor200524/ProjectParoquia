@@ -39,7 +39,7 @@ public class UsuarioService {
         }
     }
 
-    public boolean deletarUsuario(Long idUsuario) {
+    public boolean excluirUsuario(Long idUsuario) {
         try{
             usuarioRepository.deleteById(idUsuario);
             return true;

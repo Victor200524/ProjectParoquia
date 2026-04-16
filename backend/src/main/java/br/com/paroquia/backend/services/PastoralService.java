@@ -31,4 +31,14 @@ public class PastoralService{
             System.out.println("Erro ao gravar usuário: " + e.getMessage());
         }
     }
+    public boolean excluirPastoral(Long idPastoral) {
+        try{
+            pastoralRepository.deleteById(idPastoral);
+            return true;
+        } catch (Exception e) {
+            System.err.println("Erro ao deletar: " + e.getMessage());
+        }
+        return false;
+    }
+
 }
