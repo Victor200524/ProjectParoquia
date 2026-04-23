@@ -1,6 +1,8 @@
 package br.com.paroquia.backend.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 
 @Entity
 @Table(name = "usuario")
@@ -13,6 +15,8 @@ public class Usuario {
     @Column(name = "\"nome_Usuario\"")
     private String nomeUsuario;
 
+    @NotBlank(message = "O e-mail é obrigatório")
+    @Email(message = "Formato de e-mail inválido")
     @Column(name = "\"email_Usuario\"")
     private String emailUsuario;
 
@@ -22,20 +26,28 @@ public class Usuario {
     @Column(name = "\"nivel_Usuario\"")
     private int nivelUsuario;
 
+    @Column(name = "\"status_Usuario\"")
+    private int statusUsuario;
+
     @Column(name = "\"contato_Usuario\"")
     private String contatoUsuario;
 
+    @Column(name = "\"cpf_Usuario\"")
+    private String cpfUsuario;
+
     public Usuario() {
-        this(0L, "", "", "", 0, "");
+        this(0L, "", "", "", 0, "", 0, "");
     }
 
-    public Usuario(Long idUsuario, String nomeUsuario, String emailUsuario, String senhaUsuario, int nivelUsuario, String contatoUsuario) {
+    public Usuario(Long idUsuario, String nomeUsuario, String emailUsuario, String senhaUsuario, int nivelUsuario, String contatoUsuario, int statusUsuario, String cpfUsuario) {
         this.idUsuario = idUsuario;
         this.nomeUsuario = nomeUsuario;
         this.emailUsuario = emailUsuario;
         this.senhaUsuario = senhaUsuario;
         this.nivelUsuario = nivelUsuario;
         this.contatoUsuario = contatoUsuario;
+        this.statusUsuario = statusUsuario;
+        this.cpfUsuario = cpfUsuario;
     }
 
     public Long getIdUsuario() {
@@ -78,6 +90,14 @@ public class Usuario {
         this.nivelUsuario = nivelUsuario;
     }
 
+    public int getStatusUsuario() {
+        return statusUsuario;
+    }
+
+    public void setStatusUsuario(int statusUsuario) {
+        this.statusUsuario = statusUsuario;
+    }
+
     public String getContatoUsuario() {
         return contatoUsuario;
     }
@@ -85,4 +105,14 @@ public class Usuario {
     public void setContatoUsuario(String contatoUsuario) {
         this.contatoUsuario = contatoUsuario;
     }
+
+    public String getCpfUsuario() {
+        return cpfUsuario;
+    }
+
+    public void setCpfUsuario(String cpfUsuario) {
+        this.cpfUsuario = cpfUsuario;
+    }
+
+    //fazer a função validar aqui dentro
 }

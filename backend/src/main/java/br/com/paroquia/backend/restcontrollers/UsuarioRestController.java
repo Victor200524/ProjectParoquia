@@ -31,28 +31,34 @@ public class UsuarioRestController {
         return  ResponseEntity.status(HttpStatus.NOT_FOUND).body("Email: " + emailUsuario + " não encontrado!");
     }
 
-    @GetMapping(value = "/loginUsuario")
+    @PostMapping(value = "/loginUsuario")
     public ResponseEntity<Object> loginUsuario(@RequestBody Usuario usuario){
-        if(usuarioService.getUserEmail(usuario.getEmailUsuario()) != null){
-            if(usuarioService.verificarLogin(usuario.getEmailUsuario(), usuario.getSenhaUsuario()))
+        if(usuarioService.getCpfUsuario(usuario.getCpfUsuario()) != null){
+            if(usuarioService.verificarLogin(usuario.getCpfUsuario(), usuario.getSenhaUsuario()))
                 return ResponseEntity.status(HttpStatus.ACCEPTED).body("Login efetuado com sucesso");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Senha incorreta!");
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Email incorreto!");
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("CPF incorreto!");
     }
 
     @PostMapping(value = "/gravarUsuario")
     public ResponseEntity<Object> gravarUsuario(@RequestBody Usuario usuario) {
         if(usuario != null){
-            if(usuarioService.getUserEmail(usuario.getEmailUsuario()) == null){
-                Usuario novoUsuario = usuarioService.saveUsuario(usuario);
-                return ResponseEntity.status(HttpStatus.CREATED).body("Usuário: " + usuario.getNomeUsuario() + " cadastrado com sucesso!");
-            }
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Usuário ja cadastrado com esse e-mail: " + usuario.getEmailUsuario());
+            if(usuarioService.getUserEmail(usuario.getEmailUsuario()) != null)
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("E-mail já cadastrado!");
+            if(usuarioService.getCpfUsuario(usuario.getCpfUsuario()) != null)
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("CPF já cadastrado!");
+            if(!usuarioService.isFormatoEmailValido(usuario.getEmailUsuario()))
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Formato de E-MAIL inválido: " + usuario.getEmailUsuario());
+            if(!usuarioService.isCpfValido(usuario.getCpfUsuario()))
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Formato de CPF inválido: " + usuario.getCpfUsuario());
+
+            Usuario novoUsuario = usuarioService.saveUsuario(usuario);
+            return ResponseEntity.status(HttpStatus.CREATED).body("Usuário: " + novoUsuario.getNomeUsuario() + " cadastrado com sucesso!");
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Dados insuficientes para gravar o usuário!");
     }
-    
+
     @PutMapping(value = "/alterarUsuario/{idUsuario}")
     public ResponseEntity<Object> alterarUsuario(@PathVariable Long idUsuario, @RequestBody Usuario usuarioAtualizado) {
         Usuario usuarioExistente = usuarioService.getUserId(idUsuario);
