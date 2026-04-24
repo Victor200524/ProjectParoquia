@@ -41,6 +41,9 @@ public class ComunidadeRestControllers {
                     for (HorarioMissa horario : comunidade.getHorariosMissa())
                         horario.setComunidade(comunidade);
                 }
+                if(!comunidadeService.isTelefoneValido(comunidade.getContatoComunidade()))
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Formato de telefone inválivo:  " + comunidade.getContatoComunidade());
+
                 comunidadeService.salvarComunidade(comunidade);
                 return ResponseEntity.status(HttpStatus.CREATED).body("Comunidade cadastrada: " + comunidade.getNomeComunidade());
             }
@@ -59,6 +62,10 @@ public class ComunidadeRestControllers {
                 for (HorarioMissa horario : comunidadeAtualizada.getHorariosMissa())
                     horario.setComunidade(comunidadeAtualizada);
             }
+
+            if(!comunidadeService.isTelefoneValido(comunidadeAtualizada.getContatoComunidade()))
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Formato de telefone inválivo:  " + comunidadeAtualizada.getContatoComunidade());
+
             comunidadeService.salvarComunidade(comunidadeAtualizada);
             return ResponseEntity.ok("Comunidade alterada com sucesso!");
         }

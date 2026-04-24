@@ -43,4 +43,23 @@ public class ComunidadeService {
         }
         return false;
     }
+    // --- Validar Contato ---
+    public boolean isTelefoneValido(String telefone) {
+        if (telefone == null || telefone.trim().isEmpty())
+            return true;
+
+        String numeros = telefone.replaceAll("\\D", "");
+
+        if (numeros.length() < 10 || numeros.length() > 11)
+            return false;
+
+        if (numeros.length() == 11 && numeros.charAt(2) != '9')
+            return false;
+
+        String ddd = numeros.substring(0, 2);
+        if (Integer.parseInt(ddd) < 11)
+            return false;
+
+        return true;
+    }
 }

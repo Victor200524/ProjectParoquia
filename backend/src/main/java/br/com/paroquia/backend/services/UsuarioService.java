@@ -6,34 +6,33 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Service
 public class UsuarioService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-    public List<Usuario> getAllUsers(){
+    public List<Usuario> getAllUsarios(){
         return usuarioRepository.findAll();
     }
-
-    // Faz parte do login e da busca do usuário através do email
     public Usuario getUserEmail(String email) {
         return usuarioRepository.findByEmailUsuario(email);
     }
     public Usuario getCpfUsuario(String cpf){
         return usuarioRepository.findByCpfUsuario(cpf);
     }
-
-    // Serve somente para o login
-    public boolean verificarLogin(String cpf, String senha) {
-        Usuario usuario = usuarioRepository.findByCpfUsuario(cpf);
-        return isCpfValido(cpf) && usuario.getSenhaUsuario().equals(senha);
-    }
-
     public Usuario getUserId(Long idUsuario){
         return usuarioRepository.findById(idUsuario).orElse(null);
+    }
+    public Usuario getContatoUsuasrio(String contato){
+        return usuarioRepository.findByContatoUsuario(contato);
+    }
+
+
+    // Serve somente para o login
+    public boolean verificarLogin(String cpf, String senha, String contato) {
+        Usuario usuario = usuarioRepository.findByCpfUsuario(cpf);
+        return isCpfValido(cpf) && usuario.getSenhaUsuario().equals(senha) && isTelefoneValido(contato);
     }
 
     public boolean excluirUsuario(Long idUsuario) {
@@ -44,16 +43,6 @@ public class UsuarioService {
             System.err.println("Erro ao deletar: " + e.getMessage());
         }
         return false;
-    }
-
-
-    // --- Validação do Email ---
-    public boolean isFormatoEmailValido(String email) {
-        if (email == null || email.trim().isEmpty()) {
-            return false;
-        }
-        String regex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
-        return email.matches(regex);
     }
 
     // Metodo principal de cadastro
@@ -70,28 +59,38 @@ public class UsuarioService {
         return usuarioRepository.save(novoUsuario);
     }
 
+    // ============================================ Validações ================================================================
+    // --- Validação do Email ---
+    public boolean isFormatoEmailValido(String email) {
+        if (email == null || email.trim().isEmpty()) {
+            return false;
+        }
+        String regex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
+        return email.matches(regex);
+    }
+
     // --- Validação de CPF ---
     public boolean isCpfValido(String cpf) {
         if (cpf == null)
             return false;
-        cpf = cpf.replaceAll("\\D", ""); // Remove qualquer formatação (pontos e traços) que vier do Front-end
+        cpf = cpf.replaceAll("\\D", "");
 
 
-        if (cpf.length() != 11 || cpf.matches("(\\d)\\1{10}")) // Verifica se tem 11 dígitos ou se é uma sequência repetida
+        if (cpf.length() != 11 || cpf.matches("(\\d)\\1{10}"))
             return false;
 
         try {
             int soma = 0, peso = 10;
-            for (int i = 0; i < 9; i++) {
+            for (int i = 0; i < 9; i++)
                 soma += (cpf.charAt(i) - '0') * peso--;
-            }
+
             int r = 11 - (soma % 11);
             char dig10 = (r == 10 || r == 11) ? '0' : (char) (r + '0');
 
             soma = 0; peso = 11;
-            for (int i = 0; i < 10; i++) {
+            for (int i = 0; i < 10; i++)
                 soma += (cpf.charAt(i) - '0') * peso--;
-            }
+
             r = 11 - (soma % 11);
             char dig11 = (r == 10 || r == 11) ? '0' : (char) (r + '0');
 
@@ -100,5 +99,25 @@ public class UsuarioService {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    // --- Validar Contato ---
+    public boolean isTelefoneValido(String telefone) {
+        if (telefone == null || telefone.trim().isEmpty())
+            return true;
+
+        String numeros = telefone.replaceAll("\\D", "");
+
+        if (numeros.length() < 10 || numeros.length() > 11)
+            return false;
+
+        if (numeros.length() == 11 && numeros.charAt(2) != '9')
+            return false;
+
+        String ddd = numeros.substring(0, 2);
+        if (Integer.parseInt(ddd) < 11)
+            return false;
+
+        return true;
     }
 }
