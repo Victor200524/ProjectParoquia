@@ -3,6 +3,7 @@ package br.com.paroquia.backend.entities;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import lombok.Data;
 
 @Entity
 @Table(name = "usuario")
@@ -17,7 +18,7 @@ public class Usuario {
 
     @NotBlank(message = "O e-mail é obrigatório")
     @Email(message = "Formato de e-mail inválido")
-    @Column(name = "\"email_Usuario\"")
+    @Column(name = "\"email_Usuario\"", unique = true)
     private String emailUsuario;
 
     @Column(name = "\"senha_Usuario\"")
@@ -32,7 +33,7 @@ public class Usuario {
     @Column(name = "\"contato_Usuario\"")
     private String contatoUsuario;
 
-    @Column(name = "\"cpf_Usuario\"")
+    @Column(name = "\"cpf_Usuario\"", unique = true)
     private String cpfUsuario;
 
     public Usuario() {

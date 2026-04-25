@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UsuarioService {
@@ -19,19 +20,15 @@ public class UsuarioService {
         return usuarioRepository.findByEmailUsuario(email);
     }
     public Usuario getCpfUsuario(String cpf){
-        return usuarioRepository.findByCpfUsuario(cpf);
+        return usuarioRepository.findByCpfUsuario(cpf).orElse(null);
     }
     public Usuario getUserId(Long idUsuario){
         return usuarioRepository.findById(idUsuario).orElse(null);
     }
-    public Usuario getContatoUsuasrio(String contato){
-        return usuarioRepository.findByContatoUsuario(contato);
-    }
-
 
     // Serve somente para o login
     public boolean verificarLogin(String cpf, String senha, String contato) {
-        Usuario usuario = usuarioRepository.findByCpfUsuario(cpf);
+        Usuario usuario = usuarioRepository.findByCpfUsuario(cpf).orElse(null);
         return isCpfValido(cpf) && usuario.getSenhaUsuario().equals(senha) && isTelefoneValido(contato);
     }
 

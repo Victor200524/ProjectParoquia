@@ -43,6 +43,7 @@ public class ComunidadeService {
         }
         return false;
     }
+
     // --- Validar Contato ---
     public boolean isTelefoneValido(String telefone) {
         if (telefone == null || telefone.trim().isEmpty())

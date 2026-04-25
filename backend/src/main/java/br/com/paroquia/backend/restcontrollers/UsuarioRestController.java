@@ -5,8 +5,10 @@ import br.com.paroquia.backend.services.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.Optional;
 
 @CrossOrigin
 @RestController
@@ -14,6 +16,12 @@ import java.util.List;
 public class UsuarioRestController {
     @Autowired
     private UsuarioService usuarioService;
+
+    private final PasswordEncoder encoder;
+
+    public UsuarioRestController(PasswordEncoder encoder) {
+        this.encoder = encoder;
+    }
 
     @GetMapping(value = "/getAllUsers")
     public ResponseEntity<Object> getAllUsers(){
@@ -32,13 +40,15 @@ public class UsuarioRestController {
     }
 
     @PostMapping(value = "/loginUsuario")
-    public ResponseEntity<Object> loginUsuario(@RequestBody Usuario usuario){
-        if(usuarioService.getCpfUsuario(usuario.getCpfUsuario()) != null){
-            if(usuarioService.verificarLogin(usuario.getCpfUsuario(), usuario.getSenhaUsuario(), usuario.getContatoUsuario()))
-                return ResponseEntity.status(HttpStatus.ACCEPTED).body("Login efetuado com sucesso");
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Senha incorreta!");
-        }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("CPF incorreto!");
+    public ResponseEntity<Object> loginUsuario(@RequestParam String cpfUsuario, @RequestParam String senhaUsuario){
+        boolean validar = false;
+        Optional<Usuario> optionalUsuario = Optional.ofNullable(usuarioService.getCpfUsuario(cpfUsuario));
+        if(optionalUsuario.isEmpty())
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Usuário não autorizado!");
+        Usuario usuario = optionalUsuario.get();
+        validar = encoder.matches(senhaUsuario, usuario.getSenhaUsuario());
+        HttpStatus status = (validar) ? HttpStatus.OK : HttpStatus.UNAUTHORIZED; // Se for http, vai ter um status "OK" se não, vai ter um status "UNAUTHORIZED"
+        return  ResponseEntity.status(status).body(validar);
     }
 
     @PostMapping(value = "/cadastrarUsuario")
@@ -57,6 +67,7 @@ public class UsuarioRestController {
             if(!usuarioService.isTelefoneValido(usuario.getContatoUsuario()))
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Formato de telefone inválido: " + usuario.getContatoUsuario());
 
+            usuario.setSenhaUsuario(encoder.encode(usuario.getSenhaUsuario())); //Aqui faz a criptografia da senha do usuario quando for feito seu cadastro
             Usuario novoUsuario = usuarioService.saveUsuario(usuario);
             return ResponseEntity.status(HttpStatus.CREATED).body("Usuário: " + novoUsuario.getNomeUsuario() + " cadastrado com sucesso!");
         }
@@ -83,11 +94,14 @@ public class UsuarioRestController {
             if(!usuarioService.isTelefoneValido(usuarioAtualizado.getContatoUsuario()))
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Formato de telefone inválido: " + usuarioAtualizado.getContatoUsuario());
 
-            if (usuarioAtualizado.getSenhaUsuario() == null)
+            // Se não mandou senha nova, mantém a antiga, ja criptografada no banco
+            if (usuarioAtualizado.getSenhaUsuario() == null || usuarioAtualizado.getSenhaUsuario().isEmpty())
                 usuarioAtualizado.setSenhaUsuario(usuarioExistente.getSenhaUsuario());
+            else
+                usuarioAtualizado.setSenhaUsuario(encoder.encode(usuarioAtualizado.getSenhaUsuario()));
 
             Usuario novoUsuario = usuarioService.saveUsuario(usuarioAtualizado);
-            return ResponseEntity.ok("Usuário alterado com sucesso!");
+            return ResponseEntity.ok("Usuário " + novoUsuario.getNomeUsuario() + " alterado com sucesso!");
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuário não encontrado para alteração!");
     }
