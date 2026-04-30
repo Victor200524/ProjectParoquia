@@ -25,10 +25,10 @@ public class Usuario {
     private String senhaUsuario;
 
     @Column(name = "\"nivel_Usuario\"")
-    private int nivelUsuario;
+    private Integer nivelUsuario;
 
     @Column(name = "\"status_Usuario\"")
-    private int statusUsuario;
+    private Integer statusUsuario;
 
     @Column(name = "\"contato_Usuario\"")
     private String contatoUsuario;
@@ -40,7 +40,7 @@ public class Usuario {
         this(0L, "", "", "", 0, "", 0, "");
     }
 
-    public Usuario(Long idUsuario, String nomeUsuario, String emailUsuario, String senhaUsuario, int nivelUsuario, String contatoUsuario, int statusUsuario, String cpfUsuario) {
+    public Usuario(Long idUsuario, String nomeUsuario, String emailUsuario, String senhaUsuario, Integer nivelUsuario, String contatoUsuario, Integer statusUsuario, String cpfUsuario) {
         this.idUsuario = idUsuario;
         this.nomeUsuario = nomeUsuario;
         this.emailUsuario = emailUsuario;
@@ -83,19 +83,19 @@ public class Usuario {
         this.senhaUsuario = senhaUsuario;
     }
 
-    public int getNivelUsuario() {
+    public Integer getNivelUsuario() {
         return nivelUsuario;
     }
 
-    public void setNivelUsuario(int nivelUsuario) {
+    public void setNivelUsuario(Integer nivelUsuario) {
         this.nivelUsuario = nivelUsuario;
     }
 
-    public int getStatusUsuario() {
+    public Integer getStatusUsuario() {
         return statusUsuario;
     }
 
-    public void setStatusUsuario(int statusUsuario) {
+    public void setStatusUsuario(Integer statusUsuario) {
         this.statusUsuario = statusUsuario;
     }
 
