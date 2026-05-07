@@ -13,13 +13,13 @@ import java.util.Optional;
 @CrossOrigin
 @RestController
 @RequestMapping(value = "usuario")
-public class UsuarioRestController {
+public class UsuarioRestControllers {
     @Autowired
     private UsuarioService usuarioService;
 
     private final PasswordEncoder encoder;
 
-    public UsuarioRestController(PasswordEncoder encoder) {
+    public UsuarioRestControllers(PasswordEncoder encoder) {
         this.encoder = encoder;
     }
 

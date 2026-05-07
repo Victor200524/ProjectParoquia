@@ -26,12 +26,6 @@ public class UsuarioService {
         return usuarioRepository.findById(idUsuario).orElse(null);
     }
 
-    // Serve somente para o login
-    public boolean verificarLogin(String cpf, String senha, String contato) {
-        Usuario usuario = usuarioRepository.findByCpfUsuario(cpf).orElse(null);
-        return isCpfValido(cpf) && usuario.getSenhaUsuario().equals(senha) && isTelefoneValido(contato);
-    }
-
     public boolean excluirUsuario(Long idUsuario) {
         try{
             usuarioRepository.deleteById(idUsuario);
