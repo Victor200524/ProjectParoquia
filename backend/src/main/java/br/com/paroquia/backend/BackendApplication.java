@@ -13,9 +13,9 @@ public class BackendApplication {
         SpringApplication.run(BackendApplication.class, args);
     }
 
-    @Bean
-    public PasswordEncoder getPasswordEncoder(){
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        return encoder;
-    }
+//    @Bean
+//    public PasswordEncoder getPasswordEncoder(){
+//        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+//        return encoder;
+//    }
 }

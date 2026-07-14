@@ -1,6 +1,4 @@
 package br.com.paroquia.backend.entities;
-
-
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;

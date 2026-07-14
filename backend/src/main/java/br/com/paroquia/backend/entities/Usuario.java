@@ -4,10 +4,16 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Table(name = "usuario")
-public class Usuario {
+public class Usuario implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "\"id_Usuario\"")
@@ -115,5 +121,45 @@ public class Usuario {
         this.cpfUsuario = cpfUsuario;
     }
 
-    //fazer a função validar aqui dentro
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        // Traduz o nivelUsuario para as ROLES do Spring
+        if (this.nivelUsuario != null && this.nivelUsuario == 0) // Coordenador Geral / Padre / Secretaria
+            return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
+        else if (this.nivelUsuario != null && this.nivelUsuario == 1)// Coordenador do Acampamento
+            return List.of(new SimpleGrantedAuthority("ROLE_COORDENADOR"), new SimpleGrantedAuthority("ROLE_USER"));
+        else // Campista / Servo
+            return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+    }
+
+    @Override
+    public String getPassword() {
+        return this.senhaUsuario;
+    }
+
+    @Override
+    public String getUsername() {
+        return this.emailUsuario;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() { // Barrar usuarios inativos
+        return true;
+    }
+
 }

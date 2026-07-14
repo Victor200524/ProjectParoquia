@@ -33,7 +33,7 @@ public class MercadoPagoClient {
     @PostConstruct
     public void init() {
         MercadoPagoConfig.setAccessToken(accessToken);
-        System.out.println("Iniciando SDK do Mercado Pago com sucesso!");
+        System.out.println("Iniciando SDK do Mercado Pago com sucesso! AccessToken: " + accessToken );
     }
 
     public PreferenciaResponseDTO createPreference(PreferenciaAcampamentoDTO dto) throws Exception {
@@ -75,4 +75,13 @@ public class MercadoPagoClient {
         }
         return null;
     }
+
+    /*
+    * 5031 4332 1540 6351
+        123
+        11/30
+        12345678909
+        test@testuser.com
+        APRO
+    * */
 }

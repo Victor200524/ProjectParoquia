@@ -3,6 +3,8 @@ package br.com.paroquia.backend.services;
 import br.com.paroquia.backend.entities.Usuario;
 import br.com.paroquia.backend.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -110,5 +112,10 @@ public class UsuarioService {
             return false;
 
         return true;
+    }
+
+    // Questão das requisições que o usuário faz para realizar o login no sistema
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return usuarioRepository.findByEmailUsuario(username);
     }
 }
