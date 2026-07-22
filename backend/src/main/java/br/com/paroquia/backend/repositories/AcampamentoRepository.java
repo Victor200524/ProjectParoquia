@@ -8,6 +8,6 @@ import java.util.Optional;
 
 public interface AcampamentoRepository extends JpaRepository<Acampamento, Long> {
     Optional<Acampamento> findByNomeAcampamento(String nomeAcampamento);
-    List<Acampamento> findByNomeAcampamentoContainingIgnoreCase(String nomeAcampamento);
+    Acampamento findByNomeAcampamentoContainingIgnoreCase(String nomeAcampamento);
     List<Acampamento> findByComunidade_IdComunidade(Long idComunidade);
 }

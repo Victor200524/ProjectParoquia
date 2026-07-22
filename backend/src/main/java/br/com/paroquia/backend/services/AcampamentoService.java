@@ -20,6 +20,10 @@ public class AcampamentoService {
         return acampamentoRepository.findById(idAcampamento).orElse(null);
     }
 
+    public Acampamento getNomeAcampamento(String nome){
+        return acampamentoRepository.findByNomeAcampamentoContainingIgnoreCase(nome);
+    }
+
     public Acampamento saveAcampamento(Acampamento acampamento) {
         if (acampamento.getIdadeMinAcampamento() >= acampamento.getIdadeMaxAcampamento())
             throw new IllegalArgumentException("A idade mínima deve ser menor que a idade máxima do acampamento!");

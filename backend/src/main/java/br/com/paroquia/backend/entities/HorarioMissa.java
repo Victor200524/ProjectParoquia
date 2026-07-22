@@ -25,7 +25,6 @@ public class HorarioMissa {
     private Comunidade comunidade;
 
     public HorarioMissa() {
-        this(0L, "", "");
     }
 
     public HorarioMissa(Long idHorarioMissa, String semanaMissa, String horarioMissa) {

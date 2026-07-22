@@ -25,7 +25,6 @@ public class Pagamento {
     private InscricaoAcampamento inscricaoAcampamento;
 
     public Pagamento() {
-        this(0L, 0.0, "", 0, null);
     }
 
     public Pagamento(Long idPagamento, Double valorPagamento, String formaPagamento, int statusPagamento, InscricaoAcampamento inscricaoAcampamento) {

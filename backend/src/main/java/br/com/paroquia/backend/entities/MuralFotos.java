@@ -28,7 +28,6 @@ public class MuralFotos {
     private Acampamento acampamento;
 
     public MuralFotos() {
-        this(0L, "",null, "", null);
     }
 
     public MuralFotos(Long idMuralFotos, String tituloMuralFotos, Date dataEventoMuralFotos, String linkDriveMuralFotos, Acampamento acampamento) {

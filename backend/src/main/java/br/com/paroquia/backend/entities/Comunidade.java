@@ -30,7 +30,6 @@ public class Comunidade {
     private List<HorarioMissa> horariosMissa = new ArrayList<>();
 
     public Comunidade() {
-        this(0L, "", "", "", "");
     }
 
 

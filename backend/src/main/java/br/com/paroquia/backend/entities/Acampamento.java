@@ -51,7 +51,6 @@ public class Acampamento {
     private Comunidade comunidade;
 
     public Acampamento() {
-        this(0L,"","",0,0,0.0,0,null,null,"","",null,null);
     }
 
     public Acampamento(Long idAcampamento, String nomeAcampamento, String localAcampamento, Integer idadeMinAcampamento, Integer idadeMaxAcampamento, Double taxaInscricaoAcampamento, Integer vagasAcampamento, Date dataInicioAcampamento, Date dataFimAcampamento, String informacoesAcampamento, String fotoAcampamento, Usuario usuario, Comunidade comunidade) {

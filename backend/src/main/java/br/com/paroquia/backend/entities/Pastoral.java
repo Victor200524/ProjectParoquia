@@ -14,7 +14,6 @@ public class Pastoral {
     private String nomePastoral;
 
     public Pastoral() {
-        this(0L, "");
     }
 
     public Pastoral(Long idPastoral, String nomePastoral) {

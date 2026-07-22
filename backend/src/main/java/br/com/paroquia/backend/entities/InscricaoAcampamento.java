@@ -32,7 +32,6 @@ public class InscricaoAcampamento {
 
     // Construtor padrão (obrigatório para o JPA)
     public InscricaoAcampamento() {
-        this(0L, "", 0, null, null, null);
     }
 
     // Construtor completo

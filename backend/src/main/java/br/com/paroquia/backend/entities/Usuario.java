@@ -43,7 +43,6 @@ public class Usuario implements UserDetails {
     private String cpfUsuario;
 
     public Usuario() {
-        this(0L, "", "", "", 0, "", 0, "");
     }
 
     public Usuario(Long idUsuario, String nomeUsuario, String emailUsuario, String senhaUsuario, Integer nivelUsuario, String contatoUsuario, Integer statusUsuario, String cpfUsuario) {
