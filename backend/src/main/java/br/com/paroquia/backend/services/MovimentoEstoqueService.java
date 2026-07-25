@@ -19,6 +19,10 @@ public class MovimentoEstoqueService {
         return movimentacaoEstoqueRepository.findAll();
     }
 
+    public MovimentacaoEstoque getMovimentacaoEstoqueId(Long id){
+        return movimentacaoEstoqueRepository.findById(id).orElse(null);
+    }
+
     public List<MovimentacaoEstoque> temUsuarioMovimentacaoEstoque(String cpfUsuario) {
         return movimentacaoEstoqueRepository.findByUsuarioCpfUsuarioContainingIgnoreCase(cpfUsuario);
     }
@@ -33,5 +37,9 @@ public class MovimentoEstoqueService {
 
     public List<MovimentacaoEstoque> temTipoMovimentoEstoque(String tipo) {
         return movimentacaoEstoqueRepository.findByTipoMovimentacaoEstoqueContainingIgnoreCase(tipo);
+    }
+
+    public void gravarMovimentoEstoque(MovimentacaoEstoque movimentacaoEstoque) {
+        movimentacaoEstoqueRepository.save(movimentacaoEstoque);
     }
 }

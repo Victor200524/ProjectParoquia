@@ -40,10 +40,14 @@ public class MovimentacaoEstoque {
     @JoinColumn(name = "acampamento_id_acampamento")
     private Acampamento acampamento;
 
+    @ManyToOne
+    @JoinColumn(name = "AcampamentoDestino_id_Acampamento")
+    private Acampamento acampamentoDestino;
+
     public MovimentacaoEstoque() {
     }
 
-    public MovimentacaoEstoque(Long idMovimentacaoEstoque, TipoMovimentacaoEstoque tipoMovimentacaoEstoque, Integer qtdeMovimentacaoEstoque, LocalDateTime dataMovimentacaoEstoque, String obsMovimentacaoEstoque, ItemEstoque itemEstoque, Usuario usuario, Acampamento acampamento) {
+    public MovimentacaoEstoque(Long idMovimentacaoEstoque, TipoMovimentacaoEstoque tipoMovimentacaoEstoque, Integer qtdeMovimentacaoEstoque, LocalDateTime dataMovimentacaoEstoque, String obsMovimentacaoEstoque, ItemEstoque itemEstoque, Usuario usuario, Acampamento acampamento, Acampamento acampamentoDestino) {
         this.idMovimentacaoEstoque = idMovimentacaoEstoque;
         this.tipoMovimentacaoEstoque = tipoMovimentacaoEstoque;
         this.qtdeMovimentacaoEstoque = qtdeMovimentacaoEstoque;
@@ -52,6 +56,7 @@ public class MovimentacaoEstoque {
         this.itemEstoque = itemEstoque;
         this.usuario = usuario;
         this.acampamento = acampamento;
+        this.acampamentoDestino = null;
     }
 
     public Long getIdMovimentacaoEstoque() {
@@ -116,5 +121,13 @@ public class MovimentacaoEstoque {
 
     public void setAcampamento(Acampamento acampamento) {
         this.acampamento = acampamento;
+    }
+
+    public Acampamento getAcampamentoDestino() {
+        return acampamentoDestino;
+    }
+
+    public void setAcampamentoDestino(Acampamento acampamentoDestino) {
+        this.acampamentoDestino = acampamentoDestino;
     }
 }
