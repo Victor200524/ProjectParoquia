@@ -14,7 +14,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @CrossOrigin
@@ -28,8 +31,6 @@ public class MovimentoEstoqueRestControllers {
     private UsuarioService usuarioService;
     @Autowired
     private AcampamentoService acampamentoService;
-
-    private ItemEstoque itemEstoque;
 
     @GetMapping(value = "/todasMovimentacoes")
     public ResponseEntity<Object> getAllMovimentacoesEstoque(){
@@ -105,8 +106,57 @@ public class MovimentoEstoqueRestControllers {
     @PostMapping(value = "/gravarMovimentoEstoque")
     public ResponseEntity<Object> gravarMovimentoEstoque(@RequestBody MovimentacaoEstoque movimentacaoEstoque){
         if(movimentacaoEstoque != null){
-            movimentoEstoqueService.gravarMovimentoEstoque(movimentacaoEstoque);
-            return ResponseEntity.status(HttpStatus.OK).body("Movimentacao cadastrada com sucesso!");
+            ItemEstoque itemEstoque = itemEstoqueService.getItemEstoqueId(movimentacaoEstoque.getItemEstoque().getIdItemEstoque()); // Procuro o item, se realmente existe
+            if(itemEstoque != null){
+                if(movimentacaoEstoque.getQtdeMovimentacaoEstoque() > 0) {
+
+                    // ==========================================
+                    // BLOCO DE ENTRADA
+                    // ==========================================
+                    if (movimentacaoEstoque.getTipoMovimentacaoEstoque() == TipoMovimentacaoEstoque.ENTRADA) {
+                        itemEstoque.setQtdeItemEstoque(itemEstoque.getQtdeItemEstoque() + movimentacaoEstoque.getQtdeMovimentacaoEstoque()); // Faço a somatoria da quantidade atual com a de entrada
+                        itemEstoqueService.save(itemEstoque);
+                        movimentoEstoqueService.gravarMovimentoEstoque(movimentacaoEstoque);
+                        return ResponseEntity.status(HttpStatus.OK).body("Movimentacao de ENTRADA cadastrada com sucesso!");
+                    }
+
+                    // ==========================================
+                    // BLOCO DE SAÍDA OU PERDA
+                    // ==========================================
+                    else if (movimentacaoEstoque.getTipoMovimentacaoEstoque() == TipoMovimentacaoEstoque.SAIDA || movimentacaoEstoque.getTipoMovimentacaoEstoque() == TipoMovimentacaoEstoque.PERDA_VALIDADE) {
+                        if (movimentacaoEstoque.getQtdeMovimentacaoEstoque() > itemEstoque.getQtdeItemEstoque())
+                            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Quantidade insuficiente no estoque para realizar esta saída!");
+                        int novaQtde = itemEstoque.getQtdeItemEstoque() - movimentacaoEstoque.getQtdeMovimentacaoEstoque();
+                        itemEstoque.setQtdeItemEstoque(novaQtde);
+                        itemEstoqueService.save(itemEstoque);
+                        movimentoEstoqueService.gravarMovimentoEstoque(movimentacaoEstoque);
+                        return ResponseEntity.status(HttpStatus.OK).body("Movimentação de " + movimentacaoEstoque.getTipoMovimentacaoEstoque() + " cadastrada com sucesso!");
+                    }
+
+                    // ==========================================
+                    // BLOCO DE TRANSFERÊNCIA
+                    // ==========================================
+                    else if (movimentacaoEstoque.getTipoMovimentacaoEstoque() == TipoMovimentacaoEstoque.TRANSFERENCIA) {
+                        if (movimentacaoEstoque.getQtdeMovimentacaoEstoque() > itemEstoque.getQtdeItemEstoque()) {
+                            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Quantidade insuficiente no estoque central para realizar a transferência!");
+                        }
+                        if (movimentacaoEstoque.getAcampamento() != null && movimentacaoEstoque.getAcampamentoDestino() != null) {
+                            movimentoEstoqueService.gravarMovimentoEstoque(movimentacaoEstoque);
+                            return ResponseEntity.status(HttpStatus.OK).body("Movimentação de TRANSFERÊNCIA registrada com sucesso!");
+                        }
+                        else {
+                            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Acampamento de Origem e Destino são obrigatórios!");
+                        }
+                    }
+                    else {
+                        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Tipo de movimento não encontrado!");
+                    }
+                }
+                else{
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("A quantidade da entrada deve ser maior que zero!");
+                }
+            }
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Item em estoque não cadastrado!");
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Dados insuficientes para cadastro!");
     }
@@ -188,6 +238,97 @@ public class MovimentoEstoqueRestControllers {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Dados da nova movimentação estão faltando!");
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Movimento de estoque não existe!");
+    }
+
+    @DeleteMapping(value = "/deletar/{id}")
+    public ResponseEntity<Object> deletarMovimentacaoEstoque(@PathVariable Long id){
+        MovimentacaoEstoque movimentacaoEstoque = movimentoEstoqueService.getMovimentacaoEstoqueId(id);
+        if(movimentacaoEstoque != null){
+            ItemEstoque itemEstoque = itemEstoqueService.getItemEstoqueId(movimentacaoEstoque.getItemEstoque().getIdItemEstoque());
+            if(itemEstoque != null){
+                // ==========================================
+                // BLOCO DE ENTRADA
+                // ==========================================
+                if(movimentacaoEstoque.getTipoMovimentacaoEstoque() == TipoMovimentacaoEstoque.ENTRADA){
+                    int qtde = movimentacaoEstoque.getQtdeMovimentacaoEstoque();
+                    if(itemEstoque.getQtdeItemEstoque() - qtde < 0)
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Não é possível deletar esta entrada, pois o saldo do estoque ficaria negativo!");
+                    itemEstoque.setQtdeItemEstoque(itemEstoque.getQtdeItemEstoque() - qtde); // Retiro a quantidade que foi de entrada
+                    itemEstoqueService.save(itemEstoque);
+                    movimentoEstoqueService.deletarMovimentoEstoque(movimentacaoEstoque);
+                }
+
+                // ==========================================
+                // BLOCO DE SAIDA OU PERDA
+                // ==========================================
+                else if(movimentacaoEstoque.getTipoMovimentacaoEstoque() == TipoMovimentacaoEstoque.SAIDA || movimentacaoEstoque.getTipoMovimentacaoEstoque() == TipoMovimentacaoEstoque.PERDA_VALIDADE){
+                    int qtde = movimentacaoEstoque.getQtdeMovimentacaoEstoque();
+                    itemEstoque.setQtdeItemEstoque(itemEstoque.getQtdeItemEstoque() + qtde); // devolvo a quantidade que foi de saida ou perda
+                    itemEstoqueService.save(itemEstoque);
+                    movimentoEstoqueService.deletarMovimentoEstoque(movimentacaoEstoque);
+                }
+
+                // ==========================================
+                // BLOCO DE TRANSFERÊNCIA
+                // ==========================================
+                else{ // aqui eu somente deleto mesmo, nada demais
+                    movimentoEstoqueService.deletarMovimentoEstoque(movimentacaoEstoque);
+                }
+                return ResponseEntity.status(HttpStatus.OK).body("Movimentação de estoque: " + movimentacaoEstoque.getTipoMovimentacaoEstoque() + " deletada com sucesso!");
+            }
+            else{
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Não possui esse item no estoque!");
+            }
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Movimentação de estoque não encontrada!");
+    }
+
+    @GetMapping(value = "/exibirSaldo/{id}")
+    public ResponseEntity<Object> exibirSaldoMovimentacao(@PathVariable Long id){
+        MovimentacaoEstoque movReferencia = movimentoEstoqueService.getMovimentacaoEstoqueId(id);
+        if(movReferencia != null){
+            String acampamentoAlvo = movReferencia.getAcampamento().getNomeAcampamento();
+            Long idItemAlvo = movReferencia.getItemEstoque().getIdItemEstoque();
+            List<MovimentacaoEstoque> historicoCompleto = movimentoEstoqueService.getAllMovimentacoesEstoque();
+            int saldo = 0;
+
+            for (MovimentacaoEstoque mov : historicoCompleto) {
+                if (mov.getItemEstoque().getIdItemEstoque().equals(idItemAlvo)) {
+                    // ==========================================
+                    // BLOCO DE ENTRADA
+                    // ==========================================
+                    if (mov.getTipoMovimentacaoEstoque() == TipoMovimentacaoEstoque.ENTRADA) {
+                        if (mov.getAcampamento().getNomeAcampamento().equals(acampamentoAlvo)) {
+                            saldo = saldo + mov.getQtdeMovimentacaoEstoque(); // Ganhou, então SOMA
+                        }
+                    }
+                    // ==========================================
+                    // BLOCO DE SAÍDA OU PERDA
+                    // ==========================================
+                    else if (mov.getTipoMovimentacaoEstoque() == TipoMovimentacaoEstoque.SAIDA || mov.getTipoMovimentacaoEstoque() == TipoMovimentacaoEstoque.PERDA_VALIDADE) {
+                        if (mov.getAcampamento().getNomeAcampamento().equals(acampamentoAlvo)) {
+                            saldo = saldo - mov.getQtdeMovimentacaoEstoque(); // Gastou, então SUBTRAI
+                        }
+                    }
+                    // ==========================================
+                    // BLOCO DE TRANSFERÊNCIA
+                    // ==========================================
+                    else if (mov.getTipoMovimentacaoEstoque() == TipoMovimentacaoEstoque.TRANSFERENCIA) {
+                        // Se o acampamento doou para outro (Ele é a Origem)
+                        if (mov.getAcampamento().getNomeAcampamento().equals(acampamentoAlvo)) {
+                            saldo = saldo - mov.getQtdeMovimentacaoEstoque(); // Doou, então SUBTRAI
+                        }
+                        // Se o acampamento recebeu de outro (Ele é o Destino)
+                        else if (mov.getAcampamentoDestino() != null && mov.getAcampamentoDestino().getNomeAcampamento().equals(acampamentoAlvo)) {
+                            saldo = saldo + mov.getQtdeMovimentacaoEstoque(); // Recebeu, então SOMA
+                        }
+                    }
+                }
+            }
+            return ResponseEntity.status(HttpStatus.OK).body("Saldo atual de " + movReferencia.getItemEstoque().getNomeItemEstoque() + " para o acampamento " + acampamentoAlvo + ": " + saldo);
+        }
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Movimentação de estoque não encontrada!");
     }
 }
 

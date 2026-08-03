@@ -42,4 +42,8 @@ public class MovimentoEstoqueService {
     public void gravarMovimentoEstoque(MovimentacaoEstoque movimentacaoEstoque) {
         movimentacaoEstoqueRepository.save(movimentacaoEstoque);
     }
+
+    public void deletarMovimentoEstoque(MovimentacaoEstoque movimentacaoEstoque) {
+        movimentacaoEstoqueRepository.delete(movimentacaoEstoque);
+    }
 }

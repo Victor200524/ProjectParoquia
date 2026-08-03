@@ -36,6 +36,8 @@ public class ItemEstoqueRestControllers {
     @PostMapping(value = "/gravarItemEstoque")
     public ResponseEntity<Object> gravarItemEstoque(@RequestBody ItemEstoque itemEstoque){
         if(itemEstoque != null){
+            itemEstoque.setQtdeItemEstoque(0); // Coloco isso como garantia que esta se enviando 0 para cadastrar no banco de dados
+            // Faço isso, pois toda a manipulação que vai ser realizada do ‘item’ de estoque vem da movimentação do estoque
             ItemEstoque novoItemEstoque = itemEstoqueService.save(itemEstoque);
             return ResponseEntity.status(HttpStatus.CREATED).body("Item cadastrado com sucesso!");
         }
