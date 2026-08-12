@@ -1,0 +1,45 @@
+.header {
+  height: 75px;
+  background-color: var(--bg-card); /* Fundo dinâmico */
+  border-bottom: 1px solid var(--border-color); /* Borda dinâmica */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary); /* Texto dinâmico */
+}
+
+.userProfile {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.userName {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-secondary); /* Texto dinâmico */
+}
+
+/* O .avatar continua igual, pois ele é sempre vermelho */
+.avatar {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #cc2027, #94151a);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1rem;
+  box-shadow: 0 4px 10px rgba(204, 32, 39, 0.2);
+}

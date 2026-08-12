@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import "./globals.css"; // ESSA É A LINHA MÁGICA QUE MATA AS BORDAS
+import { Providers } from "./providers"; // Importamos o provedor
+import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Paróquia São Miguel Arcanjo",
@@ -12,8 +13,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR">
-      <body>{children}</body>
+    // suppressHydrationWarning é obrigatório ao usar next-themes na tag html
+    <html lang="pt-BR" suppressHydrationWarning>
+      <body>
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }

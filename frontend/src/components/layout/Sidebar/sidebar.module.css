@@ -1,0 +1,66 @@
+.sidebar {
+  width: 280px;
+  background-color: var(--bg-card); /* Fundo dinâmico */
+  border-right: 1px solid var(--border-color); /* Borda dinâmica */
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+
+.logoArea {
+  height: 75px;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0 1.5rem;
+  border-bottom: 1px solid var(--border-color); /* Borda dinâmica */
+}
+
+.logoIcon {
+  width: 3rem;
+  height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.logoText {
+  font-weight: 800;
+  color: var(--text-primary); /* Texto dinâmico */
+  font-size: 1.1rem;
+  line-height: 1.1;
+}
+
+.nav {
+  flex: 1;
+  padding: 1.5rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.navLink {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  color: var(--text-secondary); /* Texto dinâmico */
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  border-radius: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.navLink:hover {
+  background-color: var(--bg-body); /* Fundo dinâmico no hover */
+  color: #cc2027; /* Mantém o vermelho do hover */
+}
+
+.navLinkActive {
+  background-color: rgba(204, 32, 39, 0.08);
+  color: #cc2027; /* Mantém o destaque vermelho */
+}

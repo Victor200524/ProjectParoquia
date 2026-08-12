@@ -1,0 +1,370 @@
+/* login.module.css */
+.page {
+  box-sizing: border-box;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
+  background: #fff;
+}
+
+.page * {
+  box-sizing: border-box;
+}
+
+@media (max-width: 960px) {
+  .page {
+    height: auto;
+    min-height: 100vh;
+    overflow: auto;
+    flex-direction: column;
+  }
+}
+
+/* ================= PAINEL ESQUERDO (HERO) ================= */
+.hero {
+  position: relative;
+  overflow: hidden;
+  flex: 1 1 50%;
+  background: linear-gradient(160deg, #7a0f14 0%, #cc2027 45%, #4a0709 100%);
+  color: #fff;
+  padding: 2.5rem 3rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+@media (max-width: 960px) {
+  .hero {
+    flex: none;
+    padding: 2rem 1.75rem;
+  }
+}
+
+.heroGlow {
+  position: absolute;
+  top: -25%;
+  right: -20%;
+  width: 26rem;
+  height: 26rem;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.16), transparent 65%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.heroTop {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  flex-shrink: 0;
+}
+
+.heroLogoBadge {
+  width: 8rem;
+  height: 10rem;
+  border-radius: 0.85rem;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.heroBadgeText {
+  font-weight: 600;
+  font-size: 3rem;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.heroBody {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; 
+  padding-top: 8rem;
+  padding-bottom: 2rem;
+}
+
+.heroTitle {
+  font-size: clamp(4rem, 3vw, 2.9rem);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  margin: 0 0 1rem 0;
+}
+
+.heroTitle span {
+  color: #ffd9d4;
+}
+
+.heroSubtitle {
+  font-size: 2rem;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.85);
+  max-width: 40rem;
+  margin: 0 0 1.5rem 0;
+}
+
+.heroList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.heroList li {
+  position: relative;
+  padding-left: 1.5rem;
+  font-size: 1.2rem;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.heroList li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.35rem;
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 50%;
+  background: #fff;
+}
+
+.btnAcampamentos {
+  position: relative;
+  z-index: 1;
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #fff;
+  color: #a81a20;
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 0.75rem 1.35rem;
+  border-radius: 0.7rem;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 10px 20px -10px rgba(0, 0, 0, 0.5);
+  flex-shrink: 0;
+}
+
+.btnAcampamentos:hover {
+  transform: translateY(-2px);
+}
+
+/* ================= PAINEL DIREITO (FORM) ================= */
+.formPanel {
+  flex: 1 1 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: #fafafa;
+  overflow-y: auto;
+}
+
+@media (max-width: 960px) {
+  .formPanel {
+    flex: none;
+    padding: 2.5rem 1.75rem;
+  }
+}
+
+.formCard {
+  width: 100%;
+  max-width: 24rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.formHeader {
+  margin-bottom: 1.75rem;
+}
+
+.formTitle {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #161616;
+  margin: 0 0 0.35rem 0;
+  letter-spacing: -0.01em;
+}
+
+.formSubtitle {
+  color: #7a7a7a;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.fieldLabel {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #444;
+}
+
+.inputField {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #161616;
+  border: 1.5px solid #e2e2e2;
+  border-radius: 0.7rem;
+  background: #fff;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.inputField::placeholder {
+  color: #b0b0b0;
+  font-weight: 400;
+}
+
+.inputField:focus {
+  border-color: #cc2027;
+  box-shadow: 0 0 0 3px rgba(204, 32, 39, 0.1);
+}
+
+.passwordWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.passwordWrapper .inputField {
+  padding-right: 2.6rem;
+}
+
+.togglePassword {
+  position: absolute;
+  right: 0.75rem;
+  background: none;
+  border: none;
+  color: #9a9a9a;
+  cursor: pointer;
+  display: flex;
+  padding: 0.2rem;
+  border-radius: 0.4rem;
+  transition: color 0.2s ease;
+}
+
+.togglePassword:hover {
+  color: #cc2027;
+}
+
+.rowBetween {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.82rem;
+  color: #555;
+  cursor: pointer;
+}
+
+.checkbox {
+  width: 0.95rem;
+  height: 0.95rem;
+  accent-color: #cc2027;
+  cursor: pointer;
+}
+
+.forgotPassword {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #cc2027;
+  text-decoration: none;
+}
+
+.forgotPassword:hover {
+  text-decoration: underline;
+}
+
+.errorText {
+  color: #cc2027;
+  font-size: 0.82rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.btnSubmit {
+  width: 100%;
+  background: linear-gradient(135deg, #cc2027, #94151a);
+  color: #fff;
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 0.85rem 2rem;
+  border-radius: 0.7rem;
+  border: none;
+  cursor: pointer;
+  margin-top: 0.15rem;
+  box-shadow: 0 10px 20px -10px rgba(204, 32, 39, 0.6);
+  transition: filter 0.2s ease, transform 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.9rem;
+}
+
+.btnSubmit:hover:not(:disabled) {
+  filter: brightness(1.07);
+  transform: translateY(-1px);
+}
+
+.btnSubmit:disabled {
+  opacity: 0.75;
+  cursor: not-allowed;
+}
+
+.spinner {
+  width: 1.15rem;
+  height: 1.15rem;
+  border: 2.5px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+.footerNote {
+  margin-top: 1.75rem;
+  font-size: 0.75rem;
+  color: #999;
+  text-align: center;
+}
+
+.footerCopy {
+  margin-top: 0.3rem;
+  font-size: 0.7rem;
+  color: #bbb;
+  text-align: center;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

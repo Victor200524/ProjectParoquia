@@ -3,7 +3,7 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
-import logoParoquia from '../../../images/logo_brasao_paroquia_sao_miguel_alterado_page-0001-removebg-preview.png';
+import logoParoquia from '@/images/logo_brasao_paroquia_sao_miguel.png';
 import styles from './login.module.css';
 
 export default function Login() {
@@ -24,7 +24,6 @@ export default function Login() {
 
     setLoading(true);
     try {
-      // TODO: integrar com a API de autenticação
       await new Promise((resolve) => setTimeout(resolve, 1200));
     } catch {
       setError('Não foi possível entrar. Tente novamente.');
