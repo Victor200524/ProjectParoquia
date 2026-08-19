@@ -1,108 +1,104 @@
-import {Acampamento} from "../models/acampamento";
+import { Acampamento } from "../types/acampamento";
 
 const BASE_URL = "http://localhost:8080/acampamento";
 
-
-
 export const acampamentoService = {
     // Async devido a operações de rede que podem levar algum tempo para serem concluídas
-    async criarAcampamento(acampamento: Acampamento): Promise<Acampamento> {
-        try{
-            const response = await fetch(`${BASE_URL}/gravarAcampamento`,{
+    async criarAcampamento(acampamento: Acampamento, arquivoFoto: File | null): Promise<string> {
+        try {
+            const formData = new FormData();
+            // Transformamos o objeto em JSON e adicionamos como um Blob
+            const jsonBlob = new Blob([JSON.stringify(acampamento)], { type: 'application/json' });
+            formData.append('acampamento', jsonBlob);
+
+            if (arquivoFoto) {
+                formData.append('foto', arquivoFoto);
+            }
+
+            const response = await fetch(`${BASE_URL}/gravarAcampamento`, {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json" // avisa que o corpo da mensagem é um JSON
-                    // Token de segurança vai ser adicionado aqui no futuro
+                    "Authorization": `Bearer ${localStorage.getItem('token') || ''}`
                 },
-                body: JSON.stringify(acampamento) //Objeto em TS é transformado em JSON para envio
+                body: formData
             });
-
-            if(!response.ok){
-                // Faz a leitura da mensagem de erro que é retornada pelo backend
-                const errorData = await response.json().catch(() => null)
-                throw new Error(errorData?.message || "Erro ao criar acampamento");
+            // Lemos a resposta como texto, não como JSON
+            const responseText = await response.text();
+            if (!response.ok) {
+                throw new Error(responseText || "Erro ao criar acampamento");
             }
-            return await response.json(); // Converte a resposta do backend de JSON para objeto JS/TS
-
-        }catch (error) {
+            return responseText;
+        } catch (error) {
             console.error("Erro na camada de serviço: ", error);
-            throw error; // Propaga o erro para que a camada de apresentação possa lidar com ele
+            throw error;
         }
-    },
+    }, // <--- VÍRGULA GARANTIDA AQUI
 
     async alterarAcampamento(idAcampamento: number, acampamento: Acampamento): Promise<Acampamento> {
-        try{
+        try {
             const response = await fetch(`${BASE_URL}/alterarAcampamento/${idAcampamento}`, {
                 method: "PUT",
-                headers:{
-                    "Content-Type": "application/json"
-                },
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(acampamento)
-            })
-            if(!response.ok){
-                const errorData = await response.json().catch(() => null)
+            });
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => null);
                 throw new Error(errorData?.message || "Erro ao alterar acampamento!");
             }
             return await response.json();
-        }catch(error){
-            console.error("Erro na camade de serviço: ", error);
+        } catch (error) {
+            console.error("Erro na camada de serviço: ", error);
             throw error;
         }
-    },
+    }, // <--- VÍRGULA GARANTIDA AQUI
 
     async listarAcampamentos(): Promise<Acampamento[]> {
-        try{
+        try {
             const response = await fetch(`${BASE_URL}/todosAcampamentos`, {
                 method: "GET",
-                headers:{
-                    "Content-Type": "application/json"
-                },
-            })
-            if(!response.ok){
-                const errorData = await response.json().catch(() => null)
+                headers: { "Content-Type": "application/json" }
+            });
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => null);
                 throw new Error(errorData?.message || "Erro ao listar os acampamentos!");
             }
             return await response.json();
-        } catch(error){
+        } catch (error) {
             console.error("Erro na camada de serviço: ", error);
             throw error;
         }
-    },
+    }, // <--- VÍRGULA GARANTIDA AQUI
 
     async buscarAcampamentoPorNome(nomeAcampamento: string): Promise<Acampamento[]> {
-        try{
-            const response = await fetch( `${BASE_URL}/buscarAcampamento/${nomeAcampamento}`,{
+        try {
+            const response = await fetch(`${BASE_URL}/buscarAcampamento/${nomeAcampamento}`, {
                 method: "GET",
-                headers:{
-                    "Content-Type": "application/json"
-                },
-            })
-            if(!response.ok){
-                const errorData = await response.json().catch(() => null)
+                headers: { "Content-Type": "application/json" }
+            });
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => null);
                 throw new Error(errorData?.message || "Erro ao buscar acampamento por nome!");
             }
             return await response.json();
-        }catch(error){
+        } catch (error) {
             console.error("Erro na camada de serviço: ", error);
             throw error;
         }
-    },
+    }, // <--- VÍRGULA GARANTIDA AQUI
 
     async deletarAcampamento(idAcampamento: number): Promise<void> {
-        try{
+        try {
             const response = await fetch(`${BASE_URL}/deletarAcampamento/${idAcampamento}`, {
                 method: "DELETE",
-                headers:{
-                    "Content-Type": "application/json"
-                },
-            })
-            if(!response.ok){
-                const errorData = await response.json().catch(() => null)
+                headers: { "Content-Type": "application/json" }
+            });
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => null);
                 throw new Error(errorData?.message || "Erro ao deletar acampamento!");
             }
-        }catch(error){
+        } catch (error) {
             console.error("Erro na camada de serviço: ", error);
             throw error;
         }
     }
-}
+};

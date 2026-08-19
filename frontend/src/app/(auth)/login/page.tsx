@@ -1,14 +1,18 @@
 // page.tsx
 "use client";
 
+import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import Image from 'next/image';
 import logoParoquia from '@/images/logo_brasao_paroquia_sao_miguel.png';
 import styles from './login.module.css';
+import { login } from '@/services/authService';
 
 export default function Login() {
+  const router = useRouter();
+  
   const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState('');
+  const [cpf, setCpf] = useState(''); 
   const [senha, setSenha] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -16,21 +20,26 @@ export default function Login() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError('');
-
-    if (!email || !senha) {
-      setError('Preencha e-mail e senha para continuar.');
-      return;
-    }
-
     setLoading(true);
+
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1200));
-    } catch {
-      setError('Não foi possível entrar. Tente novamente.');
+      await login({ cpf, senha }); 
+      router.push('/forms/acampamento'); 
+    } catch (err: any) {
+      setError('CPF ou senha incorretos.');
     } finally {
       setLoading(false);
     }
   }
+
+  const formatarCPF = (value: string) => {
+  return value
+    .replace(/\D/g, '') // remove tudo que não é número
+    .replace(/(\d{3})(\d)/, '$1.$2')
+    .replace(/(\d{3})(\d)/, '$1.$2')
+    .replace(/(\d{3})(\d{1,2})/, '$1-$2')
+    .substring(0, 14);
+  };
 
   return (
     <div className={styles.page}>
@@ -89,15 +98,15 @@ export default function Login() {
 
           <form className={styles.form} onSubmit={handleSubmit} noValidate>
             <div className={styles.fieldGroup}>
-              <label className={styles.fieldLabel} htmlFor="email">E-mail</label>
+              <label className={styles.fieldLabel} htmlFor="cpf">CPF</label>
               <input
                 className={styles.inputField}
-                id="email"
-                type="email"
-                placeholder="seuemail@exemplo.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                autoComplete="email"
+                id="cpf"
+                type="text"
+                placeholder="000.000.000-00"
+                value={cpf}
+                onChange={(e) => setCpf(formatarCPF(e.target.value))}
+                autoComplete="off"
                 required
               />
             </div>

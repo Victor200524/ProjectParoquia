@@ -10,6 +10,7 @@ export interface Acampamento {
     dataFimAcampamento: string;
     informacoesAcampamento: string;
     fotoAcampamento: string;
+    tokenMercadoPagoAcampamento: string;
     usuario: { idUsuario: number };
     comunidade: { idComunidade: number };
 }

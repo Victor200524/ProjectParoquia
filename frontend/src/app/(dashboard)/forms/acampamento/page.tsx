@@ -2,31 +2,64 @@
 
 import React, { useState } from 'react';
 import styles from './acampamento.module.css';
+import {acampamentoService} from '@/services/acampamentoService';
+import {Acampamento} from '@/types/acampamento';
 
 export default function NovoAcampamento() {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<Acampamento>({
     nomeAcampamento: '',
     localAcampamento: '',
-    comunidade: '', // Será o ID da comunidade selecionada
     dataInicioAcampamento: '',
     dataFimAcampamento: '',
-    idadeMinAcampamento: '',
-    idadeMaxAcampamento: '',
-    vagasAcampamento: '',
-    taxaInscricaoAcampamento: '',
+    idadeMinAcampamento: 0,
+    idadeMaxAcampamento: 0,
+    vagasAcampamento: 0,
+    taxaInscricaoAcampamento: 0,
     informacoesAcampamento: '',
-    fotoAcampamento: ''
+    fotoAcampamento: '',
+    tokenMercadoPagoAcampamento: '',
+    usuario: { idUsuario: 2 }, 
+    comunidade: { idComunidade: 1 }
   });
 
+  const [fotoArquivo, setFotoArquivo] = useState<File | null>(null);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    // Pegamos o 'type' para saber se o HTML está mandando um número disfarçado de texto
+    const { name, value, type } = e.target;
+    setFormData(prev => ({ 
+      ...prev, 
+      // Se for input numérico, converte para Number. Senão, deixa o texto normal.
+      [name]: type === 'number' ? (value === '' ? 0 : Number(value)) : value 
+    }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault(); // Ele impede recarregar a pagina inteira ao clicar em gravar
     console.log("Dados prontos para o Back-end:", formData);
-    // Aqui entrará a chamada para o acampamentoService.ts!
+    try{
+      await acampamentoService.criarAcampamento(formData, fotoArquivo);
+      alert("Acampamento salvo com sucesso!");
+      // Aqui você pode redirecionar ou limpar o formulário, se necessário
+      setFormData({ // Limpa o formulário após salvar0
+        nomeAcampamento: '',
+        localAcampamento: '',
+        dataInicioAcampamento: '',
+        dataFimAcampamento: '',
+        idadeMinAcampamento: 0,
+        idadeMaxAcampamento: 0,
+        vagasAcampamento: 0,
+        taxaInscricaoAcampamento: 0,
+        informacoesAcampamento: '',
+        fotoAcampamento: '',
+        tokenMercadoPagoAcampamento: '',
+        usuario: { idUsuario: 2 }, 
+        comunidade: { idComunidade: 1 }
+      });
+      setFotoArquivo(null); // Limpa o arquivo de foto
+    }catch(error: any){
+      alert("Erro ao salvar o acampamento: " + error.message);
+    }
   };
 
   return (
@@ -62,8 +95,8 @@ export default function NovoAcampamento() {
               className={styles.inputField} 
               id="comunidade" 
               name="comunidade"
-              value={formData.comunidade}
-              onChange={handleChange}
+              value={formData.comunidade.idComunidade}
+              onChange={(e) => setFormData(prev => ({ ...prev, comunidade: { idComunidade: Number(e.target.value) } }))}
               required
             >
               <option value="">Selecione a comunidade...</option>
@@ -185,15 +218,20 @@ export default function NovoAcampamento() {
         <h3 className={styles.sectionTitle}>Mídia e Detalhes Adicionais</h3>
         <div className={styles.grid2Col}>
           <div className={styles.fieldGroupFull}>
-            <label className={styles.fieldLabel} htmlFor="fotoAcampamento">URL da Arte / Foto do Acampamento</label>
+            <label className={styles.fieldLabel} htmlFor="fotoAcampamento">Arte / Foto do Acampamento *</label>
             <input
               className={styles.inputField}
               id="fotoAcampamento"
               name="fotoAcampamento"
-              type="text"
-              placeholder="https://exemplo.com/arte-do-acampamento.png"
-              value={formData.fotoAcampamento}
-              onChange={handleChange}
+              type="file" 
+              accept="image/*"
+              onChange={(e) => {
+                if (e.target.files && e.target.files.length > 0) {
+                  setFotoArquivo(e.target.files[0]);
+                } else {
+                  setFotoArquivo(null);
+                }
+              }}
             />
           </div>
 
