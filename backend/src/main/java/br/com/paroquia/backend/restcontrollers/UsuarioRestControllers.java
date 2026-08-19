@@ -39,16 +39,22 @@ public class UsuarioRestControllers {
         return  ResponseEntity.status(HttpStatus.NOT_FOUND).body("Email: " + emailUsuario + " não encontrado!");
     }
 
+    public record LoginDTO(String cpf, String senha) {}
     @PostMapping(value = "/loginUsuario")
-    public ResponseEntity<Object> loginUsuario(@RequestParam String cpfUsuario, @RequestParam String senhaUsuario){
-        boolean validar = false;
-        Optional<Usuario> optionalUsuario = Optional.ofNullable(usuarioService.getCpfUsuario(cpfUsuario));
-        if(optionalUsuario.isEmpty())
+    public ResponseEntity<Object> loginUsuario(@RequestBody LoginDTO loginDto) {
+        Optional<Usuario> optionalUsuario = Optional.ofNullable(usuarioService.getCpfUsuario(loginDto.cpf()));
+
+        if (optionalUsuario.isEmpty())
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Usuário não autorizado!");
+
         Usuario usuario = optionalUsuario.get();
-        validar = encoder.matches(senhaUsuario, usuario.getSenhaUsuario());
-        HttpStatus status = (validar) ? HttpStatus.OK : HttpStatus.UNAUTHORIZED; // Se for http, vai ter um status "OK" se não, vai ter um status "UNAUTHORIZED"
-        return  ResponseEntity.status(status).body(validar);
+        boolean validar = encoder.matches(loginDto.senha(), usuario.getSenhaUsuario());
+
+        if (validar) {
+            return ResponseEntity.ok("Login realizado com sucesso!");
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Senha incorreta!");
+        }
     }
 
     @PostMapping(value = "/cadastrarUsuario")

@@ -1,6 +1,8 @@
 package br.com.paroquia.backend.entities;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.util.Date;
 
@@ -39,8 +41,12 @@ public class Acampamento {
     @Column(name = "\"informacoes_Acampamento\"", columnDefinition = "TEXT")
     private String informacoesAcampamento;
 
-    @Column(name = "\"foto_Acampamento\"", columnDefinition = "TEXT")
-    private String fotoAcampamento;
+    @JdbcTypeCode(SqlTypes.BINARY) // 👈 Isso obriga o Hibernate a respeitar o formato de bytes do Postgres!
+    @Column(name = "\"foto_Acampamento\"", columnDefinition = "bytea")
+    private byte[] fotoAcampamento;
+
+    @Column(name = "\"tokenMercadoPago_Acampamento\"")
+    private String tokenMercadoPagoAcampamento;
 
     @ManyToOne
     @JoinColumn(name = "usuario_id_usuario", nullable = false)
@@ -53,7 +59,7 @@ public class Acampamento {
     public Acampamento() {
     }
 
-    public Acampamento(Long idAcampamento, String nomeAcampamento, String localAcampamento, Integer idadeMinAcampamento, Integer idadeMaxAcampamento, Double taxaInscricaoAcampamento, Integer vagasAcampamento, Date dataInicioAcampamento, Date dataFimAcampamento, String informacoesAcampamento, String fotoAcampamento, Usuario usuario, Comunidade comunidade) {
+    public Acampamento(Long idAcampamento, String nomeAcampamento, String localAcampamento, Integer idadeMinAcampamento, Integer idadeMaxAcampamento, Double taxaInscricaoAcampamento, Integer vagasAcampamento, Date dataInicioAcampamento, Date dataFimAcampamento, String informacoesAcampamento, byte[] fotoAcampamento, String tokenMercadoPagoAcampamento,Usuario usuario, Comunidade comunidade) {
         this.idAcampamento = idAcampamento;
         this.nomeAcampamento = nomeAcampamento;
         this.localAcampamento = localAcampamento;
@@ -65,6 +71,7 @@ public class Acampamento {
         this.dataFimAcampamento = dataFimAcampamento;
         this.informacoesAcampamento = informacoesAcampamento;
         this.fotoAcampamento = fotoAcampamento;
+        this.tokenMercadoPagoAcampamento = tokenMercadoPagoAcampamento;
         this.usuario = usuario;
         this.comunidade = comunidade;
     }
@@ -149,12 +156,20 @@ public class Acampamento {
         this.informacoesAcampamento = informacoesAcampamento;
     }
 
-    public String getFotoAcampamento() {
+    public byte[] getFotoAcampamento() {
         return fotoAcampamento;
     }
 
-    public void setFotoAcampamento(String fotoAcampamento) {
+    public void setFotoAcampamento(byte[] fotoAcampamento) {
         this.fotoAcampamento = fotoAcampamento;
+    }
+
+    public String getTokenMercadoPagoAcampamento() {
+        return tokenMercadoPagoAcampamento;
+    }
+
+    public void setTokenMercadoPagoAcampamento(String tokenMercadoPagoAcampamento) {
+        this.tokenMercadoPagoAcampamento = tokenMercadoPagoAcampamento;
     }
 
     public Usuario getUsuario() {

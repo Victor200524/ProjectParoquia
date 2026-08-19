@@ -4,8 +4,10 @@ import br.com.paroquia.backend.entities.Acampamento;
 import br.com.paroquia.backend.services.AcampamentoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -32,13 +34,16 @@ public class AcampamentoRestControllers {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Acampamento não encontrado!");
     }
 
-    @PostMapping(value = "/gravarAcampamento")
-    public ResponseEntity<Object> gravarAcampamento(@RequestBody Acampamento acampamento) {
+    @PostMapping(value = "/gravarAcampamento", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Object> gravarAcampamento(@RequestPart("acampamento") Acampamento acampamento, @RequestPart(value = "foto", required = false) MultipartFile foto) {
         if (acampamento != null) {
             try {
+                if (foto != null && !foto.isEmpty())
+                    acampamento.setFotoAcampamento(foto.getBytes());
                 Acampamento novoAcampamento = acampamentoService.saveAcampamento(acampamento);
                 return ResponseEntity.status(HttpStatus.CREATED).body("Acampamento '" + novoAcampamento.getNomeAcampamento() + "' criado com sucesso!");
-            } catch (IllegalArgumentException e) {
+
+            } catch (Exception e) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
             }
         }

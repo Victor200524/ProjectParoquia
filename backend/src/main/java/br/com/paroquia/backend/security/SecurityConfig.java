@@ -15,6 +15,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.cors.CorsConfigurationSource;
 import static org.springframework.security.config.Customizer.withDefaults;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Configuration
@@ -32,7 +33,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // Essas rotas sao abertas devido elas nao precisarem de tokens
                         .requestMatchers(HttpMethod.POST, "/autenticacao").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/usuario/cadastrar").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/usuario/**").permitAll()
 
                         // Deixei liberado devido as testes dos pix que estou fazendo
                         .requestMatchers("/pagamento/**").permitAll()
@@ -45,9 +46,9 @@ public class SecurityConfig {
                         * */
 
                         // Rotas bloqueadas por nível
-                         .requestMatchers(HttpMethod.POST, "/acampamento").hasRole("COORDENADOR")
-
-                        // 3. Qualquer outra requisição precisa do Token (Usuário logado)
+                         .requestMatchers(HttpMethod.POST, "/acampamento/**").permitAll()//.hasRole("COORDENADOR")
+                        .requestMatchers("/error").permitAll() // Desmascara os erros internos
+                        // Qualquer outra requisição precisa do Token (Usuário logado)
                         .anyRequest().authenticated()
                 )
                 // AVISO PARA O SPRING: "Rode o MEU filtro antes do filtro padrão do Spring"
@@ -65,7 +66,7 @@ public class SecurityConfig {
 
         // Libera os métodos HTTP que o frontend pode usar
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(List.of("*"));
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

@@ -26,14 +26,24 @@ public class SecurityFilter extends OncePerRequestFilter {
         String token = recuperarToken(request);
 
         if (token != null) {
-            // Valida o token e descobre qual é o e-mail do usuário logado
-            String emailDoUsuario = tokenService.validarToken(token);
+            try {
+                // Tenta validar o token e extrair o login/subject
+                var subject = tokenService.validarToken(token);
 
-            Usuario usuario = usuarioService.getUserEmail(emailDoUsuario);
+                if (subject != null) {
+                    var usuario = usuarioService.getCpfUsuario(subject); // ou findByCpf dependendo de como gera o token
 
-            // Crio a credencial ocifial do proprio sprint e cria o contexto a partir dela
-            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(usuario, null, usuario.getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+                    // Só autentica se o usuário realmente existir no banco
+                    if (usuario != null) {
+                        var authentication = new UsernamePasswordAuthenticationToken(usuario, null, usuario.getAuthorities());
+                        SecurityContextHolder.getContext().setAuthentication(authentication);
+                    }
+                }
+            } catch (Exception e) {
+                // Se o token for falso, malformado ou string de teste ('logado-sucesso'),
+                // o sistema apenas ignora silenciosamente em vez de explodir o servidor!
+                System.out.println("Token inválido ou ignorado: " + e.getMessage());
+            }
         }
         // Envia a requisição para seguir sue fluxo
         filterChain.doFilter(request, response);
