@@ -33,7 +33,7 @@ public class SecurityFilter extends OncePerRequestFilter {
                 if (subject != null) {
                     var usuario = usuarioService.getCpfUsuario(subject); // ou findByCpf dependendo de como gera o token
 
-                    // Só autentica se o usuário realmente existir no banco
+                    // SR$ 130,00ó autentica se o usuário realmente existir no banco
                     if (usuario != null) {
                         var authentication = new UsernamePasswordAuthenticationToken(usuario, null, usuario.getAuthorities());
                         SecurityContextHolder.getContext().setAuthentication(authentication);

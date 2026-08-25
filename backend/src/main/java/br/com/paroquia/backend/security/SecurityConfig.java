@@ -46,7 +46,8 @@ public class SecurityConfig {
                         * */
 
                         // Rotas bloqueadas por nível
-                         .requestMatchers(HttpMethod.POST, "/acampamento/**").permitAll()//.hasRole("COORDENADOR")
+                         .requestMatchers("/acampamento/**").permitAll()//.hasRole("COORDENADOR")
+                        .requestMatchers("/doacao/**").permitAll()
                         .requestMatchers("/error").permitAll() // Desmascara os erros internos
                         // Qualquer outra requisição precisa do Token (Usuário logado)
                         .anyRequest().authenticated()
