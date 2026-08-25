@@ -18,6 +18,7 @@ export default function Sidebar() {
     { nome: 'Estoque', rota: '/estoque' },
     { nome: 'Financeiro', rota: '/financeiro' },
     { nome: 'Usuários', rota: '/usuarios' },
+    {nome : 'Doações', rota: '/doacao'},
   ];
 
   return (

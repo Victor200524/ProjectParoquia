@@ -18,7 +18,7 @@ export default function NovoAcampamento() {
     informacoesAcampamento: '',
     fotoAcampamento: '',
     tokenMercadoPagoAcampamento: '',
-    usuario: { idUsuario: 2 }, 
+    usuario: { idUsuario: Number(localStorage.getItem('idUsuario'))}, // Pega o id do usuário logado do localStorage
     comunidade: { idComunidade: 1 }
   });
 
