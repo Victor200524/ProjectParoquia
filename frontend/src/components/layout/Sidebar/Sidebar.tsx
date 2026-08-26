@@ -12,13 +12,13 @@ export default function Sidebar() {
 
   const menuItems = [
     { nome: 'Dashboard', rota: '/' },
-    { nome: 'Acampamentos', rota: '/acampamentos' },
+    { nome: 'Acampamentos', rota: '/forms/acampamento' },
     { nome: 'Inscrições', rota: '/inscricoes' },
     { nome: 'Equipes & Quadrante', rota: '/equipes' },
     { nome: 'Estoque', rota: '/estoque' },
     { nome: 'Financeiro', rota: '/financeiro' },
     { nome: 'Usuários', rota: '/usuarios' },
-    {nome : 'Doações', rota: '/doacao'},
+    {nome : 'Doações', rota: '/forms/doacao'},
   ];
 
   return (

@@ -1,3 +1,6 @@
+import { Comunidade } from "./comunidade";
+import { Usuario } from "./usuario";
+
 export interface Acampamento {
     idAcampamento?: number;
     nomeAcampamento: string;
@@ -11,6 +14,6 @@ export interface Acampamento {
     informacoesAcampamento: string;
     fotoAcampamento: string;
     tokenMercadoPagoAcampamento: string;
-    usuario: { idUsuario: number };
-    comunidade: { idComunidade: number };
+    usuario: Usuario;
+    comunidade: Comunidade;
 }

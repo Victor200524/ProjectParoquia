@@ -1,9 +1,11 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './acampamento.module.css';
-import {acampamentoService} from '@/services/acampamentoService';
 import {Acampamento} from '@/types/acampamento';
+import {Comunidade} from '@/types/comunidade';
+import {acampamentoService} from '@/services/acampamentoService';
+import {comunidadeService} from '@/services/comunidadeService';
 
 export default function NovoAcampamento() {
   const [formData, setFormData] = useState<Acampamento>({
@@ -18,18 +20,51 @@ export default function NovoAcampamento() {
     informacoesAcampamento: '',
     fotoAcampamento: '',
     tokenMercadoPagoAcampamento: '',
-    usuario: { idUsuario: Number(localStorage.getItem('idUsuario'))}, // Pega o id do usuário logado do localStorage
-    comunidade: { idComunidade: 1 }
+    usuario: { idUsuario: 0 }, 
+    comunidade: { idComunidade: 0 }
   });
 
   const [fotoArquivo, setFotoArquivo] = useState<File | null>(null);
+  const [listaComunidades, setListaComunidades] = useState<Comunidade[]>([]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    // Pegamos o 'type' para saber se o HTML está mandando um número disfarçado de texto
+  useEffect(() => {
+    // Pega o id do usuário logado do localStorage e atualiza o estado
+    const idUsuarioLogado = localStorage.getItem('idUsuario');
+    if (idUsuarioLogado) {
+      setFormData(prev => ({ ...prev, usuario: { idUsuario: Number(idUsuarioLogado) } }));
+    }
+
+    // Aqui você pode adicionar a lógica para buscar as comunidades do Back-end
+    const carregarComunidades = async () => {
+      try {
+        const dados = await comunidadeService.listarComunidades();
+        if (dados && dados.length > 0) {
+          setListaComunidades(dados);
+        }
+      } catch (error) {
+        console.error("Erro ao buscar comunidades:", error);
+      }
+    };
+
+    carregarComunidades();
+
+  }, []);
+
+const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
+    
+    // Se o campo alterado for a comunidade, monta o objeto do jeito que o Java espera
+    if (name === 'comunidade') {
+      setFormData(prev => ({
+        ...prev,
+        comunidade: { idComunidade: value === '' ? 0 : Number(value) }
+      }));
+      return;
+    }
+
+    // Outros inputs
     setFormData(prev => ({ 
       ...prev, 
-      // Se for input numérico, converte para Number. Senão, deixa o texto normal.
       [name]: type === 'number' ? (value === '' ? 0 : Number(value)) : value 
     }));
   };
@@ -53,8 +88,8 @@ export default function NovoAcampamento() {
         informacoesAcampamento: '',
         fotoAcampamento: '',
         tokenMercadoPagoAcampamento: '',
-        usuario: { idUsuario: 2 }, 
-        comunidade: { idComunidade: 1 }
+        usuario: { idUsuario: 0 }, 
+        comunidade: { idComunidade: 0 }
       });
       setFotoArquivo(null); // Limpa o arquivo de foto
     }catch(error: any){
@@ -96,12 +131,15 @@ export default function NovoAcampamento() {
               id="comunidade" 
               name="comunidade"
               value={formData.comunidade.idComunidade}
-              onChange={(e) => setFormData(prev => ({ ...prev, comunidade: { idComunidade: Number(e.target.value) } }))}
+              onChange={handleChange}
               required
             >
               <option value="">Selecione a comunidade...</option>
-              <option value="1">Capela São Miguel Arcanjo</option>
-              {/* No futuro, as comunidades virão do Back-end */}
+              {listaComunidades.map(comunidade => (
+                <option key={comunidade.idComunidade} value={comunidade.idComunidade}>
+                  {comunidade.nomeComunidade}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -158,16 +196,18 @@ export default function NovoAcampamento() {
           <div style={{ display: 'flex', gap: '1rem' }}>
             <div className={styles.fieldGroup} style={{ flex: 1 }}>
               <label className={styles.fieldLabel} htmlFor="idadeMinAcampamento">Idade Mín. *</label>
-              <input
-                className={styles.inputField}
-                id="idadeMinAcampamento"
-                name="idadeMinAcampamento"
-                type="number"
-                placeholder="Ex: 18"
-                value={formData.idadeMinAcampamento}
-                onChange={handleChange}
-                required
-              />
+              <input 
+                  className={styles.inputField}
+                  id="idadeMinAcampamento"
+                  name="idadeMinAcampamento"
+                  type="number"
+                  placeholder="Ex: 18"
+                  value={formData.idadeMinAcampamento}
+                  onChange={handleChange}
+                  min="0"
+                  required
+                  onFocus={(e) => e.target.select()} 
+                />
             </div>
             <div className={styles.fieldGroup} style={{ flex: 1 }}>
               <label className={styles.fieldLabel} htmlFor="idadeMaxAcampamento">Idade Máx.</label>
@@ -179,6 +219,9 @@ export default function NovoAcampamento() {
                 placeholder="Ex: 30"
                 value={formData.idadeMaxAcampamento}
                 onChange={handleChange}
+                min = "0"
+                required
+                onFocus={(e) => e.target.select()}
               />
             </div>
           </div>
@@ -194,7 +237,9 @@ export default function NovoAcampamento() {
                 placeholder="Ex: 120"
                 value={formData.vagasAcampamento}
                 onChange={handleChange}
+                min = "0"
                 required
+                onFocus={(e) => e.target.select()}
               />
             </div>
             <div className={styles.fieldGroup} style={{ flex: 1 }}>
@@ -208,7 +253,9 @@ export default function NovoAcampamento() {
                 placeholder="0.00"
                 value={formData.taxaInscricaoAcampamento}
                 onChange={handleChange}
+                min = "1.00"
                 required
+                onFocus={(e) => e.target.select()} 
               />
             </div>
           </div>

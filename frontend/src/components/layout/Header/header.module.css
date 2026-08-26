@@ -17,10 +17,31 @@
   color: var(--text-primary); /* Texto dinâmico */
 }
 
-.userProfile {
+/* Container do toggle + perfil */
+.userControls {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+/* Necessário para o menu dropdown ficar na posição correta */
+.profileContainer {
+  position: relative; 
+}
+
+/* Área que envolve o nome e o avatar e que recebe o clique */
+.userInfo {
   display: flex;
   align-items: center;
   gap: 1rem;
+  cursor: pointer;
+  padding: 0.3rem 0.5rem;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.userInfo:hover {
+  background-color: rgba(128, 128, 128, 0.1); /* Um leve fundo ao passar o mouse */
 }
 
 .userName {
@@ -29,7 +50,7 @@
   color: var(--text-secondary); /* Texto dinâmico */
 }
 
-/* O .avatar continua igual, pois ele é sempre vermelho */
+/* O .avatar continua igual */
 .avatar {
   width: 40px;
   height: 40px;
@@ -42,4 +63,51 @@
   font-weight: bold;
   font-size: 1rem;
   box-shadow: 0 4px 10px rgba(204, 32, 39, 0.2);
+}
+
+/* === ESTILOS DO MENU DROPDOWN === */
+.dropdownMenu {
+  position: absolute;
+  top: 110%; /* Fica um pouquinho abaixo do avatar */
+  right: 0; /* Alinha o menu pela direita */
+  width: 180px;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 100;
+}
+
+.dropdownItem {
+  background: none;
+  border: none;
+  padding: 12px 16px;
+  text-align: left;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.dropdownItem:hover {
+  background-color: rgba(128, 128, 128, 0.1);
+}
+
+.dropdownDivider {
+  border: none;
+  border-top: 1px solid var(--border-color);
+  margin: 0;
+}
+
+/* Destaca o botão de sair em vermelho */
+.logoutText {
+  color: #cc2027; 
+}
+
+.logoutText:hover {
+  background-color: rgba(204, 32, 39, 0.05); /* Fundo avermelhado bem clarinho no hover */
 }

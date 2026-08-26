@@ -24,7 +24,7 @@ export default function Login() {
 
     try {
       await login({ cpf, senha }); 
-      router.push('/forms/doacao'); 
+      router.push('/forms/acampamento'); 
     } catch (err: any) {
       setError('CPF ou senha incorretos.');
     } finally {

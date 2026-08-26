@@ -140,6 +140,7 @@ export default function NovaDoacao() {
               onChange={handleChange}
               min="1"
               required
+              onFocus={(e) => e.target.select()} 
             />
           </div>
 
