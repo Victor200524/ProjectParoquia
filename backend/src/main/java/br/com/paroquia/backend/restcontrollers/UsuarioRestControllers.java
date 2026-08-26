@@ -7,7 +7,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @CrossOrigin
@@ -51,8 +54,13 @@ public class UsuarioRestControllers {
         boolean validar = encoder.matches(loginDto.senha(), usuario.getSenhaUsuario());
 
         if (validar) {
-            return ResponseEntity.ok("Login realizado com sucesso!");
-        } else {
+            Map<String, Object> resposta = new HashMap<>();
+            resposta.put("token", "logado-sucesso");
+            resposta.put("idUsuario", usuario.getIdUsuario());
+            resposta.put("nomeUsuario", usuario.getNomeUsuario());
+            return ResponseEntity.ok(resposta);
+        }
+        else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Senha incorreta!");
         }
     }
