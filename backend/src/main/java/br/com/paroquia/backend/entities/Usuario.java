@@ -1,9 +1,10 @@
 package br.com.paroquia.backend.entities;
 
+import br.com.paroquia.backend.enums.UsuarioTipoNivel;
+import br.com.paroquia.backend.enums.UsuarioTipoStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -30,11 +31,13 @@ public class Usuario implements UserDetails {
     @Column(name = "\"senha_Usuario\"")
     private String senhaUsuario;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "\"nivel_Usuario\"")
-    private Integer nivelUsuario;
+    private UsuarioTipoNivel nivelUsuario;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "\"status_Usuario\"")
-    private Integer statusUsuario;
+    private UsuarioTipoStatus statusUsuario;
 
     @Column(name = "\"contato_Usuario\"")
     private String contatoUsuario;
@@ -45,7 +48,7 @@ public class Usuario implements UserDetails {
     public Usuario() {
     }
 
-    public Usuario(Long idUsuario, String nomeUsuario, String emailUsuario, String senhaUsuario, Integer nivelUsuario, String contatoUsuario, Integer statusUsuario, String cpfUsuario) {
+    public Usuario(Long idUsuario, String nomeUsuario, String emailUsuario, String senhaUsuario, UsuarioTipoNivel nivelUsuario, String contatoUsuario, UsuarioTipoStatus statusUsuario, String cpfUsuario) {
         this.idUsuario = idUsuario;
         this.nomeUsuario = nomeUsuario;
         this.emailUsuario = emailUsuario;
@@ -88,19 +91,19 @@ public class Usuario implements UserDetails {
         this.senhaUsuario = senhaUsuario;
     }
 
-    public Integer getNivelUsuario() {
+    public UsuarioTipoNivel getNivelUsuario() {
         return nivelUsuario;
     }
 
-    public void setNivelUsuario(Integer nivelUsuario) {
+    public void setNivelUsuario(UsuarioTipoNivel nivelUsuario) {
         this.nivelUsuario = nivelUsuario;
     }
 
-    public Integer getStatusUsuario() {
+    public UsuarioTipoStatus getStatusUsuario() {
         return statusUsuario;
     }
 
-    public void setStatusUsuario(Integer statusUsuario) {
+    public void setStatusUsuario(UsuarioTipoStatus statusUsuario) {
         this.statusUsuario = statusUsuario;
     }
 
@@ -122,13 +125,25 @@ public class Usuario implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // Traduz o nivelUsuario para as ROLES do Spring
-        if (this.nivelUsuario != null && this.nivelUsuario == 0) // Coordenador Geral / Padre / Secretaria
-            return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
-        else if (this.nivelUsuario != null && this.nivelUsuario == 1)// Coordenador do Acampamento
-            return List.of(new SimpleGrantedAuthority("ROLE_COORDENADOR"), new SimpleGrantedAuthority("ROLE_USER"));
-        else // Campista / Servo
+        if (this.nivelUsuario == null) {
             return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+        }
+
+        return switch (this.nivelUsuario) {
+            case COORDENADOR_GERAL, PADRE, SECRETARIA -> List.of(
+                    new SimpleGrantedAuthority("ROLE_ADMIN"),
+                    new SimpleGrantedAuthority("ROLE_USER")
+            );
+
+            case COORDENADOR_ACAMPAMENTO -> List.of(
+                    new SimpleGrantedAuthority("ROLE_COORDENADOR"),
+                    new SimpleGrantedAuthority("ROLE_USER")
+            );
+
+            case SERVO, CAMPISTA -> List.of(
+                    new SimpleGrantedAuthority("ROLE_USER")
+            );
+        };
     }
 
     @Override

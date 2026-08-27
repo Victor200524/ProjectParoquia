@@ -1,6 +1,7 @@
 package br.com.paroquia.backend.services;
 
 import br.com.paroquia.backend.entities.Usuario;
+import br.com.paroquia.backend.enums.UsuarioTipoStatus;
 import br.com.paroquia.backend.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -48,7 +49,7 @@ public class UsuarioService {
         if (!isCpfValido(novoUsuario.getCpfUsuario()))
             throw new IllegalArgumentException("CPF inválido!");
 
-        novoUsuario.setStatusUsuario(0); // (0 = Pendente, 1 = Ativo)
+        novoUsuario.setStatusUsuario(UsuarioTipoStatus.PENDENTE); // (0 = Pendente, 1 = Ativo, 2 = Desativado)
         return usuarioRepository.save(novoUsuario);
     }
 
