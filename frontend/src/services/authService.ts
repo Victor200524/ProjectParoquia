@@ -18,6 +18,6 @@ export async function login(dadosLogin: { cpf: string, senha: string }) {
     localStorage.setItem('token', dados.token); 
     localStorage.setItem('idUsuario', dados.idUsuario.toString()); 
     localStorage.setItem('nomeUsuario', dados.nomeUsuario); 
-
+    localStorage.setItem('nivelUsuario', dados.nivelUsuario);
     return dados;
 }

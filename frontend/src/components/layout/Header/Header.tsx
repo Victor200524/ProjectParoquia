@@ -2,12 +2,12 @@
 
 import React, { useState, useSyncExternalStore } from 'react';
 import styles from '@/components/layout/Header/header.module.css';
-import ThemeToggle from '@/components/layout/ThemeToogle/ThemeToggle'; // Importamos o botão
+import ThemeToggle from '@/components/layout/ThemeToogle/ThemeToggle';
+import { useRouter } from 'next/navigation';
 
 export default function Header() {
-  // Estado para controlar se o menu está visível
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
+  const router = useRouter();
   const nomeUsuario = useSyncExternalStore(
     () => () => {},
     () => typeof window !== 'undefined' ? localStorage.getItem('nomeUsuario') || 'Usuário' : 'Usuário',
@@ -22,10 +22,11 @@ export default function Header() {
   // Função vazia pronta para você usar depois!
   const handleLogout = () => {
     console.log("Preparado para o logout!");
-    // localStorage.removeItem('token');
-    // localStorage.removeItem('idUsuario');
-    // localStorage.removeItem('nomeUsuario');
-    // router.push('/login');
+    localStorage.removeItem('token');
+    localStorage.removeItem('idUsuario');
+    localStorage.removeItem('nomeUsuario');
+    localStorage.removeItem('nivelUsuario');
+    router.push('/login');
   };
 
   return (
