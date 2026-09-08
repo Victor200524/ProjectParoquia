@@ -17,8 +17,9 @@ export default function Sidebar() {
     { nome: 'Equipes & Quadrante', rota: '/equipes' },
     { nome: 'Estoque', rota: '/estoque' },
     { nome: 'Financeiro', rota: '/financeiro' },
-    { nome: 'Usuários', rota: '/usuarios' },
+    { nome: 'Usuários', rota: '/forms/usuarios' },
     {nome : 'Doações', rota: '/forms/doacao'},
+    { nome: 'Comunidades', rota: '/forms/comunidades' },
   ];
 
   return (

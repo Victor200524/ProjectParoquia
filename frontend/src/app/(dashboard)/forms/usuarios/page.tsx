@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import styles from './usuarios.module.css';
+import { usuarioService } from '@/services/usuarioService'; // Ajuste o caminho conforme a sua estrutura
 
 export default function CadastroUsuario() {
   const [formData, setFormData] = useState({
@@ -10,9 +11,13 @@ export default function CadastroUsuario() {
     emailUsuario: '',
     senhaUsuario: '',
     contatoUsuario: '',
-    nivelUsuario: '', // Por padrão, começa como Campista/Servo
+    nivelUsuario: '', 
     statusUsuario: ''
   });
+
+  // Estados para dar feedback visual ao usuário
+  const [mensagem, setMensagem] = useState<{ tipo: 'sucesso' | 'erro', texto: string } | null>(null);
+  const [carregando, setCarregando] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
@@ -23,10 +28,32 @@ export default function CadastroUsuario() {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // A sua integração com a service entrará aqui!
-    console.log('Dados prontos para envio:', formData);
+    setCarregando(true);
+    setMensagem(null);
+
+    try {
+      // Chama o serviço passando o objeto preenchido
+      const resposta = await usuarioService.cadastrarUsuario(formData as any);
+      
+      setMensagem({ tipo: 'sucesso', texto: resposta });
+      
+      // Limpa o formulário após o sucesso
+      setFormData({
+        nomeUsuario: '',
+        cpfUsuario: '',
+        emailUsuario: '',
+        senhaUsuario: '',
+        contatoUsuario: '',
+        nivelUsuario: '',
+        statusUsuario: ''
+      });
+    } catch (error: any) {
+      setMensagem({ tipo: 'erro', texto: error.message });
+    } finally {
+      setCarregando(false);
+    }
   };
 
   return (
@@ -34,6 +61,20 @@ export default function CadastroUsuario() {
       <div className={styles.card}>
         <h1 className={styles.pageTitle}>Cadastrar Novo Usuário</h1>
         <p className={styles.pageSubtitle}>Preencha os dados abaixo para registrar um novo acesso ao sistema.</p>
+
+        {/* Exibe as mensagens de erro ou sucesso acima do formulário */}
+        {mensagem && (
+          <div style={{
+            padding: '1rem',
+            marginBottom: '1rem',
+            borderRadius: '8px',
+            backgroundColor: mensagem.tipo === 'sucesso' ? '#d4edda' : '#f8d7da',
+            color: mensagem.tipo === 'sucesso' ? '#155724' : '#721c24',
+            border: `1px solid ${mensagem.tipo === 'sucesso' ? '#c3e6cb' : '#f5c6cb'}`
+          }}>
+            {mensagem.texto}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className={styles.form}>
           <div className={styles.fieldGroupFull}>
@@ -75,6 +116,7 @@ export default function CadastroUsuario() {
                 placeholder="(00) 00000-0000"
                 value={formData.contatoUsuario}
                 onChange={handleChange}
+                required
               />
             </div>
 
@@ -121,10 +163,8 @@ export default function CadastroUsuario() {
                 <option value="PADRE">Padre</option>
                 <option value="SECRETARIA">Secretaria</option>
                 <option value="COORDENADOR_ACAMPAMENTO">Coordenador dos Acampamentos</option>
-                <option value="COORDENADOR_ACAMPAMENTO">Coordenador dos Acampamentos</option>
-                <option value="CAMPISTA">Servo</option>
-                <option value="CAMPISTA">Servo</option>
-
+                <option value="SERVO">Servo</option>
+                <option value="CAMPISTA">Campista</option>
               </select>
             </div>
 
@@ -148,7 +188,9 @@ export default function CadastroUsuario() {
 
           <div className={styles.actions}>
             <button type="button" className={styles.btnCancel}>Cancelar</button>
-            <button type="submit" className={styles.btnSubmit}>Salvar Usuário</button>
+            <button type="submit" className={styles.btnSubmit} disabled={carregando}>
+              {carregando ? 'Salvando...' : 'Salvar Usuário'}
+            </button>
           </div>
         </form>
       </div>

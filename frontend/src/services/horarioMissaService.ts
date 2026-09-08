@@ -1,10 +1,11 @@
-import { Usuario } from "../types/usuario";
-const BASE_URL = "http://localhost:8080/usuario";
+import { HorarioMissa } from "../types/horarioMissa"; // Ajuste o caminho conforme necessário
 
-export const usuarioService = {
-    async listarUsuarios(): Promise<Usuario[]> {
+const BASE_URL = "http://localhost:8080/horarioMissa";
+
+export const horarioMissaService = {
+    async listarHorarios(): Promise<HorarioMissa[]> {
         try {
-            const response = await fetch(`${BASE_URL}/getAllUsers`, {
+            const response = await fetch(`${BASE_URL}/todosHorarios`, {
                 method: "GET",
                 headers: { 
                     "Content-Type": "application/json",
@@ -14,7 +15,7 @@ export const usuarioService = {
             
             if (!response.ok) {
                 const errorText = await response.text();
-                throw new Error(errorText || "Erro ao listar os usuários!");
+                throw new Error(errorText || "Erro ao listar os horários de missa!");
             }
             return await response.json();
         } catch (error) {
@@ -23,9 +24,9 @@ export const usuarioService = {
         }
     },
 
-    async buscarUsuarioPorEmail(emailUsuario: string): Promise<Usuario> {
+    async buscarHorariosPorDia(semanaMissa: string): Promise<HorarioMissa[]> {
         try {
-            const response = await fetch(`${BASE_URL}/buscarUsuario/${emailUsuario}`, {
+            const response = await fetch(`${BASE_URL}/buscarPorDia/${semanaMissa}`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -35,7 +36,7 @@ export const usuarioService = {
 
             if (!response.ok) {
                 const errorText = await response.text();
-                throw new Error(errorText || "Erro ao buscar usuário por e-mail!");
+                throw new Error(errorText || "Erro ao buscar horários por dia!");
             }
             return await response.json();
         } catch (error) {
@@ -44,21 +45,20 @@ export const usuarioService = {
         }
     },
 
-    async cadastrarUsuario(usuario: Usuario): Promise<string> {
+    async cadastrarHorario(horarioMissa: HorarioMissa): Promise<string> {
         try {
-            const response = await fetch(`${BASE_URL}/cadastrarUsuario`, {
+            const response = await fetch(`${BASE_URL}/gravarHorario`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${localStorage.getItem('token') || ''}`
                 },
-                body: JSON.stringify(usuario)
+                body: JSON.stringify(horarioMissa)
             });
             
-            // O Java retorna uma String de sucesso ou erro (ex: "E-mail já cadastrado!")
             const responseText = await response.text();
             if (!response.ok) {
-                throw new Error(responseText || "Erro ao criar usuário");
+                throw new Error(responseText || "Erro ao gravar o horário!");
             }
             return responseText;
         } catch (error) {
@@ -67,20 +67,20 @@ export const usuarioService = {
         }
     },
 
-    async alterarUsuario(idUsuario: number, usuarioAtualizado: Usuario): Promise<string> {
+    async alterarHorario(idHorario: number, horarioAtualizado: HorarioMissa): Promise<string> {
         try {
-            const response = await fetch(`${BASE_URL}/alterarUsuario/${idUsuario}`, {
+            const response = await fetch(`${BASE_URL}/alterarHorario/${idHorario}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${localStorage.getItem('token') || ''}`
                 },
-                body: JSON.stringify(usuarioAtualizado)
+                body: JSON.stringify(horarioAtualizado)
             });
 
             const responseText = await response.text();
             if (!response.ok) {
-                throw new Error(responseText || "Erro ao alterar usuário!");
+                throw new Error(responseText || "Erro ao alterar horário!");
             }
             return responseText;
         } catch (error) {
@@ -89,9 +89,9 @@ export const usuarioService = {
         }
     },
 
-    async deletarUsuario(idUsuario: number): Promise<string> {
+    async deletarHorario(idHorario: number): Promise<string> {
         try {
-            const response = await fetch(`${BASE_URL}/deletarUsuario/${idUsuario}`, {
+            const response = await fetch(`${BASE_URL}/excluirHorario/${idHorario}`, {
                 method: "DELETE",
                 headers: {
                     "Content-Type": "application/json",
@@ -101,7 +101,7 @@ export const usuarioService = {
 
             const responseText = await response.text();
             if (!response.ok) {
-                throw new Error(responseText || "Erro ao deletar usuário!");
+                throw new Error(responseText || "Erro ao deletar horário!");
             }
             return responseText;
         } catch (error) {
