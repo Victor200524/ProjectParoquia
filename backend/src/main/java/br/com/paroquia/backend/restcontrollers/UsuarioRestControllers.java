@@ -58,6 +58,7 @@ public class UsuarioRestControllers {
             resposta.put("token", "logado-sucesso");
             resposta.put("idUsuario", usuario.getIdUsuario());
             resposta.put("nomeUsuario", usuario.getNomeUsuario());
+            resposta.put("nivelUsuario", usuario.getNivelUsuario());
             return ResponseEntity.ok(resposta);
         }
         else {
