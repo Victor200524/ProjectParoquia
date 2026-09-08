@@ -23,7 +23,7 @@ public class Comunidade {
     private String contatoComunidade;
 
     @Column(name = "\"foto_Comunidade\"")
-    private String fotoComunidade;
+    private byte[] fotoComunidade;
 
     // Relacionamento do 1:N com HorarioMissa
     @OneToMany(mappedBy = "comunidade", cascade = CascadeType.ALL) // CascadeType.ALL -> Se salvar a comunidade salva os horários juntos
@@ -33,7 +33,7 @@ public class Comunidade {
     }
 
 
-    public Comunidade(Long idComunidade, String nomeComunidade, String enderecoComunidade, String contatoComunidade, String fotoComunidade) {
+    public Comunidade(Long idComunidade, String nomeComunidade, String enderecoComunidade, String contatoComunidade, byte[] fotoComunidade) {
         this.idComunidade = idComunidade;
         this.nomeComunidade = nomeComunidade;
         this.enderecoComunidade = enderecoComunidade;
@@ -81,11 +81,11 @@ public class Comunidade {
         this.horariosMissa = horariosMissa;
     }
 
-    public String getFotoComunidade() {
+    public byte[] getFotoComunidade() {
         return fotoComunidade;
     }
 
-    public void setFotoComunidade(String fotoComunidade) {
+    public void setFotoComunidade(byte[] fotoComunidade) {
         this.fotoComunidade = fotoComunidade;
     }
 }

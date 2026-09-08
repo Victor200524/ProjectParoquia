@@ -7,8 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.List;
+
+import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 
 @RestController
 @CrossOrigin
@@ -34,42 +38,56 @@ public class ComunidadeRestControllers {
     }
 
     @PostMapping(value = "/gravarComunidade")
-    public ResponseEntity<Object> gravarComunidade(@RequestBody Comunidade comunidade){
+    public ResponseEntity<Object> gravarComunidade(@RequestPart("comunidade") Comunidade comunidade, @RequestPart(value = "foto", required = false) MultipartFile foto) {
         try {
             if(comunidade != null){
+                if(foto != null && !foto.isEmpty()){
+                    comunidade.setFotoComunidade(foto.getBytes());
+                }
                 if (comunidade.getHorariosMissa() != null) {
                     for (HorarioMissa horario : comunidade.getHorariosMissa())
                         horario.setComunidade(comunidade);
                 }
                 if(!comunidadeService.isTelefoneValido(comunidade.getContatoComunidade()))
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Formato de telefone inválivo:  " + comunidade.getContatoComunidade());
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Formato de telefone inválido.");
 
                 comunidadeService.salvarComunidade(comunidade);
-                return ResponseEntity.status(HttpStatus.CREATED).body("Comunidade cadastrada: " + comunidade.getNomeComunidade());
+                return ResponseEntity.status(HttpStatus.CREATED).body("Comunidade cadastrada com sucesso!");
             }
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Dados insuficientes para cadastro!");
         } catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao gravar a Comunidade: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao gravar: " + e.getMessage());
         }
     }
 
     @PutMapping(value = "/alterarComunidade/{idComunidade}")
-    public ResponseEntity<Object> alterarComunidade(@PathVariable Long idComunidade, @RequestBody Comunidade comunidadeAtualizada){
-        Comunidade comunidadeExistente = comunidadeService.getIdComunidade(idComunidade);
-        if(comunidadeExistente != null){
-            comunidadeAtualizada.setIdComunidade(comunidadeExistente.getIdComunidade());
-            if (comunidadeAtualizada.getHorariosMissa() != null) {
-                for (HorarioMissa horario : comunidadeAtualizada.getHorariosMissa())
-                    horario.setComunidade(comunidadeAtualizada);
+    public ResponseEntity<Object> alterarComunidade(@PathVariable Long idComunidade, @RequestPart("comunidade") Comunidade comunidadeAtualizada, @RequestPart(value = "foto", required = false) MultipartFile foto){
+        try {
+            Comunidade comunidadeExistente = comunidadeService.getIdComunidade(idComunidade);
+            if(comunidadeExistente != null){
+                comunidadeAtualizada.setIdComunidade(comunidadeExistente.getIdComunidade());
+
+                if(foto != null && !foto.isEmpty()){
+                    comunidadeAtualizada.setFotoComunidade(foto.getBytes());
+                } else {
+                    comunidadeAtualizada.setFotoComunidade(comunidadeExistente.getFotoComunidade());
+                }
+
+                if (comunidadeAtualizada.getHorariosMissa() != null) {
+                    for (HorarioMissa horario : comunidadeAtualizada.getHorariosMissa())
+                        horario.setComunidade(comunidadeAtualizada);
+                }
+
+                if(!comunidadeService.isTelefoneValido(comunidadeAtualizada.getContatoComunidade()))
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Formato de telefone inválido.");
+
+                comunidadeService.salvarComunidade(comunidadeAtualizada);
+                return ResponseEntity.ok("Comunidade alterada com sucesso!");
             }
-
-            if(!comunidadeService.isTelefoneValido(comunidadeAtualizada.getContatoComunidade()))
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Formato de telefone inválivo:  " + comunidadeAtualizada.getContatoComunidade());
-
-            comunidadeService.salvarComunidade(comunidadeAtualizada);
-            return ResponseEntity.ok("Comunidade alterada com sucesso!");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Comunidade não encontrada.");
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao alterar: " + e.getMessage());
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Comunidade não encontrada.");
     }
 
     @DeleteMapping(value = "/excluirComunidade/{idComunidade}")
