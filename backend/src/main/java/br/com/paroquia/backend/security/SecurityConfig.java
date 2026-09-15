@@ -49,6 +49,12 @@ public class SecurityConfig {
                          .requestMatchers("/acampamento/**").permitAll()//.hasRole("COORDENADOR")
                         .requestMatchers("/doacao/**").permitAll()
                         .requestMatchers("/comunidade/**").permitAll()
+                        .requestMatchers("/pastoral/**").permitAll()
+                        .requestMatchers("/usuario/**").permitAll()
+                        .requestMatchers("/inscricao/**").permitAll()
+                        .requestMatchers("/movimentacaoEstoque/**").permitAll()
+                        .requestMatchers("/itemEstoque/**").permitAll()
+                        .requestMatchers("/muralFotos/**").permitAll()
                         .requestMatchers("/error").permitAll() // Desmascara os erros internos
                         // Qualquer outra requisição precisa do Token (Usuário logado)
                         .anyRequest().authenticated()
