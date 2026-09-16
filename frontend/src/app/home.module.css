@@ -1,0 +1,451 @@
+/* =========================================
+   ESTRUTURA GERAL (MODO CLARO PADRÃO)
+   ========================================= */
+.landingContainer {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+  background-color: #ffffff;
+  color: #333;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+/* HEADER */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 5%;
+  background-color: #ffffff;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.logoArea {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.paroquiaName {
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: #333;
+  transition: color 0.3s;
+}
+
+.navLinks {
+  display: flex;
+  gap: 2rem;
+}
+
+.navLinks a {
+  text-decoration: none;
+  color: #555;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.navLinks a:hover {
+  color: #cc2027;
+}
+
+.authButtons {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.btnCadastro {
+  text-decoration: none;
+  background-color: #cc2027;
+  color: #fff;
+  padding: 0.5rem 1.5rem;
+  border-radius: 6px;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.btnLogin {
+  text-decoration: none;
+  background-color: #cc2027;
+  color: #fff;
+  padding: 0.5rem 1.5rem;
+  border-radius: 6px;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.btnLogin:hover {
+  background-color: #94151a;
+}
+
+/* HERO SECTION */
+.heroSection {
+  background: linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.55)), url('/images/bannerParoquiaAcampamento.png') center/cover;
+  height: 70vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #fff;
+  padding: 0 1rem;
+}
+
+.heroContent {
+  max-width: 800px;
+}
+
+.heroTitle {
+  font-size: 3rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+}
+
+.heroSubtitle {
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+  opacity: 0.9;
+}
+
+.btnPrimary {
+  display: inline-block;
+  background-color: #cc2027;
+  color: #fff;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  font-weight: bold;
+  text-decoration: none;
+  font-size: 1.1rem;
+  transition: transform 0.2s;
+}
+
+.btnPrimary:hover {
+  transform: translateY(-2px);
+}
+
+/* SEÇÕES GENÉRICAS */
+.section {
+  padding: 5rem 5%;
+}
+
+.bgAlt {
+  background-color: #f9f9f9;
+  transition: background-color 0.3s;
+}
+
+.sectionHeader {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.sectionTitle {
+  font-size: 2.2rem;
+  color: #333;
+  margin-bottom: 0.5rem;
+  transition: color 0.3s;
+}
+
+.sectionDesc {
+  color: #666;
+  font-size: 1.1rem;
+  transition: color 0.3s;
+}
+
+.gridContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.placeholderCard {
+  background: #eaeaea;
+  height: 250px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  color: #888;
+  border: 1px dashed #ccc;
+  transition: background-color 0.3s, border-color 0.3s;
+}
+
+.donationBox {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* CARDS DE COMUNIDADE */
+.cardComunidade {
+  background: #ffffff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+  border: 1px solid #eaeaea;
+  transition: transform 0.2s, background-color 0.3s, border-color 0.3s;
+  display: flex;
+  flex-direction: column;
+}
+
+.cardComunidade:hover {
+  transform: translateY(-5px);
+}
+
+.cardComunidadeFoto {
+  height: 200px;
+  background-size: cover;
+  background-position: center;
+  background-color: #f0f0f0; 
+}
+
+.cardComunidadeContent {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.cardComunidadeContent h3 {
+  font-size: 1.25rem;
+  color: #333;
+  margin-bottom: 0.5rem;
+  transition: color 0.3s;
+}
+
+.endereco {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 0.5rem;
+  line-height: 1.4;
+  transition: color 0.3s;
+}
+
+.contato {
+  font-size: 0.85rem;
+  color: #cc2027;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.horariosContainer {
+  margin-top: auto;
+  border-top: 1px solid #eee;
+  padding-top: 1rem;
+  transition: border-color 0.3s;
+}
+
+.horariosContainer h4 {
+  font-size: 0.9rem;
+  color: #444;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: color 0.3s;
+}
+
+.horariosContainer ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: 0.9rem;
+  color: #555;
+  transition: color 0.3s;
+}
+
+.horariosContainer li {
+  margin-bottom: 0.25rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.semHorario {
+  font-size: 0.85rem;
+  color: #999;
+  font-style: italic;
+}
+
+/* FOOTER */
+.footer {
+  background-color: #222;
+  color: #ccc;
+  padding: 3rem 5% 1rem;
+}
+
+.footerContent {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #444;
+  padding-bottom: 2rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+
+.footerInfo h3, .footerSocial h3 {
+  color: #fff;
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+}
+
+.footerInfo p {
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.socialLink {
+  display: inline-block;
+  color: #fff;
+  background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 0.95rem;
+  transition: opacity 0.2s;
+}
+
+.socialLink:hover {
+  opacity: 0.9;
+}
+
+.footerBottom {
+  text-align: center;
+  font-size: 0.9rem;
+  margin-top: 1.5rem;
+}
+
+/* =========================================
+   SUPORTE AO MODO ESCURO (DARK MODE)
+   ========================================= */
+:global(.dark) .landingContainer {
+  background-color: #121212;
+  color: #f1f1f1;
+}
+
+:global(.dark) .header {
+  background-color: #1a1a1a;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+}
+
+:global(.dark) .paroquiaName,
+:global(.dark) .sectionTitle,
+:global(.dark) .cardComunidadeContent h3 {
+  color: #f1f1f1;
+}
+
+:global(.dark) .navLinks a,
+:global(.dark) .sectionDesc,
+:global(.dark) .endereco,
+:global(.dark) .horariosContainer ul {
+  color: #bbb;
+}
+
+:global(.dark) .navLinks a:hover {
+  color: #cc2027;
+}
+
+:global(.dark) .bgAlt {
+  background-color: #181818;
+}
+
+:global(.dark) .cardComunidade {
+  background-color: #242424;
+  border-color: #333;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+:global(.dark) .horariosContainer {
+  border-top-color: #3a3a3a;
+}
+
+:global(.dark) .horariosContainer h4 {
+  color: #ddd;
+}
+
+:global(.dark) .placeholderCard {
+  background: #2a2a2a;
+  border-color: #444;
+}
+
+/* RESPONSIVIDADE */
+@media (max-width: 768px) {
+  .navLinks { display: none; }
+  .footerContent { flex-direction: column; gap: 2rem; }
+  .heroTitle { font-size: 2rem; }
+  .heroSection { height: 60vh; }
+}
+
+/* =========================================
+   SUPORTE AO MODO ESCURO (DARK MODE)
+   ========================================= */
+
+/* Cobre tanto a classe .dark quanto o atributo data-theme="dark" (usado pelo next-themes) */
+:global(.dark) .landingContainer,
+:global([data-theme="dark"]) .landingContainer {
+  background-color: #121212;
+  color: #f1f1f1;
+}
+
+:global(.dark) .header,
+:global([data-theme="dark"]) .header {
+  background-color: #1a1a1a;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+}
+
+:global(.dark) .paroquiaName,
+:global([data-theme="dark"]) .paroquiaName,
+:global(.dark) .sectionTitle,
+:global([data-theme="dark"]) .sectionTitle,
+:global(.dark) .cardComunidadeContent h3,
+:global([data-theme="dark"]) .cardComunidadeContent h3 {
+  color: #f1f1f1;
+}
+
+:global(.dark) .navLinks a,
+:global([data-theme="dark"]) .navLinks a,
+:global(.dark) .sectionDesc,
+:global([data-theme="dark"]) .sectionDesc,
+:global(.dark) .endereco,
+:global([data-theme="dark"]) .endereco,
+:global(.dark) .horariosContainer ul,
+:global([data-theme="dark"]) .horariosContainer ul {
+  color: #bbb;
+}
+
+:global(.dark) .navLinks a:hover,
+:global([data-theme="dark"]) .navLinks a:hover {
+  color: #cc2027;
+}
+
+:global(.dark) .bgAlt,
+:global([data-theme="dark"]) .bgAlt {
+  background-color: #181818;
+}
+
+:global(.dark) .cardComunidade,
+:global([data-theme="dark"]) .cardComunidade {
+  background-color: #242424;
+  border-color: #333;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+:global(.dark) .horariosContainer,
+:global([data-theme="dark"]) .horariosContainer {
+  border-top-color: #3a3a3a;
+}
+
+:global(.dark) .horariosContainer h4,
+:global([data-theme="dark"]) .horariosContainer h4 {
+  color: #ddd;
+}
+
+:global(.dark) .placeholderCard,
+:global([data-theme="dark"]) .placeholderCard {
+  background: #2a2a2a;
+  border-color: #444;
+}

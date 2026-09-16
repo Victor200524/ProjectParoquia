@@ -6,5 +6,5 @@ export interface Comunidade{
     enderecoComunidade?: string,
     contatoComunidade?: string,
     fotoComunidade?: string,
-    horarioMissas?: HorarioMissa[],
+    horariosMissa?: HorarioMissa[],
 }

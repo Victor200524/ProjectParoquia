@@ -1,0 +1,184 @@
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: #f4f7f6;
+  padding: 2rem 1rem;
+  transition: background-color 0.3s;
+}
+
+.card {
+  background: #ffffff;
+  padding: 2.5rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+  width: 100%;
+  max-width: 700px;
+  transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.title {
+  color: #333;
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+  transition: color 0.3s;
+}
+
+.subtitle {
+  color: #666;
+  font-size: 0.95rem;
+  transition: color 0.3s;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+/* Campos que ocupam a linha inteira */
+.fullWidth {
+  grid-column: span 2;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #444;
+  transition: color 0.3s;
+}
+
+.input {
+  padding: 0.8rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+  outline: none;
+  background-color: #fff;
+  color: #333;
+  transition: border-color 0.2s, background-color 0.3s, color 0.3s;
+}
+
+.input:focus {
+  border-color: #cc2027;
+}
+
+.btnSubmit {
+  width: 100%;
+  padding: 1rem;
+  background-color: #cc2027;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 1.5rem;
+  transition: background-color 0.2s;
+}
+
+.btnSubmit:hover {
+  background-color: #94151a;
+}
+
+.btnSubmit:disabled {
+  background-color: #e08b8e;
+  cursor: not-allowed;
+}
+
+.footer {
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.link {
+  color: #cc2027;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+.errorMsg {
+  background-color: #ffeaea;
+  color: #cc2027;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+  text-align: center;
+  border: 1px solid #ffcaca;
+}
+
+/* RESPONSIVIDADE */
+@media (max-width: 600px) {
+  .formGrid {
+    grid-template-columns: 1fr;
+  }
+  .fullWidth {
+    grid-column: span 1;
+  }
+}
+
+/* =========================================
+   MODO ESCURO (DARK MODE)
+   ========================================= */
+:global(.dark) .container,
+:global([data-theme="dark"]) .container {
+  background-color: #121212;
+}
+
+:global(.dark) .card,
+:global([data-theme="dark"]) .card {
+  background-color: #1e1e1e;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+}
+
+:global(.dark) .title,
+:global([data-theme="dark"]) .title,
+:global(.dark) .label,
+:global([data-theme="dark"]) .label {
+  color: #f1f1f1;
+}
+
+:global(.dark) .subtitle,
+:global([data-theme="dark"]) .subtitle,
+:global(.dark) .footer,
+:global([data-theme="dark"]) .footer {
+  color: #bbb;
+}
+
+:global(.dark) .input,
+:global([data-theme="dark"]) .input {
+  background-color: #2a2a2a;
+  border-color: #444;
+  color: #f1f1f1;
+}
+
+:global(.dark) .input:focus,
+:global([data-theme="dark"]) .input:focus {
+  border-color: #cc2027;
+}
+
+:global(.dark) .errorMsg,
+:global([data-theme="dark"]) .errorMsg {
+  background-color: rgba(204, 32, 39, 0.1);
+  border-color: rgba(204, 32, 39, 0.3);
+  color: #ff6b6b;
+}

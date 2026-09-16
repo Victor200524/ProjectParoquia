@@ -18,8 +18,11 @@ export default function Sidebar() {
     { nome: 'Estoque', rota: '/estoque' },
     { nome: 'Financeiro', rota: '/financeiro' },
     { nome: 'Usuários', rota: '/forms/usuarios' },
-    {nome : 'Doações', rota: '/forms/doacao'},
+    { nome : 'Doações', rota: '/forms/doacao'},
     { nome: 'Comunidades', rota: '/forms/comunidades' },
+    { nome: 'Mural de Fotos', rota: '/forms/muralFotos' },
+    { nome: 'Itens do Estoque', rota: '/forms/itemEstoque' },
+    { nome: 'Movimentos do Estoque', rota: '/forms/movimentoEstoque' },
   ];
 
   return (
