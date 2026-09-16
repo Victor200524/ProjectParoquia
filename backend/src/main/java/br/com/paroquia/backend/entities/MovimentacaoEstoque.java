@@ -29,7 +29,7 @@ public class MovimentacaoEstoque {
     private String obsMovimentacaoEstoque;
 
     @ManyToOne
-    @JoinColumn(name = "itemEstoque_id_ItemEstoque")
+    @JoinColumn(name = "itemestoque_id_itemestoque")
     private ItemEstoque itemEstoque;
 
     @ManyToOne

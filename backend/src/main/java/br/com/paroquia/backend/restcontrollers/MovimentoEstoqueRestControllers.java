@@ -12,6 +12,7 @@ import br.com.paroquia.backend.services.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -103,6 +104,7 @@ public class MovimentoEstoqueRestControllers {
     }
 // =========================== BUSCAS ESPECIFICAS ===================================================== \\
 
+    @Transactional
     @PostMapping(value = "/gravarMovimentoEstoque")
     public ResponseEntity<Object> gravarMovimentoEstoque(@RequestBody MovimentacaoEstoque movimentacaoEstoque){
         if(movimentacaoEstoque != null){

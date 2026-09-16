@@ -34,7 +34,7 @@ public class ItemEstoque {
     public ItemEstoque() {
     }
 
-    public ItemEstoque(Long idItemEstoque, String nomeItemEstoque, int qtdeItemEstoque, CategoriaItemEstoque categoriaItemEstoque, TipoItemEstoque tipoItemEstoque, Date dataValidadeItemEstoque) {
+    public ItemEstoque(Long idItemEstoque, String nomeItemEstoque, Integer qtdeItemEstoque, CategoriaItemEstoque categoriaItemEstoque, TipoItemEstoque tipoItemEstoque, Date dataValidadeItemEstoque) {
         this.idItemEstoque = idItemEstoque;
         this.nomeItemEstoque = nomeItemEstoque;
         this.qtdeItemEstoque = qtdeItemEstoque;
