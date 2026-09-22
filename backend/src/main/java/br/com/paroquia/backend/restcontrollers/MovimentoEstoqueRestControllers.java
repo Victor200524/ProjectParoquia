@@ -107,6 +107,7 @@ public class MovimentoEstoqueRestControllers {
     @Transactional
     @PostMapping(value = "/gravarMovimentoEstoque")
     public ResponseEntity<Object> gravarMovimentoEstoque(@RequestBody MovimentacaoEstoque movimentacaoEstoque){
+        try {
         if(movimentacaoEstoque != null){
             ItemEstoque itemEstoque = itemEstoqueService.getItemEstoqueId(movimentacaoEstoque.getItemEstoque().getIdItemEstoque()); // Procuro o item, se realmente existe
             if(itemEstoque != null){
@@ -161,10 +162,14 @@ public class MovimentoEstoqueRestControllers {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Item em estoque não cadastrado!");
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Dados insuficientes para cadastro!");
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao gravar a Movimentação de Estoque!");
+        }
     }
 
     @PutMapping(value = "/alterarMovimentoEstoque/{id}")
     public ResponseEntity<Object> alterarMovimentoEstoque(@PathVariable Long id, @RequestBody MovimentacaoEstoque novaMovimentacaoEstoque) {
+        try {
         MovimentacaoEstoque movimentacaoEstoqueAntiga = movimentoEstoqueService.getMovimentacaoEstoqueId(id);
         if (movimentacaoEstoqueAntiga != null) {
             if (novaMovimentacaoEstoque != null) {
@@ -240,6 +245,9 @@ public class MovimentoEstoqueRestControllers {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Dados da nova movimentação estão faltando!");
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Movimento de estoque não existe!");
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao alterar a Movimentação de Estoque!");
+        }
     }
 
     @DeleteMapping(value = "/deletar/{id}")

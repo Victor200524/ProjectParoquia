@@ -68,57 +68,65 @@ public class UsuarioRestControllers {
 
     @PostMapping(value = "/cadastrarUsuario")
     public ResponseEntity<Object> cadastrarUsuario(@RequestBody Usuario usuario) {
-        if(usuario != null){
-            // Verifica se ja ta cadastrado no banco
-            if(usuarioService.getUserEmail(usuario.getEmailUsuario()) != null)
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("E-mail já cadastrado!");
-            if(usuarioService.getCpfUsuario(usuario.getCpfUsuario()) != null)
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("CPF já cadastrado!");
-            // Verifica se o formato enviado está correto
-            if(!usuarioService.isFormatoEmailValido(usuario.getEmailUsuario()))
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Formato de E-MAIL inválido: " + usuario.getEmailUsuario());
-            if(!usuarioService.isCpfValido(usuario.getCpfUsuario()))
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Formato de CPF inválido: " + usuario.getCpfUsuario());
-            if(!usuarioService.isTelefoneValido(usuario.getContatoUsuario()))
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Formato de telefone inválido: " + usuario.getContatoUsuario());
+        try {
+            if(usuario != null){
+                // Verifica se ja ta cadastrado no banco
+                if(usuarioService.getUserEmail(usuario.getEmailUsuario()) != null)
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("E-mail já cadastrado!");
+                if(usuarioService.getCpfUsuario(usuario.getCpfUsuario()) != null)
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("CPF já cadastrado!");
+                // Verifica se o formato enviado está correto
+                if(!usuarioService.isFormatoEmailValido(usuario.getEmailUsuario()))
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Formato de E-MAIL inválido: " + usuario.getEmailUsuario());
+                if(!usuarioService.isCpfValido(usuario.getCpfUsuario()))
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Formato de CPF inválido: " + usuario.getCpfUsuario());
+                if(!usuarioService.isTelefoneValido(usuario.getContatoUsuario()))
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Formato de telefone inválido: " + usuario.getContatoUsuario());
 
-            usuario.setSenhaUsuario(encoder.encode(usuario.getSenhaUsuario())); //Aqui faz a criptografia da senha do usuario quando for feito seu cadastro
-            Usuario novoUsuario = usuarioService.saveUsuario(usuario);
-            return ResponseEntity.status(HttpStatus.CREATED).body("Usuário: " + novoUsuario.getNomeUsuario() + " cadastrado com sucesso!");
+                usuario.setSenhaUsuario(encoder.encode(usuario.getSenhaUsuario())); //Aqui faz a criptografia da senha do usuario quando for feito seu cadastro
+                Usuario novoUsuario = usuarioService.saveUsuario(usuario);
+                return ResponseEntity.status(HttpStatus.CREATED).body("Usuário: " + novoUsuario.getNomeUsuario() + " cadastrado com sucesso!");
+            }
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Dados insuficientes para gravar o usuário!");
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao gravar o Usuário!");
         }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Dados insuficientes para gravar o usuário!");
     }
 
     @PutMapping(value = "/alterarUsuario/{idUsuario}")
     public ResponseEntity<Object> alterarUsuario(@PathVariable Long idUsuario, @RequestBody Usuario usuarioAtualizado) {
-        Usuario usuarioExistente = usuarioService.getUserId(idUsuario);
+        try {
+            Usuario usuarioExistente = usuarioService.getUserId(idUsuario);
 
-        if (usuarioExistente != null) {
-            usuarioAtualizado.setIdUsuario(usuarioExistente.getIdUsuario());
+            if (usuarioExistente != null) {
+                usuarioAtualizado.setIdUsuario(usuarioExistente.getIdUsuario());
 
-            // Verifica se ja ta cadastrado no banco
-            if(usuarioService.getUserEmail(usuarioAtualizado.getEmailUsuario()) != null)
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("E-mail já cadastrado!");
-            if(usuarioService.getCpfUsuario(usuarioAtualizado.getCpfUsuario()) != null)
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("CPF já cadastrado!");
-            // Verifica se o formato enviado está correto
-            if(!usuarioService.isFormatoEmailValido(usuarioAtualizado.getEmailUsuario()))
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Formato de E-MAIL inválido: " + usuarioAtualizado.getEmailUsuario());
-            if(!usuarioService.isCpfValido(usuarioAtualizado.getCpfUsuario()))
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Formato de CPF inválido: " + usuarioAtualizado.getCpfUsuario());
-            if(!usuarioService.isTelefoneValido(usuarioAtualizado.getContatoUsuario()))
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Formato de telefone inválido: " + usuarioAtualizado.getContatoUsuario());
+                // Verifica se ja ta cadastrado no banco
+                if(usuarioService.getUserEmail(usuarioAtualizado.getEmailUsuario()) != null)
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("E-mail já cadastrado!");
+                if(usuarioService.getCpfUsuario(usuarioAtualizado.getCpfUsuario()) != null)
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("CPF já cadastrado!");
+                // Verifica se o formato enviado está correto
+                if(!usuarioService.isFormatoEmailValido(usuarioAtualizado.getEmailUsuario()))
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Formato de E-MAIL inválido: " + usuarioAtualizado.getEmailUsuario());
+                if(!usuarioService.isCpfValido(usuarioAtualizado.getCpfUsuario()))
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Formato de CPF inválido: " + usuarioAtualizado.getCpfUsuario());
+                if(!usuarioService.isTelefoneValido(usuarioAtualizado.getContatoUsuario()))
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Formato de telefone inválido: " + usuarioAtualizado.getContatoUsuario());
 
-            // Se não mandou senha nova, mantém a antiga, ja criptografada no banco
-            if (usuarioAtualizado.getSenhaUsuario() == null || usuarioAtualizado.getSenhaUsuario().isEmpty())
-                usuarioAtualizado.setSenhaUsuario(usuarioExistente.getSenhaUsuario());
-            else
-                usuarioAtualizado.setSenhaUsuario(encoder.encode(usuarioAtualizado.getSenhaUsuario()));
+                // Se não mandou senha nova, mantém a antiga, ja criptografada no banco
+                if (usuarioAtualizado.getSenhaUsuario() == null || usuarioAtualizado.getSenhaUsuario().isEmpty())
+                    usuarioAtualizado.setSenhaUsuario(usuarioExistente.getSenhaUsuario());
+                else
+                    usuarioAtualizado.setSenhaUsuario(encoder.encode(usuarioAtualizado.getSenhaUsuario()));
 
-            Usuario novoUsuario = usuarioService.saveUsuario(usuarioAtualizado);
-            return ResponseEntity.ok("Usuário " + novoUsuario.getNomeUsuario() + " alterado com sucesso!");
+                Usuario novoUsuario = usuarioService.saveUsuario(usuarioAtualizado);
+                return ResponseEntity.ok("Usuário " + novoUsuario.getNomeUsuario() + " alterado com sucesso!");
+            }
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuário não encontrado para alteração!");
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao alterar o Usuário!");
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuário não encontrado para alteração!");
     }
 
     @DeleteMapping(value = "/deletarUsuario/{idUsuario}")

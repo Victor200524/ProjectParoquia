@@ -34,32 +34,40 @@ public class DoacacoRestControllers {
 
     @PostMapping(value = "/gravarDoacao")
     ResponseEntity<Object> gravarDoacao(@RequestBody Doacao doacao){
-        Doacao doacaoAux = doacaoService.buscarNomeDoacao(doacao.getNomeDoacao());
-        if(doacaoAux == null){ // se nao existe o doacao com o mesmo nome
-            if(doacao.getQtdeDoacao() > 0) { // verifico se a quantidade colocada é maior do que 0
-                if(doacao.getDataDoacao() != null){
-                    doacaoService.gravarDoacao(doacao);
-                    return ResponseEntity.status(HttpStatus.CREATED).body("Doção cadastrada com sucesso!");
+        try {
+            Doacao doacaoAux = doacaoService.buscarNomeDoacao(doacao.getNomeDoacao());
+            if(doacaoAux == null){ // se nao existe o doacao com o mesmo nome
+                if(doacao.getQtdeDoacao() > 0) { // verifico se a quantidade colocada é maior do que 0
+                    if(doacao.getDataDoacao() != null){
+                        doacaoService.gravarDoacao(doacao);
+                        return ResponseEntity.status(HttpStatus.CREATED).body("Doção cadastrada com sucesso!");
+                    }
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Precisa especificar a data da doação!");
                 }
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Precisa especificar a data da doação!");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Quantidade tem que ser maior que 0!");
             }
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Quantidade tem que ser maior que 0!");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Doação ja cadastrada!");
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao gravar a Doação!");
         }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Doação ja cadastrada!");
     }
 
     @PutMapping(value = "/alterarDoacao/{idDoacao}")
     ResponseEntity<Object> alterarDoacao(@PathVariable Long idDoacao, @RequestBody Doacao doacaoAtualizada){
-        Doacao doacao = doacaoService.buscarIdDoacao(idDoacao);
-        if(doacao != null){
-            doacaoAtualizada.setIdDoacao(doacao.getIdDoacao());
-            if(doacaoAtualizada.getQtdeDoacao() > 0){
-                doacaoService.gravarDoacao(doacaoAtualizada);
-                return ResponseEntity.status(HttpStatus.OK).body("Doação alterada com sucesso!");
+        try {
+            Doacao doacao = doacaoService.buscarIdDoacao(idDoacao);
+            if(doacao != null){
+                doacaoAtualizada.setIdDoacao(doacao.getIdDoacao());
+                if(doacaoAtualizada.getQtdeDoacao() > 0){
+                    doacaoService.gravarDoacao(doacaoAtualizada);
+                    return ResponseEntity.status(HttpStatus.OK).body("Doação alterada com sucesso!");
+                }
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Quantidade tem que ser maior que 0!");
             }
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Quantidade tem que ser maior que 0!");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Doação não encontrada!");
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao alterar a Doação!");
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Doação não encontrada!");
     }
 
     @DeleteMapping(value = "/deletarDoacao/{idDoacao}")

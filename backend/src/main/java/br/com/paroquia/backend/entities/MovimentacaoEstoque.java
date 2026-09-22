@@ -41,7 +41,7 @@ public class MovimentacaoEstoque {
     private Acampamento acampamento;
 
     @ManyToOne
-    @JoinColumn(name = "AcampamentoDestino_id_Acampamento")
+    @JoinColumn(name = "acampamentodestino_id_acampamento")
     private Acampamento acampamentoDestino;
 
     public MovimentacaoEstoque() {
@@ -56,7 +56,7 @@ public class MovimentacaoEstoque {
         this.itemEstoque = itemEstoque;
         this.usuario = usuario;
         this.acampamento = acampamento;
-        this.acampamentoDestino = null;
+        this.acampamentoDestino = acampamentoDestino;
     }
 
     public Long getIdMovimentacaoEstoque() {

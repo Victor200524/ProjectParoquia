@@ -35,22 +35,30 @@ public class ItemEstoqueRestControllers {
 
     @PostMapping(value = "/gravarItemEstoque")
     public ResponseEntity<Object> gravarItemEstoque(@RequestBody ItemEstoque itemEstoque){
-        if(itemEstoque != null){
-            itemEstoque.setQtdeItemEstoque(0); // Coloco isso como garantia que esta se enviando 0 para cadastrar no banco de dados
-            // Faço isso, pois toda a manipulação que vai ser realizada do ‘item’ de estoque vem da movimentação do estoque
-            ItemEstoque novoItemEstoque = itemEstoqueService.save(itemEstoque);
-            return ResponseEntity.status(HttpStatus.CREATED).body("Item cadastrado com sucesso!");
+        try {
+            if(itemEstoque != null){
+                itemEstoque.setQtdeItemEstoque(0); // Coloco isso como garantia que esta se enviando 0 para cadastrar no banco de dados
+                // Faço isso, pois toda a manipulação que vai ser realizada do ‘item’ de estoque vem da movimentação do estoque
+                ItemEstoque novoItemEstoque = itemEstoqueService.save(itemEstoque);
+                return ResponseEntity.status(HttpStatus.CREATED).body("Item cadastrado com sucesso!");
+            }
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Dados insuficientes para cadastro!");
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao gravar o Item de Estoque!");
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Dados insuficientes para cadastro!");
     }
 
     @PutMapping(value = "/atualizarItemEstoque")
     public ResponseEntity<Object> atualizarItemEstoque(@RequestBody ItemEstoque itemEstoque){
-        if(itemEstoque != null){
-            ItemEstoque itemAtualizado = itemEstoqueService.save(itemEstoque);
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body("Item atualizado com sucesso!");
+        try {
+            if(itemEstoque != null){
+                ItemEstoque itemAtualizado = itemEstoqueService.save(itemEstoque);
+                return ResponseEntity.status(HttpStatus.ACCEPTED).body("Item atualizado com sucesso!");
+            }
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Falta informações para atualizar o item em estoque!");
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao alterar o Item de Estoque!");
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Falta informações para atualizar o item em estoque!");
     }
 
     @DeleteMapping(value = "/deletarItemEstoque/{id}")

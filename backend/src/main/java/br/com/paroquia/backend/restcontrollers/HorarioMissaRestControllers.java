@@ -48,16 +48,20 @@ public class HorarioMissaRestControllers {
 
     @PutMapping(value = "/alterarHorario/{idHorario}")
     public ResponseEntity<Object> alterarHorario(@PathVariable Long idHorario, @RequestBody HorarioMissa horarioAtualizado){
-        HorarioMissa horarioExistente = horarioMissaService.getIdHorario(idHorario);
-        if(horarioExistente != null){
-            horarioAtualizado.setIdHorarioMissa(horarioExistente.getIdHorarioMissa());
-            if(horarioAtualizado.getComunidade() == null){
-                horarioAtualizado.setComunidade(horarioExistente.getComunidade());
+        try {
+            HorarioMissa horarioExistente = horarioMissaService.getIdHorario(idHorario);
+            if(horarioExistente != null){
+                horarioAtualizado.setIdHorarioMissa(horarioExistente.getIdHorarioMissa());
+                if(horarioAtualizado.getComunidade() == null){
+                    horarioAtualizado.setComunidade(horarioExistente.getComunidade());
+                }
+                horarioMissaService.salvarHorario(horarioAtualizado);
+                return ResponseEntity.ok("Horário alterado com sucesso!");
             }
-            horarioMissaService.salvarHorario(horarioAtualizado);
-            return ResponseEntity.ok("Horário alterado com sucesso!");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Horário não encontrado.");
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao alterar o Horário de Missa!");
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Horário não encontrado.");
     }
 
     @DeleteMapping(value = "/excluirHorario/{idHorario}")
