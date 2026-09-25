@@ -16,3 +16,13 @@ export interface MovimentacaoEstoque {
     acampamento?: Acampamento;
     acampamentoDestino?: Acampamento;
 }
+
+export type CriarMovimentacaoEstoque = Omit<
+    MovimentacaoEstoque,
+    'idMovimentacaoEstoque' | 'itemEstoque' | 'usuario' | 'acampamento' | 'acampamentoDestino'
+> & {
+    itemEstoque: { idItemEstoque: number };
+    usuario: { idUsuario: number };
+    acampamento: { idAcampamento: number } | null;
+    acampamentoDestino: { idAcampamento: number } | null;
+};

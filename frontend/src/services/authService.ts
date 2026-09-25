@@ -12,7 +12,6 @@ export async function login(dadosLogin: { cpf: string, senha: string }) {
         throw new Error(erroMsg || "Erro ao fazer login");
     }
 
-    // Usando a tipagem específica do login!
     const dados: LoginResponse = await response.json(); 
     
     localStorage.setItem('token', dados.token); 

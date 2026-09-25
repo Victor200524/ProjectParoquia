@@ -1,0 +1,61 @@
+.painelContainer {
+  padding: 2rem;
+  background-color: var(--bg-body);
+  color: var(--text-primary);
+  min-height: calc(100vh - 60px); /* Ajuste se o seu header/sidebar ocupar espaço */
+}
+
+.welcomeHeader {
+  margin-bottom: 2rem;
+  border-bottom: 2px solid var(--border-color);
+  padding-bottom: 1rem;
+}
+
+.welcomeTitle {
+  font-size: 2.2rem;
+  color: #cc2027;
+  font-weight: 800;
+  margin: 0 0 0.5rem 0;
+}
+
+.welcomeSubtitle {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+}
+
+.dashboardGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+/* Esqueleto de Card Genérico para o Dashboard */
+.dashCard {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 4px 15px -5px rgba(0,0,0,0.1);
+}
+
+.cardTitle {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Modificadores de Alertas */
+.alertCritico {
+  color: #cc2027;
+}
+
+.placeholderMsg {
+  color: var(--text-secondary);
+  font-style: italic;
+  font-size: 0.95rem;
+}

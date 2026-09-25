@@ -8,14 +8,24 @@ import { acampamentoService } from '@/services/acampamentoService';
 import { itemEstoqueService } from '@/services/itemEstoqueService';
 import { movimentoEstoqueService } from '@/services/movimentoEstoqueService';
 
-export default function NovaMovimentacao() {
-  const [listaAcampamentos, setListaAcampamentos] = useState<any[]>([]);
-  const [listaItens, setListaItens] = useState<any[]>([]);
+import type { Acampamento } from '@/types/acampamento';
+import type { ItemEstoque } from '@/types/itemEstoque';
+import type { CriarMovimentacaoEstoque } from '@/types/movimentoEstoque';
 
+function obterDataHoraLocal() {
+  const agora = new Date();
+  const doisDigitos = (numero: number) => String(numero).padStart(2, '0');
+  return `${agora.getFullYear()}-${doisDigitos(agora.getMonth() + 1)}-${doisDigitos(agora.getDate())}` +
+    `T${doisDigitos(agora.getHours())}:${doisDigitos(agora.getMinutes())}:${doisDigitos(agora.getSeconds())}`;
+}
+
+export default function NovaMovimentacao() {
+  const [listaAcampamentos, setListaAcampamentos] = useState<Acampamento[]>([]);
+  const [listaItens, setListaItens] = useState<ItemEstoque[]>([]);
+  const [dataRegistro, setDataRegistro] = useState<string>('');
   const [formData, setFormData] = useState({
     tipoMovimentacaoEstoque: '',
     qtdeMovimentacaoEstoque: 0,
-    dataMovimentacaoEstoque: '',
     obsMovimentacaoEstoque: '',
     itemEstoque: { idItemEstoque: 0 },
     acampamento: { idAcampamento: 0 },
@@ -23,6 +33,11 @@ export default function NovaMovimentacao() {
   });
 
   useEffect(() => {
+
+    const atualizarData = () => setDataRegistro(obterDataHoraLocal());
+    const inicio = window.setTimeout(atualizarData, 0);
+    const intervalo = window.setInterval(atualizarData, 1000);
+
     const carregarDados = async () => {
       try {
         const [acampamentos, itens] = await Promise.all([
@@ -37,6 +52,10 @@ export default function NovaMovimentacao() {
       }
     };
     carregarDados();
+    return () => {
+      window.clearTimeout(inicio);
+      window.clearInterval(intervalo);
+    };
   }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -71,19 +90,17 @@ export default function NovaMovimentacao() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
-    let payloadEnvio: any = { ...formData };
-    const userIdLogado = localStorage.getItem('idUsuario'); 
-    
-    if (userIdLogado)
-      payloadEnvio.usuario = { idUsuario: Number(userIdLogado) };
-    else
-      payloadEnvio.usuario = { idUsuario: 1 }; 
 
-    if (payloadEnvio.acampamento.idAcampamento === 0) 
-      payloadEnvio.acampamento = null;
-    if (payloadEnvio.acampamentoDestino.idAcampamento === 0) 
-      payloadEnvio.acampamentoDestino = null;
+    const dataHoraLocal = obterDataHoraLocal();
+    setDataRegistro(dataHoraLocal);
+    const userIdLogado = localStorage.getItem('idUsuario');
+    const payloadEnvio: CriarMovimentacaoEstoque = {
+      ...formData,
+      dataMovimentacaoEstoque: dataHoraLocal,
+      usuario: { idUsuario: userIdLogado ? Number(userIdLogado) : 1 },
+      acampamento: formData.acampamento.idAcampamento === 0 ? null : formData.acampamento,
+      acampamentoDestino: formData.acampamentoDestino.idAcampamento === 0 ? null : formData.acampamentoDestino,
+    };
 
     console.log("Dados para o Back-end:", payloadEnvio);
 
@@ -95,14 +112,13 @@ export default function NovaMovimentacao() {
       setFormData({
         tipoMovimentacaoEstoque: '',
         qtdeMovimentacaoEstoque: 0,
-        dataMovimentacaoEstoque: '',
         obsMovimentacaoEstoque: '',
         itemEstoque: { idItemEstoque: 0 },
         acampamento: { idAcampamento: 0 },
         acampamentoDestino: { idAcampamento: 0 }
       });
-    } catch(error: any) {
-      alert("Erro ao registrar movimentação: " + error.message);
+    } catch(error: unknown) {
+      alert("Erro ao registrar movimentação: " + (error instanceof Error ? error.message : "Erro desconhecido"));
     }
   };
 
@@ -174,15 +190,15 @@ export default function NovaMovimentacao() {
           </div>
 
           <div className={styles.fieldGroup}>
-            <label className={styles.fieldLabel} htmlFor="dataMovimentacaoEstoque">Data da Movimentação *</label>
+            <label className={styles.fieldLabel} htmlFor="dataMovimentacaoEstoque">Data da Movimentação</label>
             <input
               className={styles.inputField}
               id="dataMovimentacaoEstoque"
               name="dataMovimentacaoEstoque"
               type="datetime-local"
-              value={formData.dataMovimentacaoEstoque}
-              onChange={handleChange}
-              required 
+              value={dataRegistro}
+              step={1}
+              disabled 
             />
           </div>
 

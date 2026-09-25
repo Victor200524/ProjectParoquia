@@ -64,3 +64,63 @@
   background-color: rgba(204, 32, 39, 0.08);
   color: #cc2027; /* Mantém o destaque vermelho */
 }
+
+.navGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.navGroupHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  color: var(--text-secondary);
+  background: none;
+  border: none;
+  text-align: left;
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 0.95rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.navGroupHeader:hover {
+  background-color: var(--bg-body);
+  color: #cc2027;
+}
+
+.navGroupHeader::after {
+  content: '▾';
+  font-size: 0.75rem;
+  opacity: 0.7;
+}
+
+.navSubmenu {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.25rem 0 0.25rem 1rem;
+}
+
+.navSubLink {
+  display: flex;
+  align-items: center;
+  padding: 0.6rem 1rem;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.85rem;
+  border-radius: 0.5rem;
+  border-left: 2px solid var(--border-color);
+  transition: all 0.2s ease;
+}
+
+.navSubLink:hover {
+  background-color: var(--bg-body);
+  color: #cc2027;
+  border-left-color: #cc2027;
+}

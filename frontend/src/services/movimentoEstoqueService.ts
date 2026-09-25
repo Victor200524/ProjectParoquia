@@ -1,8 +1,8 @@
-import {MovimentacaoEstoque} from '../types/movimentoEstoque';
+import type {CriarMovimentacaoEstoque, MovimentacaoEstoque} from '../types/movimentoEstoque';
 const BASE_URL = "http://localhost:8080/movimentacaoEstoque";
 
 export const movimentoEstoqueService = {
-    async criarMovimentoEstoque(movimentoEstoque: MovimentacaoEstoque): Promise<string> {
+    async criarMovimentoEstoque(movimentoEstoque: CriarMovimentacaoEstoque): Promise<string> {
         try{
             const response = await fetch(`${BASE_URL}/gravarMovimentoEstoque`, {
                 method: "POST",
