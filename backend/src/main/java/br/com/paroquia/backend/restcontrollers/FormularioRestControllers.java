@@ -36,8 +36,8 @@ public class FormularioRestControllers {
     public ResponseEntity<Object> gravarFormulario(@RequestBody Formulario formulario){
         try {
             if(formulario != null){
-                formularioService.save(formulario);
-                return ResponseEntity.status(HttpStatus.OK).body("Formulario cadastrado com sucesso!");
+                Formulario formularioSalvo = formularioService.save(formulario);
+                return ResponseEntity.status(HttpStatus.OK).body(formularioSalvo);
             }
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Dados insuficientes para cadastro!");
         }catch (Exception e){

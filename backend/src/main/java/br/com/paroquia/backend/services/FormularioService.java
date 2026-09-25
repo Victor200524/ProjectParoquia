@@ -28,8 +28,8 @@ public class FormularioService {
         return formularioRepository.findById(id).orElse(null);
     }
 
-    public void save(Formulario formulario) {
-        formularioRepository.save(formulario);
+    public Formulario save(Formulario formulario) {
+        return formularioRepository.save(formulario);
     }
 
     public boolean deletarFormulario(Formulario formulario) {
