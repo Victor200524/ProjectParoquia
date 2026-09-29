@@ -35,9 +35,9 @@ export default function Sidebar() {
     { nome: 'Movimentos do Estoque', rota: '/forms/movimentoEstoque' },
     { nome: 'Usuários', rota: '/forms/usuarios' },
     { nome: 'Formulários', submenu: [
-      { nome: 'Cadastrar', rota: '/forms/formularios' },
+      { nome: 'Cadastrar Formulários', rota: '/forms/formularios' },
       { nome: 'Visualizar', rota: '/views/formularios' },
-      { nome: 'Inscrever-se', rota: '/inscricao/formularios' },
+      { nome: 'Inscrever-se', rota: '/inscricao/resposta' },
     ]},
     { nome: 'Equipes & Quadrante', rota: '/equipes' },
     { nome: 'Financeiro', rota: '/financeiro' },
