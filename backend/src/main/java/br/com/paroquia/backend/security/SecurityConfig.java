@@ -56,6 +56,8 @@ public class SecurityConfig {
                         .requestMatchers("/itemEstoque/**").permitAll()
                         .requestMatchers("/muralFotos/**").permitAll()
                         .requestMatchers("/formulario/**").permitAll()
+                        .requestMatchers("/pergunta/**").permitAll()
+                        .requestMatchers("/resposta/**").permitAll()
                         .requestMatchers("/error").permitAll() // Desmascara os erros internos
                         // Qualquer outra requisição precisa do Token (Usuário logado)
                         .anyRequest().authenticated()

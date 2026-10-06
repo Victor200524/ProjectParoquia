@@ -32,6 +32,14 @@ public class FormularioRestControllers {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhuma formulário encontrado!");
     }
 
+    @GetMapping(value = "/buscarFormularioId/{id}")
+    public ResponseEntity<Object> buscarFormularioId(@PathVariable Long id){
+        Formulario formularioID = formularioService.getFormularioId(id);
+        if(formularioID != null)
+            return ResponseEntity.status(HttpStatus.OK).body(formularioID);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Formulario não encontrado!");
+    }
+
     @PostMapping(value = "/gravarFormulario")
     public ResponseEntity<Object> gravarFormulario(@RequestBody Formulario formulario){
         try {
