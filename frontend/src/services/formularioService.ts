@@ -94,6 +94,26 @@ export const formularioService = {
         }
     },
 
+    async buscarFormularioPorId(idFormulario: number): Promise<Formulario> {
+        try {
+            const response = await fetch(`${BASE_URL}/buscarFormularioId/${idFormulario}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${localStorage.getItem('token') || ''}`
+                }
+            });
+            const responseText = await response.text();
+            if (!response.ok) {
+                throw new Error(responseText || 'Erro ao buscar formulário por ID');
+            }
+            return JSON.parse(responseText);
+        } catch (error) {
+            console.error('Erro na camada de serviço:', error);
+            throw error;
+        }
+    },
+
     async deletarFormulario(idFormulario: number): Promise<string> {
         try {
             const response = await fetch(`${BASE_URL}/deletarFormulario/${idFormulario}`, {

@@ -5,7 +5,7 @@ export type CondicaoPergunta = 'OBRIGATORIA' | 'OPCIONAL';
 
 
 export interface Pergunta {
-    idPergunta?: number;
+    idPergunta: number;
     textoPergunta: string;
     tipoPergunta: TipoPergunta;
     condicaoPergunta: CondicaoPergunta;

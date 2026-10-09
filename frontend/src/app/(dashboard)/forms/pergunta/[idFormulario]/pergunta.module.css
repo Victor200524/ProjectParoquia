@@ -167,3 +167,167 @@
   transform: translateY(-1px);
   box-shadow: 0 10px 20px -8px rgba(204, 32, 39, 0.6);
 }
+/* ===== Estilo Google Forms ===== */
+
+/* Coluna central onde ficam todos os cards */
+.coluna {
+  max-width: 770px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Card do topo com o título do formulário (faixa vermelha em cima) */
+.cardFormulario {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-top: 10px solid #cc2027;
+  border-radius: 0.75rem;
+  padding: 1.5rem 1.75rem;
+}
+
+.formularioTitulo {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem 0;
+  color: var(--text-primary);
+}
+
+.formularioInfo {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+/* Card de cada pergunta */
+.cardPergunta {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-left: 6px solid transparent;
+  border-radius: 0.75rem;
+  padding: 1.5rem 1.75rem;
+  transition: border-color 0.2s ease;
+}
+
+/* Card que está sendo editado (a pergunta nova) ganha a faixa lateral */
+.cardPerguntaAtiva {
+  border-left-color: #cc2027;
+  box-shadow: 0 6px 16px -6px rgba(0, 0, 0, 0.15);
+}
+
+.perguntaTexto {
+  font-size: 1rem;
+  font-weight: 500;
+  margin: 0 0 1rem 0;
+  color: var(--text-primary);
+}
+
+/* O * vermelho das obrigatórias */
+.asterisco {
+  color: #cc2027;
+  margin-left: 0.25rem;
+}
+
+/* Linha falsa de resposta, igual ao preview do Google Forms */
+.respostaFalsa {
+  border-bottom: 1px dotted var(--border-color);
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  padding-bottom: 0.4rem;
+  width: 60%;
+}
+
+/* Rodapé do card: obrigatória + botões, alinhado à direita */
+.rodapePergunta {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 1.25rem;
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color);
+}
+
+/* Interruptor "Obrigatória" (checkbox estilizado) */
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  user-select: none;
+}
+
+.toggle input {
+  appearance: none;
+  width: 2.25rem;
+  height: 1.25rem;
+  background: var(--border-color);
+  border-radius: 999px;
+  position: relative;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.toggle input::before {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: calc(1.25rem - 4px);
+  height: calc(1.25rem - 4px);
+  background: #fff;
+  border-radius: 50%;
+  transition: transform 0.2s ease;
+}
+
+.toggle input:checked {
+  background: #cc2027;
+}
+
+.toggle input:checked::before {
+  transform: translateX(1rem);
+}
+
+/* Botão de excluir (lixeira) */
+.btnExcluir {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1.15rem;
+  cursor: pointer;
+  padding: 0.35rem 0.5rem;
+  border-radius: 0.4rem;
+}
+
+.btnExcluir:hover {
+  color: #cc2027;
+  background: var(--bg-body);
+}
+
+/* Botão "+ Adicionar pergunta" */
+.btnAdicionar {
+  align-self: center;
+  background: var(--bg-card);
+  border: 1.5px dashed var(--border-color);
+  color: var(--text-secondary);
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 0.85rem 1.75rem;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btnAdicionar:hover {
+  border-color: #cc2027;
+  color: #cc2027;
+}
+
+.vazio {
+  text-align: center;
+  color: var(--text-secondary);
+  padding: 1.5rem;
+}
