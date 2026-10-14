@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import styles from './cadastro.module.css';
+import { formatarCPF, formatarTelefone } from '@/utils/formatters';
 
 const BASE_URL = 'http://localhost:8080';
 
@@ -17,12 +18,21 @@ export default function CadastroPage() {
     cpfUsuario: '',
     emailUsuario: '',
     contatoUsuario: '',
-    senhaUsuario: ''
+    senhaUsuario: '',
+    nivelUsuario: '' // começa vazio para obrigar a pessoa a escolher entre Campista e Servo
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+
+    // formata o CPF e o telefone enquanto a pessoa digita
+    let valor = value;
+    if(name === 'cpfUsuario')
+        valor = formatarCPF(value);
+    if(name === 'contatoUsuario')
+        valor = formatarTelefone(value);
+
+    setFormData(prev => ({ ...prev, [name]: valor }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -36,12 +46,12 @@ export default function CadastroPage() {
       emailUsuario: formData.emailUsuario,
       contatoUsuario: formData.contatoUsuario,
       senhaUsuario: formData.senhaUsuario,
-      nivelUsuario: 'CAMPISTA',
+      nivelUsuario: formData.nivelUsuario,
       statusUsuario: 'ATIVO'
     };
 
     try {
-      const response = await fetch(`${BASE_URL}/usuario/gravarUsuario`, {
+      const response = await fetch(`${BASE_URL}/usuario/cadastrarUsuario`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -127,6 +137,21 @@ export default function CadastroPage() {
                 required 
                 placeholder="exemplo@email.com"
               />
+            </div>
+
+            <div className={`${styles.inputGroup} ${styles.fullWidth}`}>
+              <label className={styles.label}>Você é</label>
+              <select
+                name="nivelUsuario"
+                value={formData.nivelUsuario}
+                onChange={handleChange}
+                className={styles.input}
+                required
+              >
+                <option value="">Selecione uma opção</option>
+                <option value="CAMPISTA">Campista</option>
+                <option value="SERVO">Servo</option>
+              </select>
             </div>
 
             <div className={`${styles.inputGroup} ${styles.fullWidth}`}>

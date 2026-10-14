@@ -14,7 +14,7 @@
   margin-right: auto;
 }
 
-.pageTitle {
+.pageTitulo {
   font-size: 2.2rem;
   font-weight: 800;
   color: var(--text-primary);
@@ -54,7 +54,7 @@
   transform: translateY(-2px);
 }
 
-.cardTitulo {
+.cardTitle {
   font-size: 1.2rem;
   font-weight: 700;
   color: var(--text-primary);

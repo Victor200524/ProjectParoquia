@@ -33,12 +33,16 @@ export default function Sidebar() {
     { nome: 'Mural de Fotos', rota: '/forms/muralFotos' },
     { nome: 'Itens do Estoque', rota: '/forms/itemEstoque' },
     { nome: 'Movimentos do Estoque', rota: '/forms/movimentoEstoque' },
-    { nome: 'Usuários', rota: '/forms/usuarios' },
+    { nome: 'Usuários', submenu: [
+      { nome: 'Cadastrar', rota: '/forms/usuarios' },
+      { nome: 'Visualizar', rota: '/views/usuarios' },
+    ]},
     { nome: 'Formulários', submenu: [
       { nome: 'Cadastrar Formulários', rota: '/forms/formularios' },
       { nome: 'Visualizar', rota: '/views/formularios' },
       { nome: 'Inscrever-se', rota: '/inscricao/resposta' },
     ]},
+    { nome: 'Inscrições', rota: '/views/inscricoes' },
     { nome: 'Equipes & Quadrante', rota: '/equipes' },
     { nome: 'Financeiro', rota: '/financeiro' },
   ];

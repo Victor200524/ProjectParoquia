@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import styles from './usuarios.module.css';
+import { formatarCPF, formatarTelefone } from '@/utils/formatters';
 import { usuarioService } from '@/services/usuarioService'; // Ajuste o caminho conforme a sua estrutura
 
 export default function CadastroUsuario() {
@@ -21,10 +22,17 @@ export default function CadastroUsuario() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
-    
+
+    // formata o CPF e o telefone enquanto a pessoa digita
+    let valor = value;
+    if(name === 'cpfUsuario')
+        valor = formatarCPF(value);
+    if(name === 'contatoUsuario')
+        valor = formatarTelefone(value);
+
     setFormData(prev => ({
       ...prev,
-      [name]: type === 'number' ? Number(value) : value
+      [name]: type === 'number' ? Number(valor) : valor
     }));
   };
 

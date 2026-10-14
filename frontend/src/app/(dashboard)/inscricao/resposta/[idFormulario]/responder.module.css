@@ -1,0 +1,173 @@
+/* Tela do campista/servo respondendo o formulário — mesmo visual estilo Google Forms da tela de perguntas */
+.pageContainer {
+  background-color: var(--bg-body);
+  padding: 2.5rem 2rem;
+  font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Coluna central onde ficam todos os cards */
+.coluna {
+  max-width: 770px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Card do topo com o título do formulário (faixa vermelha em cima) */
+.cardFormulario {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-top: 10px solid #cc2027;
+  border-radius: 0.75rem;
+  padding: 1.5rem 1.75rem;
+}
+
+.formularioTitulo {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem 0;
+  color: var(--text-primary);
+}
+
+.formularioInfo {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+/* Linha "* Indica uma pergunta obrigatória" dentro do card do topo */
+.avisoObrigatoria {
+  color: #cc2027;
+  font-size: 0.85rem;
+  margin: 1rem 0 0 0;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color);
+}
+
+/* Card de cada pergunta */
+.cardPergunta {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-left: 6px solid transparent;
+  border-radius: 0.75rem;
+  padding: 1.5rem 1.75rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Ao clicar no campo, o card da pergunta ganha a faixa lateral vermelha */
+.cardPergunta:focus-within {
+  border-left-color: #cc2027;
+  box-shadow: 0 6px 16px -6px rgba(0, 0, 0, 0.15);
+}
+
+.perguntaTexto {
+  font-size: 1rem;
+  font-weight: 500;
+  margin: 0 0 1rem 0;
+  color: var(--text-primary);
+}
+
+/* Texto da resposta já enviada (modo "ver minhas respostas") */
+.respostaTexto {
+  font-size: 1rem;
+  margin: 0;
+  color: var(--text-secondary);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* O * vermelho das obrigatórias */
+.asterisco {
+  color: #cc2027;
+  margin-left: 0.25rem;
+}
+
+.inputField {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  font-size: 0.95rem;
+  font-family: inherit;
+  color: var(--text-primary);
+  border: 1.5px solid var(--border-color);
+  border-radius: 0.6rem;
+  background: var(--bg-body);
+  outline: none;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.inputField:focus {
+  border-color: #cc2027;
+  background-color: var(--bg-card);
+  box-shadow: 0 0 0 3px rgba(204, 32, 39, 0.15);
+}
+
+.textAreaField {
+  resize: vertical;
+  min-height: 90px;
+}
+
+/* Rodapé com o botão Enviar */
+.formActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.btnSubmit {
+  background: linear-gradient(135deg, #cc2027, #a81a20);
+  color: #fff;
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 0.75rem 2.5rem;
+  border-radius: 0.6rem;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 8px 16px -8px rgba(204, 32, 39, 0.5);
+  transition: all 0.2s ease;
+}
+
+.btnSubmit:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 20px -8px rgba(204, 32, 39, 0.6);
+}
+
+.btnSubmit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Botão secundário (ex: "Voltar para a lista" depois de enviar) */
+.btnVoltar {
+  display: inline-block;
+  margin-top: 1rem;
+  color: #cc2027;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.btnVoltar:hover {
+  text-decoration: underline;
+}
+
+.vazio {
+  text-align: center;
+  color: var(--text-secondary);
+  padding: 1.5rem;
+}
+
+@media (max-width: 600px) {
+  .pageContainer {
+    padding: 1.5rem 1rem;
+  }
+
+  .cardFormulario,
+  .cardPergunta {
+    padding: 1.25rem;
+  }
+}

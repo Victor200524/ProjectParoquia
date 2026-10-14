@@ -4,6 +4,7 @@
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import logoParoquia from '@/images/logo_brasao_paroquia_sao_miguel.png';
 import styles from './login.module.css';
 import { login } from '@/services/authService';
@@ -26,7 +27,7 @@ export default function Login() {
       await login({ cpf, senha }); 
       router.push('/painel'); 
     } catch (err: any) {
-      setError('CPF ou senha incorretos.');
+      setError(err.message || 'CPF ou senha incorretos.');
     } finally {
       setLoading(false);
     }
@@ -160,6 +161,8 @@ export default function Login() {
               {loading ? <span className={styles.spinner} aria-hidden="true" /> : 'Entrar'}
             </button>
           </form>
+
+          <Link href="/" className={styles.btnVoltar}>← Voltar para a página inicial</Link>
 
           <p className={styles.footerNote}>
             (18) 99619-3996 · paroquiasaomiguelarcanjomm2026@gmail.com

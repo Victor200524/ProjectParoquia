@@ -1,0 +1,222 @@
+/* Listagem de inscrições — mesmo visual das outras telas (cores e variáveis de tema) */
+.pageContainer {
+  background-color: var(--bg-body);
+  padding: 2.5rem 2rem;
+  font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.header {
+  margin-bottom: 2rem;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.pageTitulo {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+  margin: 0 0 0.4rem 0;
+}
+
+.pageSubtitle {
+  color: var(--text-secondary);
+  font-size: 1rem;
+  margin: 0;
+}
+
+/* Barra de filtros acima da tabela */
+.filtros {
+  display: flex;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 0.75rem;
+  padding: 1.25rem 1.5rem;
+  max-width: 1200px;
+  margin: 0 auto 1.5rem auto;
+}
+
+.filtros .fieldGroup {
+  min-width: 220px;
+}
+
+/* "3 inscrição(ões)" no canto direito da barra */
+.contador {
+  margin: 0 0 0.75rem auto;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.fieldLabel {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.inputField {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: 0.95rem;
+  font-family: inherit;
+  color: var(--text-primary);
+  border: 1.5px solid var(--border-color);
+  border-radius: 0.6rem;
+  background: var(--bg-body);
+  outline: none;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.inputField:focus {
+  border-color: #cc2027;
+  background-color: var(--bg-card);
+  box-shadow: 0 0 0 3px rgba(204, 32, 39, 0.15);
+}
+
+/* Card da tabela (rola para o lado em telas pequenas) */
+.tabelaCard {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 0.75rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  overflow-x: auto;
+}
+
+.tabela {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.tabela th {
+  text-align: left;
+  padding: 0.9rem 1rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--text-secondary);
+  border-bottom: 2px solid var(--border-color);
+  white-space: nowrap;
+}
+
+.tabela td {
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-primary);
+  vertical-align: middle;
+}
+
+.tabela tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.tabela tbody tr:hover {
+  background: var(--bg-body);
+}
+
+/* Etiqueta do status da inscrição */
+.status {
+  display: inline-block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 0.25rem 0.7rem;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+/* Verde: pagou */
+.statusAprovado {
+  color: #15803d;
+  background: rgba(22, 163, 74, 0.15);
+  border: 1px solid rgba(22, 163, 74, 0.4);
+}
+
+/* Vermelho: ainda não pagou */
+.statusPendente {
+  color: #cc2027;
+  background: rgba(204, 32, 39, 0.12);
+  border: 1px solid rgba(204, 32, 39, 0.4);
+}
+
+.statusReprovado {
+  color: var(--text-secondary);
+  background: var(--bg-body);
+  border: 1px solid var(--border-color);
+}
+
+/* Campo da equipe + botão Salvar na linha do servo */
+.equipe {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.inputEquipe {
+  width: 170px;
+  padding: 0.45rem 0.7rem;
+  font-size: 0.85rem;
+  font-family: inherit;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  border: 1.5px solid var(--border-color);
+  border-radius: 0.5rem;
+  background: var(--bg-body);
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.inputEquipe:focus {
+  border-color: #cc2027;
+  box-shadow: 0 0 0 3px rgba(204, 32, 39, 0.15);
+}
+
+.btnSalvar {
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.45rem 0.9rem;
+  color: #fff;
+  background: #cc2027;
+  border: 1px solid #cc2027;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.btnSalvar:hover {
+  background: #a81a20;
+}
+
+.semEquipe {
+  color: var(--text-secondary);
+}
+
+.vazio {
+  text-align: center;
+  color: var(--text-secondary);
+  padding: 2rem;
+}
+
+@media (max-width: 700px) {
+  .pageContainer {
+    padding: 1.5rem 1rem;
+  }
+
+  .contador {
+    margin-left: 0;
+  }
+}

@@ -351,6 +351,21 @@
   animation: spin 0.7s linear infinite;
 }
 
+/* Link para voltar à página inicial, abaixo do botão Entrar */
+.btnVoltar {
+  display: block;
+  text-align: center;
+  margin-top: 1.25rem;
+  color: #cc2027;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.btnVoltar:hover {
+  text-decoration: underline;
+}
+
 .footerNote {
   margin-top: 1.75rem;
   font-size: 0.75rem;

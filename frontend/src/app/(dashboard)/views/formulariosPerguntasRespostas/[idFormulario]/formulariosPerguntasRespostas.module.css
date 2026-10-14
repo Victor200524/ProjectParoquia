@@ -1,0 +1,193 @@
+/* Tela de visualização das respostas de um formulário — mesmo visual estilo Google Forms das telas de perguntas/responder */
+.pageContainer {
+  background-color: var(--bg-body);
+  padding: 2.5rem 2rem;
+  font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Coluna central onde ficam todos os cards */
+.coluna {
+  max-width: 770px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Card do topo com o título do formulário (faixa vermelha em cima) */
+.cardFormulario {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-top: 10px solid #cc2027;
+  border-radius: 0.75rem;
+  padding: 1.5rem 1.75rem;
+}
+
+.formularioTitulo {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem 0;
+  color: var(--text-primary);
+}
+
+.formularioInfo {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.btnVoltar {
+  display: inline-block;
+  margin-top: 1rem;
+  color: #cc2027;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.btnVoltar:hover {
+  text-decoration: underline;
+}
+
+/* Barra com as setas para trocar de pessoa ("1 de 5") */
+.navegacao {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 0.75rem;
+  padding: 0.6rem 1rem;
+}
+
+.navegacaoTexto {
+  min-width: 5rem;
+  text-align: center;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.btnSeta {
+  width: 2.5rem;
+  height: 2.5rem;
+  font-size: 1.5rem;
+  line-height: 1;
+  color: #cc2027;
+  background: transparent;
+  border: 1.5px solid var(--border-color);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btnSeta:hover:not(:disabled) {
+  border-color: #cc2027;
+  background: rgba(204, 32, 39, 0.08);
+}
+
+.btnSeta:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* Linha do nome + etiqueta do status */
+.inscritoTopo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+/* Etiqueta do status da inscrição */
+.status {
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+/* Verde: pagou */
+.statusAprovado {
+  color: #15803d;
+  background: rgba(22, 163, 74, 0.15);
+  border: 1px solid rgba(22, 163, 74, 0.4);
+}
+
+/* Vermelho: ainda não pagou */
+.statusPendente {
+  color: #cc2027;
+  background: rgba(204, 32, 39, 0.12);
+  border: 1px solid rgba(204, 32, 39, 0.4);
+}
+
+.statusReprovado {
+  color: var(--text-secondary);
+  background: var(--bg-body);
+  border: 1px solid var(--border-color);
+}
+
+/* Card de cada pessoa que respondeu */
+.cardInscricao {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-left: 6px solid #cc2027;
+  border-radius: 0.75rem;
+  padding: 1.5rem 1.75rem;
+}
+
+.inscritoNome {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.inscritoInfo {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+/* Cada par pergunta + resposta dentro do card da pessoa */
+.blocoResposta {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.perguntaTexto {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin: 0 0 0.35rem 0;
+  color: var(--text-secondary);
+}
+
+.respostaTexto {
+  font-size: 1rem;
+  margin: 0;
+  color: var(--text-primary);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.vazio {
+  text-align: center;
+  color: var(--text-secondary);
+  padding: 1.5rem;
+}
+
+@media (max-width: 600px) {
+  .pageContainer {
+    padding: 1.5rem 1rem;
+  }
+
+  .cardFormulario,
+  .cardInscricao {
+    padding: 1.25rem;
+  }
+}

@@ -1,11 +1,14 @@
 import React from 'react';
 import Sidebar from '@/components/layout/Sidebar/Sidebar'; // ou o caminho que vc usou
 import Header from '@/components/layout/Header/Header';    // ou o caminho que vc usou
+import VerificarSessao from '@/components/auth/VerificarSessao';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
     <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: 'var(--bg-body)' }}>
       
+      <VerificarSessao />
+
       <Sidebar />
 
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>

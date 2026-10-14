@@ -10,6 +10,7 @@ import { Comunidade } from '@/types/comunidade';
 // Importe a service e o tipo de Acampamento (Ajuste o caminho se necessário)
 import { acampamentoService } from '@/services/acampamentoService'; 
 import { Acampamento } from '@/types/acampamento'; 
+import { verificarSessao } from '@/services/authService';
 
 export default function LandingPage() {
   const [comunidades, setComunidades] = useState<Comunidade[]>([]);
@@ -17,6 +18,15 @@ export default function LandingPage() {
   
   const [acampamentos, setAcampamentos] = useState<Acampamento[]>([]);
   const [carregandoAcampamentos, setCarregandoAcampamentos] = useState(true);
+
+  const [logado, setLogado] = useState(false); // se o usuário já está logado, o cabeçalho mostra o botão do painel
+
+  useEffect(() => {
+    async function conferirLogin() {
+      setLogado(await verificarSessao());
+    }
+    conferirLogin();
+  }, []);
 
   useEffect(() => {
     async function carregarDados() {
@@ -79,12 +89,20 @@ export default function LandingPage() {
 
         <div className={styles.authButtons}>
           <ThemeToggle />
-          <Link href="/cadastro" className={styles.btnCadastro}>
-            Cadastre-se
-          </Link>
-          <Link href="/login" className={styles.btnLogin}>
-            Entrar
-          </Link>
+          {logado ? (
+            <Link href="/painel" className={styles.btnLogin}>
+              Acessar o Painel
+            </Link>
+          ) : (
+            <>
+              <Link href="/cadastro" className={styles.btnCadastro}>
+                Cadastre-se
+              </Link>
+              <Link href="/login" className={styles.btnLogin}>
+                Entrar
+              </Link>
+            </>
+          )}
         </div>
       </header>
 
