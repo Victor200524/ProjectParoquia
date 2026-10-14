@@ -1,6 +1,7 @@
 package br.com.paroquia.backend.restcontrollers;
 
 import br.com.paroquia.backend.entities.Usuario;
+import br.com.paroquia.backend.enums.UsuarioTipoStatus;
 import br.com.paroquia.backend.services.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 @CrossOrigin
 @RestController
@@ -21,6 +23,10 @@ public class UsuarioRestControllers {
     private UsuarioService usuarioService;
 
     private final PasswordEncoder encoder;
+
+    // Código gerado toda vez que o servidor liga. Ele vira o token do login, então quando o servidor
+    // reinicia o código muda e o front percebe que o token antigo não vale mais (desloga o usuário)
+    private static final String SESSAO_SERVIDOR = UUID.randomUUID().toString();
 
     public UsuarioRestControllers(PasswordEncoder encoder) {
         this.encoder = encoder;
@@ -42,6 +48,11 @@ public class UsuarioRestControllers {
         return  ResponseEntity.status(HttpStatus.NOT_FOUND).body("Email: " + emailUsuario + " não encontrado!");
     }
 
+    @GetMapping(value = "/sessaoServidor")
+    public ResponseEntity<Object> sessaoServidor(){
+        return ResponseEntity.ok(SESSAO_SERVIDOR);
+    }
+
     public record LoginDTO(String cpf, String senha) {}
     @PostMapping(value = "/loginUsuario")
     public ResponseEntity<Object> loginUsuario(@RequestBody LoginDTO loginDto) {
@@ -51,11 +62,16 @@ public class UsuarioRestControllers {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Usuário não autorizado!");
 
         Usuario usuario = optionalUsuario.get();
+
+        // Usuário inativo não pode entrar no sistema
+        if (usuario.getStatusUsuario() == UsuarioTipoStatus.INATIVO)
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Usuário inativo! Procure a coordenação.");
+
         boolean validar = encoder.matches(loginDto.senha(), usuario.getSenhaUsuario());
 
         if (validar) {
             Map<String, Object> resposta = new HashMap<>();
-            resposta.put("token", "logado-sucesso");
+            resposta.put("token", SESSAO_SERVIDOR);
             resposta.put("idUsuario", usuario.getIdUsuario());
             resposta.put("nomeUsuario", usuario.getNomeUsuario());
             resposta.put("nivelUsuario", usuario.getNivelUsuario());
@@ -70,11 +86,14 @@ public class UsuarioRestControllers {
     public ResponseEntity<Object> cadastrarUsuario(@RequestBody Usuario usuario) {
         try {
             if(usuario != null){
-                // Verifica se ja ta cadastrado no banco
+                // Verifica se ja ta cadastrado no banco (junta as mensagens para avisar o e-mail e o CPF de uma vez)
+                String duplicados = "";
                 if(usuarioService.getUserEmail(usuario.getEmailUsuario()) != null)
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("E-mail já cadastrado!");
+                    duplicados += "E-mail já cadastrado! ";
                 if(usuarioService.getCpfUsuario(usuario.getCpfUsuario()) != null)
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("CPF já cadastrado!");
+                    duplicados += "CPF já cadastrado! ";
+                if(!duplicados.isEmpty())
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(duplicados.trim());
                 // Verifica se o formato enviado está correto
                 if(!usuarioService.isFormatoEmailValido(usuario.getEmailUsuario()))
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Formato de E-MAIL inválido: " + usuario.getEmailUsuario());
@@ -101,11 +120,17 @@ public class UsuarioRestControllers {
             if (usuarioExistente != null) {
                 usuarioAtualizado.setIdUsuario(usuarioExistente.getIdUsuario());
 
-                // Verifica se ja ta cadastrado no banco
-                if(usuarioService.getUserEmail(usuarioAtualizado.getEmailUsuario()) != null)
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("E-mail já cadastrado!");
-                if(usuarioService.getCpfUsuario(usuarioAtualizado.getCpfUsuario()) != null)
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("CPF já cadastrado!");
+                // Verifica se o e-mail/CPF ja pertence a OUTRO usuario (o proprio usuario pode manter os dele)
+                // (junta as mensagens para avisar o e-mail e o CPF de uma vez)
+                String duplicados = "";
+                Usuario usuarioEmail = usuarioService.getUserEmail(usuarioAtualizado.getEmailUsuario());
+                if(usuarioEmail != null && !usuarioEmail.getIdUsuario().equals(idUsuario))
+                    duplicados += "E-mail já cadastrado! ";
+                Usuario usuarioCpf = usuarioService.getCpfUsuario(usuarioAtualizado.getCpfUsuario());
+                if(usuarioCpf != null && !usuarioCpf.getIdUsuario().equals(idUsuario))
+                    duplicados += "CPF já cadastrado! ";
+                if(!duplicados.isEmpty())
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(duplicados.trim());
                 // Verifica se o formato enviado está correto
                 if(!usuarioService.isFormatoEmailValido(usuarioAtualizado.getEmailUsuario()))
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Formato de E-MAIL inválido: " + usuarioAtualizado.getEmailUsuario());
@@ -120,7 +145,7 @@ public class UsuarioRestControllers {
                 else
                     usuarioAtualizado.setSenhaUsuario(encoder.encode(usuarioAtualizado.getSenhaUsuario()));
 
-                Usuario novoUsuario = usuarioService.saveUsuario(usuarioAtualizado);
+                Usuario novoUsuario = usuarioService.alterarUsuario(usuarioAtualizado);
                 return ResponseEntity.ok("Usuário " + novoUsuario.getNomeUsuario() + " alterado com sucesso!");
             }
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuário não encontrado para alteração!");

@@ -1,5 +1,6 @@
 package br.com.paroquia.backend.entities;
 
+import br.com.paroquia.backend.enums.InscricaoAcampamentoStatus;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
@@ -15,8 +16,13 @@ public class InscricaoAcampamento {
     @Column(name = "\"funcao_Acampamento\"", nullable = false, length = 45)
     private String funcaoAcampamento;
 
+    // Equipe em que o servo foi alocado pelo coordenador (fica vazio para campista e para servo ainda sem equipe)
+    @Column(name = "\"equipe_Acampamento\"", length = 45)
+    private String equipeAcampamento;
+
     @Column(name = "\"status_Aprovacao\"", nullable = false)
-    private Integer statusAprovacao;
+    @Enumerated(EnumType.STRING)
+    private InscricaoAcampamentoStatus statusAprovacao;
 
     @Column(name = "\"data_Registro\"", nullable = false)
     private LocalDateTime dataRegistro;
@@ -35,7 +41,7 @@ public class InscricaoAcampamento {
     }
 
     // Construtor completo
-    public InscricaoAcampamento(Long idInscricao, String funcaoAcampamento, Integer statusAprovacao,
+    public InscricaoAcampamento(Long idInscricao, String funcaoAcampamento, InscricaoAcampamentoStatus statusAprovacao,
                                 LocalDateTime dataRegistro, Usuario usuario, Acampamento acampamento) {
         this.idInscricao = idInscricao;
         this.funcaoAcampamento = funcaoAcampamento;
@@ -61,11 +67,19 @@ public class InscricaoAcampamento {
         this.funcaoAcampamento = funcaoAcampamento;
     }
 
-    public Integer getStatusAprovacao() {
+    public String getEquipeAcampamento() {
+        return equipeAcampamento;
+    }
+
+    public void setEquipeAcampamento(String equipeAcampamento) {
+        this.equipeAcampamento = equipeAcampamento;
+    }
+
+    public InscricaoAcampamentoStatus getStatusAprovacao() {
         return statusAprovacao;
     }
 
-    public void setStatusAprovacao(Integer statusAprovacao) {
+    public void setStatusAprovacao(InscricaoAcampamentoStatus statusAprovacao) {
         this.statusAprovacao = statusAprovacao;
     }
 

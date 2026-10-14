@@ -49,8 +49,13 @@ public class UsuarioService {
         if (!isCpfValido(novoUsuario.getCpfUsuario()))
             throw new IllegalArgumentException("CPF inválido!");
 
-        novoUsuario.setStatusUsuario(UsuarioTipoStatus.PENDENTE); // (0 = Pendente, 1 = Ativo, 2 = Desativado)
+        novoUsuario.setStatusUsuario(UsuarioTipoStatus.ATIVO); // todo usuário novo já entra como ativo
         return usuarioRepository.save(novoUsuario);
+    }
+
+    // Usado na alteração: salva sem forçar o status PENDENTE, senão não daria para aprovar o usuário
+    public Usuario alterarUsuario(Usuario usuario) {
+        return usuarioRepository.save(usuario);
     }
 
     // ============================================ Validações ================================================================
