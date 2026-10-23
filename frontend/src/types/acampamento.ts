@@ -17,3 +17,18 @@ export interface Acampamento {
     usuario: Usuario;
     comunidade: Comunidade;
 }
+
+export interface AcampamentoPublico {
+    idAcampamento?: number;
+    nomeAcampamento: string;
+    localAcampamento: string;
+    idadeMinAcampamento: number;
+    idadeMaxAcampamento: number;
+    taxaInscricaoAcampamento: number;
+    vagasAcampamento: number;
+    dataInicioAcampamento: string;
+    dataFimAcampamento: string;
+    informacoesAcampamento: string;
+    fotoAcampamento: string;
+    comunidade: Comunidade;
+}

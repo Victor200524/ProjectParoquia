@@ -21,8 +21,8 @@ export default function AcessoNegado() {
           Você não tem o nível de permissão necessário para visualizar ou interagir com esta página.
         </p>
         
-        <button className={styles.button} onClick={() => router.back()}>
-          Voltar para a página anterior
+        <button className={styles.button} onClick={() => router.push("/painel")}>
+          Voltar para a página painel
         </button>
       </div>
     </div>

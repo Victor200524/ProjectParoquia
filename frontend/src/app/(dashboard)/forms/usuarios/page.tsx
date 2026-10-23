@@ -4,8 +4,11 @@ import React, { useState } from 'react';
 import styles from './usuarios.module.css';
 import { formatarCPF, formatarTelefone } from '@/utils/formatters';
 import { usuarioService } from '@/services/usuarioService'; // Ajuste o caminho conforme a sua estrutura
+import ProtectedRoute from '@/components/auth/ProtectedRoute';
 
-export default function CadastroUsuario() {
+const niveisPermitidos = ['COORDENADOR_GERAL', 'PADRE', 'SECRETARIA'];
+
+function CadastroUsuario() {
   const [formData, setFormData] = useState({
     nomeUsuario: '',
     cpfUsuario: '',
@@ -19,6 +22,8 @@ export default function CadastroUsuario() {
   // Estados para dar feedback visual ao usuário
   const [mensagem, setMensagem] = useState<{ tipo: 'sucesso' | 'erro', texto: string } | null>(null);
   const [carregando, setCarregando] = useState(false);
+
+  
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
@@ -43,7 +48,7 @@ export default function CadastroUsuario() {
 
     try {
       // Chama o serviço passando o objeto preenchido
-      const resposta = await usuarioService.cadastrarUsuario(formData as any);
+      const resposta = await usuarioService.cadastrarUsuarioAdmin(formData as any);
       
       setMensagem({ tipo: 'sucesso', texto: resposta });
       
@@ -204,4 +209,12 @@ export default function CadastroUsuario() {
       </div>
     </div>
   );
+}
+
+export default function FormsUsuarios(){
+    return(
+        <ProtectedRoute niveisPermitidos={niveisPermitidos}>
+            <CadastroUsuario />
+        </ProtectedRoute>
+    );
 }

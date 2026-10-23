@@ -5,7 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { verificarSessao } from '@/services/authService';
 
 // Fica no layout do dashboard: a cada página aberta confere se o usuário continua logado.
-// Se não estiver (nunca logou ou o servidor foi reiniciado), manda para a tela de login.
+// Se não estiver (nunca logou ou o backend recusou o token), manda para a tela de login.
 export default function VerificarSessao() {
   const router = useRouter();
   const pathname = usePathname();

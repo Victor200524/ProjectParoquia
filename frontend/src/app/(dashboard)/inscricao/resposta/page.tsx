@@ -20,14 +20,16 @@ export default function ResponderFormulario(){
         async function carregarFormularios(){
             try{
                 const dados = await formularioService.listarFormularios();
+                const nivel = localStorage.getItem('nivelUsuario');
                 const hoje = new Date().toLocaleDateString('sv-SE');
-                const abertos = dados.filter(formulario => formulario.dataInicioFormulario.slice(0, 10) <= hoje && formulario.dataFimFormulario.slice(0, 10) >= hoje);
+                // campista só vê formulário de campista e servo só de servo; os outros níveis veem todos
+                const ehCampistaOuServo = nivel === 'CAMPISTA' || nivel === 'SERVO';
+                const abertos = dados.filter(formulario => formulario.dataInicioFormulario.slice(0, 10) <= hoje && formulario.dataFimFormulario.slice(0, 10) >= hoje
+                    && (!ehCampistaOuServo || formulario.tipoFormulario === nivel));
                 setListaFormularios(abertos);
 
-                const idUsuarioLogado = Number(localStorage.getItem('idUsuario'));
-                const dadosInscricoes = await inscricaoAcampamentoService.listarInscricoes();
-                const doUsuario = dadosInscricoes.filter(inscricao => inscricao.usuario.idUsuario === idUsuarioLogado);
-                setMinhasInscricoes(doUsuario);
+                const dadosInscricoes = await inscricaoAcampamentoService.listarMinhasInscricoes();
+                setMinhasInscricoes(dadosInscricoes);
             }catch(error){
                 alert("Erro ao buscar os formulários: " + (error as Error).message);
             }
@@ -38,6 +40,11 @@ export default function ResponderFormulario(){
     // verifica se o usuário logado já se inscreveu no acampamento daquele formulário
     function jaInscrito(formulario: Formulario){
         return minhasInscricoes.some(inscricao => inscricao.acampamento.idAcampamento === formulario.acampamento.idAcampamento);
+    }
+
+    // bateu a capacidade: ninguém mais consegue se inscrever por este formulário
+    function esgotado(formulario: Formulario){
+        return formulario.capacidadeFormulario != null && (formulario.totalInscritos ?? 0) >= formulario.capacidadeFormulario;
     }
 
     return(
@@ -60,10 +67,20 @@ export default function ResponderFormulario(){
                             <p className={styles.cardInfo}><strong>Data de Início:</strong> {new Date(formulario.dataInicioFormulario).toLocaleDateString('pt-BR', { timeZone: 'UTC' })}</p>
                             <p className={styles.cardInfo}><strong>Data de Fim:</strong> {new Date(formulario.dataFimFormulario).toLocaleDateString('pt-BR', { timeZone: 'UTC' })}</p>
 
+                            {/* formulário antigo sem capacidade não tem limite, então não mostra as vagas */}
+                            {formulario.capacidadeFormulario != null && (
+                                <p className={styles.cardInfo}><strong>Vagas:</strong> {formulario.totalInscritos ?? 0} de {formulario.capacidadeFormulario} preenchidas</p>
+                            )}
+
                             <div className={styles.cardAcoes}>
-                                <Link href={`/inscricao/resposta/${formulario.idFormulario}`} className={styles.btnPrimario}>
-                                    {jaInscrito(formulario) ? "Ver minhas respostas" : "Responder"}
-                                </Link>
+                                {/* quem já se inscreveu continua podendo ver as respostas, mesmo esgotado */}
+                                {!jaInscrito(formulario) && esgotado(formulario) ? (
+                                    <span className={styles.btnEsgotado}>Esgotado</span>
+                                ) : (
+                                    <Link href={`/inscricao/resposta/${formulario.idFormulario}`} className={styles.btnPrimario}>
+                                        {jaInscrito(formulario) ? "Ver minhas respostas" : "Responder"}
+                                    </Link>
+                                )}
                             </div>
 
                         </div> 

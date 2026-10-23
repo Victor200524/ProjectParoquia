@@ -70,6 +70,33 @@ export const respostaService = {
         }
     },
 
+    // respostas de uma inscricao (o backend so libera para o dono ou admin/coordenador)
+    async buscarRespostasPorInscricao(idInscricao: number): Promise<Resposta[]> {
+        try {
+            const response = await fetch(`${BASE_URL}/buscarRespostasPorInscricao/${idInscricao}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${localStorage.getItem('token') || ''}`
+                }
+            });
+
+            if (response.status === 404) {
+                return [];
+            }
+
+            if (!response.ok) {
+                const errorData = await response.text();
+                throw new Error(errorData || 'Erro ao listar respostas');
+            }
+
+            return await response.json();
+        } catch (error) {
+            console.error('Erro na camada de serviço:', error);
+            throw error;
+        }
+    },
+
     async deletarResposta(idResposta: number): Promise<string> {
         try {
             const response = await fetch(`${BASE_URL}/deletarResposta/${idResposta}`, {

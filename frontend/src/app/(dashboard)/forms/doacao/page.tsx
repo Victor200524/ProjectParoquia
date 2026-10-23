@@ -5,7 +5,7 @@ import styles from './doacao.module.css';
 import { acampamentoService } from '@/services/acampamentoService';
 import { doacaoService } from '@/services/doacaoService'; 
 import { Doacao } from '@/types/doacao';
-import { Acampamento } from '@/types/acampamento';
+import { Acampamento, AcampamentoPublico } from '@/types/acampamento';
 
 export default function NovaDoacao() {
   const [formData, setFormData] = useState<Doacao>({
@@ -20,13 +20,13 @@ export default function NovaDoacao() {
   });
 
   // Estado para armazenar os acampamentos que vêm do banco
-  const [listaAcampamentos, setListaAcampamentos] = useState<Acampamento[]>([]);
+  const [listaAcampamentos, setListaAcampamentos] = useState<AcampamentoPublico[]>([]);
 
   // Busca os acampamentos ao carregar a página
   useEffect(() => {
     const carregarAcampamentos = async () => {
       try {
-        const dados = await acampamentoService.listarAcampamentos();
+        const dados = await acampamentoService.listarAcampamentosPublicos();
         if (dados && dados.length > 0) {
           setListaAcampamentos(dados);
         }

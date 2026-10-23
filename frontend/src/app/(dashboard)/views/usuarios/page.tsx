@@ -7,10 +7,10 @@ import { usuarioService } from "@/services/usuarioService";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import { formatarCPF, formatarTelefone } from "@/utils/formatters";
 
-const niveisPermitidos = ['COORDENADOR_GERAL', 'COORDENADOR_ACAMPAMENTO', 'PADRE', 'SECRETARIA'];
+const niveisPermitidos = ['COORDENADOR_GERAL', 'PADRE', 'SECRETARIA'];
 
 
-export default function VisualizarUsuarios(){
+function ListaUsuarios(){
 
     const [listaUsuarios, setListaUsuarios] = useState<Usuario[]>([]);
 
@@ -121,7 +121,6 @@ export default function VisualizarUsuarios(){
     }
 
     return(
-        <ProtectedRoute niveisPermitidos={niveisPermitidos}>
             <div className={styles.pageContainer}>
                 <div className={styles.header}>
                     <h1 className={styles.pageTitulo}>Usuários</h1>
@@ -241,6 +240,13 @@ export default function VisualizarUsuarios(){
                 )}
 
             </div>
+    );
+}
+
+export default function VisualizarUsuarios(){
+    return(
+        <ProtectedRoute niveisPermitidos={niveisPermitidos}>
+            <ListaUsuarios />
         </ProtectedRoute>
     );
 }

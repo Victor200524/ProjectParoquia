@@ -6,7 +6,7 @@ import ProtectedRoute from "@/components/auth/ProtectedRoute";
 
 // Types
 import { InscricaoAcampamento, InscricaoAcampamentoStatus } from "@/types/inscricaoAcampamento";
-import { Acampamento } from "@/types/acampamento";
+import { Acampamento, AcampamentoPublico } from "@/types/acampamento";
 
 // Services
 import { inscricaoAcampamentoService } from "@/services/inscricaoAcampamentoService";
@@ -16,10 +16,12 @@ import { acampamentoService } from "@/services/acampamentoService";
 const niveisPermitidos = ['COORDENADOR_GERAL', 'COORDENADOR_ACAMPAMENTO', 'PADRE', 'SECRETARIA'];
 
 
-export default function VisualizarInscricoes(){
+// Filho: só é montado depois que o ProtectedRoute liberou o acesso,
+// assim o useEffect não busca as inscrições antes da checagem de nível
+function ListaInscricoes(){
 
     const [listaInscricoes, setListaInscricoes] = useState<InscricaoAcampamento[]>([]);
-    const [listaAcampamentos, setListaAcampamentos] = useState<Acampamento[]>([]);
+    const [listaAcampamentos, setListaAcampamentos] = useState<AcampamentoPublico[]>([]);
 
     const [filtroTipo, setFiltroTipo] = useState("TODOS"); // TODOS, CAMPISTA ou SERVO
     const [filtroAcampamento, setFiltroAcampamento] = useState(0); // id do acampamento escolhido (0 = todos)
@@ -38,7 +40,7 @@ export default function VisualizarInscricoes(){
             }
             setEquipes(equipesSalvas);
 
-            const dadosAcampamentos = await acampamentoService.listarAcampamentos();
+            const dadosAcampamentos = await acampamentoService.listarAcampamentosPublicos();
             setListaAcampamentos(dadosAcampamentos);
 
         }catch(error){
@@ -66,6 +68,18 @@ export default function VisualizarInscricoes(){
         }
     };
 
+    const handleAvaliar = async (inscricao: InscricaoAcampamento, aprovado: boolean) => {
+        if(!confirm((aprovado ? "Aprovar" : "Reprovar") + " a inscrição de " + inscricao.usuario.nomeUsuario + "?"))
+            return;
+        try{
+            const mensagem = await inscricaoAcampamentoService.avaliarInscricao(Number(inscricao.idInscricao), aprovado);
+            await carregarDados();
+            alert(mensagem);
+        }catch(error){
+            alert("Erro ao avaliar a inscrição: " + (error as Error).message);
+        }
+    };
+
     // fica só com as inscrições que passam nos dois filtros escolhidos
     const inscricoesFiltradas = listaInscricoes.filter(inscricao =>
         (filtroTipo === "TODOS" || inscricao.funcaoAcampamento === filtroTipo) &&
@@ -74,8 +88,10 @@ export default function VisualizarInscricoes(){
 
     // troca o texto do banco (PAGAMENTO_PENDENTE) por um texto mais amigável
     function formatarStatus(status: InscricaoAcampamentoStatus){
+        if(status === 'AGUARDANDO_APROVACAO')
+            return "Aguardando aprovação";
         if(status === 'APROVADO')
-            return "Pago · Aprovado";
+            return "Aprovado";
         if(status === 'PAGAMENTO_PENDENTE')
             return "Pagamento pendente";
         return "Reprovado";
@@ -83,6 +99,8 @@ export default function VisualizarInscricoes(){
 
     // escolhe a cor da etiqueta: verde para quem pagou, vermelho para quem não pagou
     function classeStatus(status: InscricaoAcampamentoStatus){
+        if(status === 'AGUARDANDO_APROVACAO')
+            return styles.statusAguardando;
         if(status === 'APROVADO')
             return styles.statusAprovado;
         if(status === 'PAGAMENTO_PENDENTE')
@@ -91,7 +109,6 @@ export default function VisualizarInscricoes(){
     }
 
     return(
-        <ProtectedRoute niveisPermitidos={niveisPermitidos}>
             <div className={styles.pageContainer}>
                 <div className={styles.header}>
                     <h1 className={styles.pageTitulo}>Inscrições</h1>
@@ -147,6 +164,13 @@ export default function VisualizarInscricoes(){
                                             <span className={`${styles.status} ${classeStatus(inscricao.statusAprovacao)}`}>
                                                 {formatarStatus(inscricao.statusAprovacao)}
                                             </span>
+                                            {/* Só aparece para o servo que ainda espera a coordenação decidir */}
+                                            {inscricao.statusAprovacao === 'AGUARDANDO_APROVACAO' && (
+                                                <div className={styles.avaliacao}>
+                                                    <button type="button" className={styles.btnAprovar} onClick={() => handleAvaliar(inscricao, true)}>Aprovar</button>
+                                                    <button type="button" className={styles.btnReprovar} onClick={() => handleAvaliar(inscricao, false)}>Reprovar</button>
+                                                </div>
+                                            )}
                                         </td>
                                         <td>{new Date(inscricao.dataRegistro).toLocaleDateString('pt-BR')}</td>
                                         <td>
@@ -175,6 +199,13 @@ export default function VisualizarInscricoes(){
                 )}
 
             </div>
+    );
+}
+
+export default function VisualizarInscricoes(){
+    return(
+        <ProtectedRoute niveisPermitidos={niveisPermitidos}>
+            <ListaInscricoes />
         </ProtectedRoute>
     );
 }

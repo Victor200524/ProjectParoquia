@@ -3,27 +3,30 @@
 import { useState, useEffect } from "react";
 import styles from "./formularios.module.css";
 import { CriarFormulario } from "@/types/formulario";
-import { Acampamento } from "@/types/acampamento";
+import { Acampamento, AcampamentoPublico } from "@/types/acampamento";
 import { acampamentoService } from "@/services/acampamentoService";
 import { formularioService } from "@/services/formularioService";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
 
+const niveisPermitidos = ['COORDENADOR_GERAL', 'PADRE', 'SECRETARIA', 'COORDENADOR_ACAMPAMENTO'];
 
-export default function NovoFormulario() {
+
+function NovoFormulario() {
     const [formData, setFormData] = useState<CriarFormulario>({
         tituloFormulario: "",
         tipoFormulario: "CAMPISTA",
         dataInicioFormulario: "",
         dataFimFormulario: "",
+        capacidadeFormulario: 0,
         acampamento: { idAcampamento: 0 },
     });
-    const [listaAcampamentos, setListaAcampamentos] = useState<Acampamento[]>([]);
+    const [listaAcampamentos, setListaAcampamentos] = useState<AcampamentoPublico[]>([]);
 
     useEffect(() => {
 
         async function carregarAcampamentos() {
             try {
-                const dados = await acampamentoService.listarAcampamentos();
+                const dados = await acampamentoService.listarAcampamentosPublicos();
                 setListaAcampamentos(dados);
             } catch (error) {
                 alert("Erro ao buscar os acampamentos: " + (error as Error).message);
@@ -40,6 +43,10 @@ export default function NovoFormulario() {
             setFormData(prev => ({ ...prev, acampamento: { idAcampamento: Number(value) } })); // Atualiza o id do acampamento no estado
             return;
         }
+        if (name === "capacidadeFormulario") {
+            setFormData(prev => ({ ...prev, capacidadeFormulario: Number(value) })); // o input devolve texto, o banco espera número
+            return;
+        }
         setFormData(prev => ({ ...prev, [name]: value })); // Ele atualiza o estado do formulário com os novos valores
     };
 
@@ -53,6 +60,7 @@ export default function NovoFormulario() {
                 tipoFormulario: "CAMPISTA",
                 dataInicioFormulario: "",
                 dataFimFormulario: "",
+                capacidadeFormulario: 0,
                 acampamento: { idAcampamento: 0 },
             });
         } catch (error) {
@@ -118,6 +126,20 @@ export default function NovoFormulario() {
                         </select>
                     </div>
 
+                    <div className={styles.fieldGroup}>
+                        <label className={styles.fieldLabel} htmlFor="capacidadeFormulario">Capacidade de inscritos *</label>
+                        <input
+                            className={styles.inputField}
+                            id="capacidadeFormulario"
+                            name="capacidadeFormulario"
+                            type="number"
+                            min={1}
+                            value={formData.capacidadeFormulario || ""}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+
                     <h3 className={styles.sectionTitle}>Período do Formulário</h3>
                     <div className = {styles.grid2Col}>
                         <div className={styles.fieldGroup}>
@@ -154,6 +176,14 @@ export default function NovoFormulario() {
                 </form>
 
             </div>
+        </ProtectedRoute>
+    );
+}
+
+export default function FormsFormularios(){
+    return(
+        <ProtectedRoute niveisPermitidos={niveisPermitidos}>
+            <NovoFormulario />
         </ProtectedRoute>
     );
 }

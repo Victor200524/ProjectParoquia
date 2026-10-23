@@ -5,21 +5,19 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import styles from './cadastro.module.css';
 import { formatarCPF, formatarTelefone } from '@/utils/formatters';
-
-const BASE_URL = 'http://localhost:8080';
+import { usuarioService } from '@/services/usuarioService'; 
 
 export default function CadastroPage() {
   const router = useRouter();
   const [carregando, setCarregando] = useState(false);
   const [erro, setErro] = useState('');
-  
   const [formData, setFormData] = useState({
     nomeUsuario: '',
     cpfUsuario: '',
     emailUsuario: '',
     contatoUsuario: '',
     senhaUsuario: '',
-    nivelUsuario: '' // começa vazio para obrigar a pessoa a escolher entre Campista e Servo
+    nivelUsuario: ''
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -40,33 +38,10 @@ export default function CadastroPage() {
     setErro('');
     setCarregando(true);
 
-    const payload = {
-      nomeUsuario: formData.nomeUsuario,
-      cpfUsuario: formData.cpfUsuario,
-      emailUsuario: formData.emailUsuario,
-      contatoUsuario: formData.contatoUsuario,
-      senhaUsuario: formData.senhaUsuario,
-      nivelUsuario: formData.nivelUsuario,
-      statusUsuario: 'ATIVO'
-    };
-
     try {
-      const response = await fetch(`${BASE_URL}/usuario/cadastrarUsuario`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload)
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText || 'Erro ao realizar cadastro.');
-      }
-
+      await usuarioService.cadastrarUsuario(formData as any);
       alert('Cadastro realizado com sucesso! Faça seu login.');
       router.push('/login');
-
     } catch (error: any) {
       setErro(error.message);
     } finally {

@@ -67,8 +67,10 @@ export default function VisualizarRespostas(){
 
     // troca o texto do banco (PAGAMENTO_PENDENTE) por um texto mais amigável
     function formatarStatus(status: InscricaoAcampamentoStatus){
+        if(status === 'AGUARDANDO_APROVACAO')
+            return "Aguardando aprovação";
         if(status === 'APROVADO')
-            return "Pago · Aprovado";
+            return "Aprovado";
         if(status === 'PAGAMENTO_PENDENTE')
             return "Pagamento pendente";
         return "Reprovado";
@@ -76,6 +78,8 @@ export default function VisualizarRespostas(){
 
     // escolhe a cor da etiqueta: verde para quem pagou, vermelho para quem não pagou
     function classeStatus(status: InscricaoAcampamentoStatus){
+        if(status === 'AGUARDANDO_APROVACAO')
+            return styles.statusAguardando;
         if(status === 'APROVADO')
             return styles.statusAprovado;
         if(status === 'PAGAMENTO_PENDENTE')

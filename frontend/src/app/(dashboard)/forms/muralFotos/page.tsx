@@ -7,8 +7,11 @@ import styles from './muralFotos.module.css';
 import { acampamentoService } from '@/services/acampamentoService';
 import { MuralFotos } from '@/types/muralFotos';
 import { MuralFotosService } from '@/services/muralFotosService'; 
+import ProtectedRoute from '@/components/auth/ProtectedRoute';
 
-export default function CadastroMuralFotosPage() {
+const niveisPermitidos = ['COORDENADOR_GERAL', 'PADRE', 'SECRETARIA', 'COORDENADOR_ACAMPAMENTO'];
+
+function CadastroMuralFotosPage() {
   const router = useRouter();
   const [carregando, setCarregando] = useState(false);
   const [erro, setErro] = useState('');
@@ -27,7 +30,7 @@ export default function CadastroMuralFotosPage() {
   useEffect(() => {
     const carregarAcampamentos = async () => {
       try {
-        const data = await acampamentoService.listarAcampamentos();
+        const data = await acampamentoService.listarAcampamentosPublicos();
         setAcampamentos(data);
       } catch (err) {
         console.error("Erro ao buscar acampamentos:", err);
@@ -169,4 +172,12 @@ export default function CadastroMuralFotosPage() {
       </div>
     </div>
   );
+}
+
+export default function FormsMuralFotos(){
+    return(
+        <ProtectedRoute niveisPermitidos={niveisPermitidos}>
+            <CadastroMuralFotosPage />
+        </ProtectedRoute>
+    );
 }

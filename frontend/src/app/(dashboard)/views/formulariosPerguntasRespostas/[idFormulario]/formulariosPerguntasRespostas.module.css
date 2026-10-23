@@ -191,3 +191,10 @@
     padding: 1.25rem;
   }
 }
+
+/* Amarelo: servo esperando a coordenação aprovar */
+.statusAguardando {
+  color: #a16207;
+  background: rgba(234, 179, 8, 0.15);
+  border: 1px solid rgba(234, 179, 8, 0.45);
+}

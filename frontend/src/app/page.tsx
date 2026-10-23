@@ -9,14 +9,14 @@ import { comunidadeService } from '@/services/comunidadeService';
 import { Comunidade } from '@/types/comunidade'; 
 // Importe a service e o tipo de Acampamento (Ajuste o caminho se necessário)
 import { acampamentoService } from '@/services/acampamentoService'; 
-import { Acampamento } from '@/types/acampamento'; 
+import { Acampamento, AcampamentoPublico } from '@/types/acampamento'; 
 import { verificarSessao } from '@/services/authService';
 
 export default function LandingPage() {
   const [comunidades, setComunidades] = useState<Comunidade[]>([]);
   const [carregandoComunidades, setCarregandoComunidades] = useState(true);
   
-  const [acampamentos, setAcampamentos] = useState<Acampamento[]>([]);
+  const [acampamentos, setAcampamentos] = useState<AcampamentoPublico[]>([]);
   const [carregandoAcampamentos, setCarregandoAcampamentos] = useState(true);
 
   const [logado, setLogado] = useState(false); // se o usuário já está logado, o cabeçalho mostra o botão do painel
@@ -42,7 +42,7 @@ export default function LandingPage() {
 
       try {
         // Busca os acampamentos (Ajuste o nome da função se a sua service usar outro nome, ex: getAllAcampamentos)
-        const dadosAcampamentos = await acampamentoService.listarAcampamentos(); 
+        const dadosAcampamentos = await acampamentoService.listarAcampamentosPublicos(); 
         setAcampamentos(dadosAcampamentos);
       } catch (error) {
         console.error('Erro ao buscar acampamentos:', error);

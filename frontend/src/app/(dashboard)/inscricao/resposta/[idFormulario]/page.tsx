@@ -38,18 +38,15 @@ export default function ResponderFormulario(){
             setFormulario(dadosFormulario);
 
             // verifica se o usuário logado já tem inscrição no acampamento deste formulário
-            const idUsuarioLogado = Number(localStorage.getItem('idUsuario'));
-            const dadosInscricoes = await inscricaoAcampamentoService.listarInscricoes();
+            const dadosInscricoes = await inscricaoAcampamentoService.listarMinhasInscricoes();
             const minhaInscricao = dadosInscricoes.find(inscricao =>
-                inscricao.usuario.idUsuario === idUsuarioLogado &&
                 inscricao.acampamento.idAcampamento === dadosFormulario.acampamento.idAcampamento
             );
 
             // se já se inscreveu, busca as respostas dele para mostrar no lugar do formulário
-            if(minhaInscricao){
-                const dadosRespostas = await respostaService.listarRespostas();
-                const daInscricao = dadosRespostas.filter(resposta => resposta.inscricao.idInscricao === minhaInscricao.idInscricao);
-                setMinhasRespostas(daInscricao);
+            if(minhaInscricao && minhaInscricao.idInscricao){
+                const dadosRespostas = await respostaService.buscarRespostasPorInscricao(minhaInscricao.idInscricao);
+                setMinhasRespostas(dadosRespostas);
                 setJaInscrito(true);
             }
 
@@ -112,6 +109,10 @@ export default function ResponderFormulario(){
         }
     };
 
+    // bateu a capacidade: bloqueia quem ainda não se inscreveu (caso entre pelo link direto)
+    const esgotado = formulario != null && formulario.capacidadeFormulario != null
+        && (formulario.totalInscritos ?? 0) >= formulario.capacidadeFormulario;
+
     return(
         <div className={styles.pageContainer}>
             <div className={styles.coluna}>
@@ -139,6 +140,11 @@ export default function ResponderFormulario(){
                                 <p className={styles.respostaTexto}>{buscarMinhaResposta(pergunta.idPergunta)}</p>
                             </div>
                         ))}
+                        <Link href="/inscricao/resposta" className={styles.btnVoltar}>Voltar para a lista de formulários</Link>
+                    </>
+                ) : esgotado ? (
+                    <>
+                        <p className={styles.vazio}>Inscrições esgotadas! Todas as {formulario?.capacidadeFormulario} vagas deste formulário já foram preenchidas.</p>
                         <Link href="/inscricao/resposta" className={styles.btnVoltar}>Voltar para a lista de formulários</Link>
                     </>
                 ) : listaPerguntas.length === 0 ? (

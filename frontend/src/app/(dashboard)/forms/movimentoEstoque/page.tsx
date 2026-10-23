@@ -8,9 +8,10 @@ import { acampamentoService } from '@/services/acampamentoService';
 import { itemEstoqueService } from '@/services/itemEstoqueService';
 import { movimentoEstoqueService } from '@/services/movimentoEstoqueService';
 
-import type { Acampamento } from '@/types/acampamento';
+import type { Acampamento, AcampamentoPublico } from '@/types/acampamento';
 import type { ItemEstoque } from '@/types/itemEstoque';
 import type { CriarMovimentacaoEstoque } from '@/types/movimentoEstoque';
+import ProtectedRoute from '@/components/auth/ProtectedRoute';
 
 function obterDataHoraLocal() {
   const agora = new Date();
@@ -18,9 +19,10 @@ function obterDataHoraLocal() {
   return `${agora.getFullYear()}-${doisDigitos(agora.getMonth() + 1)}-${doisDigitos(agora.getDate())}` +
     `T${doisDigitos(agora.getHours())}:${doisDigitos(agora.getMinutes())}:${doisDigitos(agora.getSeconds())}`;
 }
+const niveisPermitidos = ['COORDENADOR_GERAL', 'PADRE', 'SECRETARIA', 'COORDENADOR_ACAMPAMENTO'];
 
-export default function NovaMovimentacao() {
-  const [listaAcampamentos, setListaAcampamentos] = useState<Acampamento[]>([]);
+function NovaMovimentacao() {
+  const [listaAcampamentos, setListaAcampamentos] = useState<AcampamentoPublico[]>([]);
   const [listaItens, setListaItens] = useState<ItemEstoque[]>([]);
   const [dataRegistro, setDataRegistro] = useState<string>('');
   const [formData, setFormData] = useState({
@@ -41,7 +43,7 @@ export default function NovaMovimentacao() {
     const carregarDados = async () => {
       try {
         const [acampamentos, itens] = await Promise.all([
-          acampamentoService.listarAcampamentos(),
+          acampamentoService.listarAcampamentosPublicos(),
           itemEstoqueService.listarItemEstoque() 
         ]);
         
@@ -270,4 +272,12 @@ export default function NovaMovimentacao() {
       </form>
     </div>
   );
+}
+
+export default function FormsMovimentacao(){
+    return(
+        <ProtectedRoute niveisPermitidos={niveisPermitidos}>
+            <NovaMovimentacao />
+        </ProtectedRoute>
+    );
 }

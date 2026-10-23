@@ -5,8 +5,12 @@ import Link from 'next/link';
 import styles from './itemEstoque.module.css'; 
 import { itemEstoqueService } from '@/services/itemEstoqueService';
 import { ItemEstoque } from '@/types/itemEstoque';
+import ProtectedRoute from '@/components/auth/ProtectedRoute';
 
-export default function NovoItemEstoque() {
+const niveisPermitidos = ['COORDENADOR_GERAL', 'PADRE', 'SECRETARIA', 'COORDENADOR_ACAMPAMENTO'];
+
+
+function NovoItemEstoque() {
   const [formData, setFormData] = useState<ItemEstoque>({
     nomeItemEstoque: '',
     qtdeItemEstoque: 0,
@@ -162,4 +166,12 @@ export default function NovoItemEstoque() {
       </form>
     </div>
   );
+}
+
+export default function FormsItemEstoque(){
+    return(
+        <ProtectedRoute niveisPermitidos={niveisPermitidos}>
+            <NovoItemEstoque />
+        </ProtectedRoute>
+    );
 }

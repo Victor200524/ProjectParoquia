@@ -1,4 +1,4 @@
-import {Acampamento} from "../types/acampamento";
+import {Acampamento, AcampamentoPublico} from "../types/acampamento";
 const BASE_URL = "http://localhost:8080/acampamento";
 
 export const acampamentoService = {
@@ -38,7 +38,8 @@ export const acampamentoService = {
             const response = await fetch(`${BASE_URL}/alterarAcampamento/${idAcampamento}`, {
                 method: "PUT",
                 headers: {
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${localStorage.getItem('token') || ''}`
                 },
                 body: JSON.stringify(acampamento)
             })
@@ -75,12 +76,33 @@ export const acampamentoService = {
         }
     },
 
+    async listarAcampamentosPublicos(): Promise<AcampamentoPublico[]>{
+        try {
+            const response = await fetch(`${BASE_URL}/publico`, {
+                method: "GET",
+                headers: { 
+                    "Content-Type": "application/json",
+                }
+            });
+            
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => null);
+                throw new Error(errorData?.message || "Erro ao listar os acampamentos públicos!");
+            }
+            return await response.json();
+        } catch (error) {
+            console.error("Erro na camada de serviço: ", error);
+            throw error;
+        }
+    },
+
     async buscarAcampamentoPorNome(nomeAcampamento: string): Promise<Acampamento[]> {
         try {
             const response = await fetch(`${BASE_URL}/buscarAcampamento/${nomeAcampamento}`, {
                 method: "GET",
                 headers: {
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${localStorage.getItem('token') || ''}`
                 },
             })
 
@@ -100,7 +122,8 @@ export const acampamentoService = {
             const response = await fetch(`${BASE_URL}/deletarAcampamento/${idAcampamento}`, {
                 method: "DELETE",
                 headers: {
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${localStorage.getItem('token') || ''}`
                 },
             })
 

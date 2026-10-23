@@ -30,18 +30,21 @@ export function logout() {
 }
 
 // Confere se o usuário continua logado.
-// O token guardado no login é o código que o servidor gerou quando ligou; se o servidor reiniciou,
-// o código mudou, o token antigo não bate mais e o usuário é deslogado.
+// Pergunta ao backend se o token (JWT) ainda vale; se ele recusar (401/403) — token expirado,
+// adulterado ou usuário inativado — o usuário é deslogado.
 export async function verificarSessao(): Promise<boolean> {
     const token = localStorage.getItem('token');
     if (!token)
         return false;
 
     try {
-        const response = await fetch("http://localhost:8080/usuario/sessaoServidor");
-        const sessaoServidor = await response.text();
+        const response = await fetch("http://localhost:8080/usuario/validarToken", {
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        });
 
-        if (response.ok && sessaoServidor !== token) {
+        if (response.status === 401 || response.status === 403) {
             logout();
             return false;
         }

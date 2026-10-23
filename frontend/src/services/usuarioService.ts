@@ -46,7 +46,30 @@ export const usuarioService = {
 
     async cadastrarUsuario(usuario: Usuario): Promise<string> {
         try {
+            // Rota pública (cadastro de quem ainda não tem conta), por isso não manda o token
             const response = await fetch(`${BASE_URL}/cadastrarUsuario`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(usuario)
+            });
+            
+            // O Java retorna uma String de sucesso ou erro (ex: "E-mail já cadastrado!")
+            const responseText = await response.text();
+            if (!response.ok) {
+                throw new Error(responseText || "Erro ao criar usuário");
+            }
+            return responseText;
+        } catch (error) {
+            console.error("Erro na camada de serviço: ", error);
+            throw error;
+        }
+    },
+
+    async cadastrarUsuarioAdmin(usuario: Usuario): Promise<string> {
+        try {
+            const response = await fetch(`${BASE_URL}/cadastrarUsuarioAdmin`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

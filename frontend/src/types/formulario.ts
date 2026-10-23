@@ -8,12 +8,14 @@ export interface Formulario {
     tipoFormulario: TipoFormulario;
     dataInicioFormulario: string;
     dataFimFormulario: string;
+    capacidadeFormulario: number; // limite de inscritos deste formulário
     acampamento: Acampamento;
+    totalInscritos?: number; // calculado pelo backend: quantos já ocupam vaga (não existe no banco)
 }
 
 // O Omit funciona como uma forma de criar um novo tipo a partir de outro, mas omitindo algumas propriedades. 
 // No caso do CriarFormulario, estamos criando um novo tipo baseado no Formulario, mas removendo as propriedades 'idFormulario' e 'acampamento'. 
 // tipo usado para criar: sem id (o banco gera) e com acampamento só pelo id.
-export type CriarFormulario = Omit<Formulario, 'idFormulario' | 'acampamento'> & {
+export type CriarFormulario = Omit<Formulario, 'idFormulario' | 'acampamento' | 'totalInscritos'> & {
     acampamento: { idAcampamento: number };
 };

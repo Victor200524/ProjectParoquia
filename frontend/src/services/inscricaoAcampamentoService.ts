@@ -51,6 +51,33 @@ export const inscricaoAcampamentoService = {
         }
     },
 
+    // so as inscricoes do usuario logado (o backend descobre quem e pelo token)
+    async listarMinhasInscricoes(): Promise<InscricaoAcampamento[]> {
+        try {
+            const response = await fetch(`${BASE_URL}/minhasInscricoes`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${localStorage.getItem('token') || ''}`
+                }
+            });
+
+            if (response.status === 404) {
+                return [];
+            }
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(errorText || 'Erro ao listar inscrições');
+            }
+
+            return await response.json();
+        } catch (error) {
+            console.error('Erro na camada de serviço:', error);
+            throw error;
+        }
+    },
+
     async alterarInscricaoAcampamento(idInscricao: number, inscricao: CriarInscricaoAcampamento): Promise<string> {
         try {
             const response = await fetch(`${BASE_URL}/alterarInscricao/${idInscricao}`, {
@@ -66,6 +93,28 @@ export const inscricaoAcampamentoService = {
                 throw new Error(errorText || 'Erro ao alterar inscrição');
             }
             return await response.text();
+        } catch (error) {
+            console.error('Erro na camada de serviço:', error);
+            throw error;
+        }
+    },
+
+    // Coordenador aprova (true) ou reprova (false) a inscrição do servo que está aguardando aprovação
+    async avaliarInscricao(idInscricao: number, aprovado: boolean): Promise<string> {
+        try {
+            const response = await fetch(`${BASE_URL}/avaliarInscricao/${idInscricao}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${localStorage.getItem('token') || ''}`
+                },
+                body: JSON.stringify({ aprovado: aprovado })
+            });
+            const responseText = await response.text();
+            if (!response.ok) {
+                throw new Error(responseText || 'Erro ao avaliar a inscrição');
+            }
+            return responseText;
         } catch (error) {
             console.error('Erro na camada de serviço:', error);
             throw error;
