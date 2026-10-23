@@ -24,7 +24,7 @@ public class TokenService {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             return JWT.create()
                     .withIssuer("paroquia-api") // Quem está enviando o token
-                    .withSubject(usuario.getEmailUsuario()) // Salvo no token o email do usuário
+                    .withSubject(usuario.getCpfUsuario()) // Salvo no token o CPF do usuário
                     .withExpiresAt(gerarDataExpiracao()) // Tempo de vida do token
                     .sign(algorithm); // Assina e fecha o token
         } catch (JWTCreationException exception) {
@@ -39,7 +39,7 @@ public class TokenService {
                     .withIssuer("paroquia-api")
                     .build()
                     .verify(token) // Verifica se não é falso ou se não expirou
-                    .getSubject(); // Devolve o email
+                    .getSubject(); // Devolve o CPF
         } catch (JWTVerificationException exception) {
             return ""; // Devolve vazio, e por padrao o spring ja bloqueia
         }

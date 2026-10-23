@@ -1,5 +1,6 @@
 package br.com.paroquia.backend.restcontrollers;
 
+import br.com.paroquia.backend.dtos.AcampamentoPublicoDTO;
 import br.com.paroquia.backend.entities.Acampamento;
 import br.com.paroquia.backend.services.AcampamentoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,28 @@ public class AcampamentoRestControllers {
         List<Acampamento> acampamentoList = acampamentoService.getAllAcampamentos();
         if (acampamentoList != null && !acampamentoList.isEmpty())
             return ResponseEntity.ok(acampamentoList);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhum acampamento cadastrado");
+    }
+
+    @GetMapping(value = "/publico")
+    public ResponseEntity<Object> getAcampamentosPublicos() {
+        List<Acampamento> acampamentoList = acampamentoService.getAllAcampamentos();
+        List<AcampamentoPublicoDTO> acampamentoPublicoDTOList = acampamentoList.stream().map(a-> new AcampamentoPublicoDTO(
+                a.getIdAcampamento(),
+                a.getNomeAcampamento(),
+                a.getLocalAcampamento(),
+                a.getIdadeMinAcampamento(),
+                a.getIdadeMaxAcampamento(),
+                a.getTaxaInscricaoAcampamento(),
+                a.getVagasAcampamento(),
+                a.getDataInicioAcampamento(),
+                a.getDataFimAcampamento(),
+                a.getInformacoesAcampamento(),
+                a.getFotoAcampamento(),
+                a.getComunidade()
+        )).toList();
+        if(!acampamentoPublicoDTOList.isEmpty())
+            return ResponseEntity.ok(acampamentoPublicoDTOList);
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhum acampamento cadastrado");
     }
 

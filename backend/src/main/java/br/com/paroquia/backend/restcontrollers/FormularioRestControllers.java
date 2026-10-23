@@ -2,6 +2,7 @@ package br.com.paroquia.backend.restcontrollers;
 
 import br.com.paroquia.backend.entities.Formulario;
 import br.com.paroquia.backend.services.FormularioService;
+import br.com.paroquia.backend.services.InscricaoAcampamentoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,11 +17,24 @@ public class FormularioRestControllers {
     @Autowired
     FormularioService formularioService;
 
+    @Autowired
+    InscricaoAcampamentoService inscricaoAcampamentoService;
+
+    // Conta quantos já ocupam vaga no acampamento/função do formulário (mesma conta do gravarInscricao)
+    // para a tela mostrar "Esgotado" quando bater a capacidade
+    private void preencherInscritos(Formulario formulario){
+        formulario.setTotalInscritos(inscricaoAcampamentoService.contarInscritos(
+                formulario.getAcampamento().getIdAcampamento(), formulario.getTipoFormulario().name()));
+    }
+
     @GetMapping(value = "/todosFormularios")
     public ResponseEntity<Object> todosFormularios(){
         List<Formulario> formularioList = formularioService.getAll();
-        if(formularioList != null && !formularioList.isEmpty())
+        if(formularioList != null && !formularioList.isEmpty()){
+            for(Formulario formulario : formularioList)
+                preencherInscritos(formulario);
             return ResponseEntity.status(HttpStatus.OK).body(formularioList);
+        }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhuma formulário cadastrado!");
     }
 
@@ -35,8 +49,10 @@ public class FormularioRestControllers {
     @GetMapping(value = "/buscarFormularioId/{id}")
     public ResponseEntity<Object> buscarFormularioId(@PathVariable Long id){
         Formulario formularioID = formularioService.getFormularioId(id);
-        if(formularioID != null)
+        if(formularioID != null){
+            preencherInscritos(formularioID);
             return ResponseEntity.status(HttpStatus.OK).body(formularioID);
+        }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Formulario não encontrado!");
     }
 
@@ -44,6 +60,9 @@ public class FormularioRestControllers {
     public ResponseEntity<Object> gravarFormulario(@RequestBody Formulario formulario){
         try {
             if(formulario != null){
+                if(formulario.getCapacidadeFormulario() == null || formulario.getCapacidadeFormulario() <= 0)
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Informe a capacidade de inscritos (maior que zero)!");
+
                 Formulario formularioSalvo = formularioService.save(formulario);
                 return ResponseEntity.status(HttpStatus.OK).body(formularioSalvo);
             }
@@ -58,6 +77,9 @@ public class FormularioRestControllers {
         try {
             Formulario formularioAux = formularioService.getFormularioId(id);
             if(formularioAux != null){
+                if(formulario.getCapacidadeFormulario() == null || formulario.getCapacidadeFormulario() <= 0)
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Informe a capacidade de inscritos (maior que zero)!");
+
                 formulario.setIdFormulario(formularioAux.getIdFormulario());
                 formularioService.save(formulario);
                 return ResponseEntity.status(HttpStatus.OK).body("Formulario alterado com sucesso!");

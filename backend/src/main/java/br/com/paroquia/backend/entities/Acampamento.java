@@ -1,5 +1,6 @@
 package br.com.paroquia.backend.entities;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
@@ -45,9 +46,11 @@ public class Acampamento {
     @Column(name = "\"foto_Acampamento\"", columnDefinition = "bytea")
     private byte[] fotoAcampamento;
 
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(name = "\"tokenMercadoPago_Acampamento\"")
     private String tokenMercadoPagoAcampamento;
 
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @ManyToOne
     @JoinColumn(name = "usuario_id_usuario", nullable = false)
     private Usuario usuario;

@@ -1,6 +1,7 @@
 package br.com.paroquia.backend.security;
 
 import br.com.paroquia.backend.entities.Usuario;
+import br.com.paroquia.backend.enums.UsuarioTipoStatus;
 import br.com.paroquia.backend.services.UsuarioService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -31,10 +32,10 @@ public class SecurityFilter extends OncePerRequestFilter {
                 var subject = tokenService.validarToken(token);
 
                 if (subject != null) {
-                    var usuario = usuarioService.getCpfUsuario(subject); // ou findByCpf dependendo de como gera o token
+                    var usuario = usuarioService.getCpfUsuario(subject);
 
-                    // SR$ 130,00ó autentica se o usuário realmente existir no banco
-                    if (usuario != null) {
+                    // Só autentica se o usuário realmente existir no banco e se o usuario nao esta inativo no banco
+                    if (usuario != null && usuario.getStatusUsuario() != UsuarioTipoStatus.INATIVO) {
                         var authentication = new UsernamePasswordAuthenticationToken(usuario, null, usuario.getAuthorities());
                         SecurityContextHolder.getContext().setAuthentication(authentication);
                     }

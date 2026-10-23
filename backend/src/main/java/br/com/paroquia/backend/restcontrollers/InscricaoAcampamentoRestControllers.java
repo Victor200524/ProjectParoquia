@@ -1,12 +1,17 @@
 package br.com.paroquia.backend.restcontrollers;
 
 
+import br.com.paroquia.backend.entities.Formulario;
 import br.com.paroquia.backend.entities.InscricaoAcampamento;
+import br.com.paroquia.backend.entities.Usuario;
 import br.com.paroquia.backend.enums.InscricaoAcampamentoStatus;
+import br.com.paroquia.backend.enums.TipoFormulario;
+import br.com.paroquia.backend.services.FormularioService;
 import br.com.paroquia.backend.services.InscricaoAcampamentoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -18,6 +23,9 @@ import java.util.List;
 public class InscricaoAcampamentoRestControllers {
     @Autowired
     InscricaoAcampamentoService inscricaoAcampamentoService;
+
+    @Autowired
+    FormularioService formularioService;
 
     @GetMapping(value = "/todasInscricoes")
     public ResponseEntity<Object> buscarInscricao(){
@@ -33,19 +41,47 @@ public class InscricaoAcampamentoRestControllers {
             ResponseEntity.status(HttpStatus.NOT_FOUND).body("Inscrição não encontrada!");
     }
 
+    // Devolve só as inscrições do usuário dono do token
+    // Sem inscrição devolve lista vazia, pois é normal para quem acabou de se cadastrar
+    @GetMapping(value = "/minhasInscricoes")
+    public ResponseEntity<Object> minhaInscricao(@AuthenticationPrincipal Usuario usuarioLogado){
+        List<InscricaoAcampamento> inscricoes = inscricaoAcampamentoService.buscarInscricaoUsuario(usuarioLogado.getIdUsuario());
+        return ResponseEntity.ok(inscricoes);
+    }
+
     @PostMapping(value = "/gravarInscricao")
-    public ResponseEntity<Object> gravarInscricao(@RequestBody InscricaoAcampamento inscricaoAcampamento){
+    public ResponseEntity<Object> gravarInscricao(@RequestBody InscricaoAcampamento inscricaoAcampamento, @AuthenticationPrincipal Usuario usuarioLogado){
         if(inscricaoAcampamento != null){
+            inscricaoAcampamento.setUsuario(usuarioLogado);
             if(inscricaoAcampamentoService.buscarInscricaoUsuarioAcampamento(inscricaoAcampamento.getUsuario().getIdUsuario(),
                     inscricaoAcampamento.getAcampamento().getIdAcampamento()) == null){ // Verifico se o usuario na esta fazendo a inscrição 2x
-                if(inscricaoAcampamento.getUsuario().getIdUsuario() != null){ //se o usuario realmente existe
-                    inscricaoAcampamento.setFuncaoAcampamento(inscricaoAcampamento.getFuncaoAcampamento().toUpperCase()); // sempre grava em maiúsculas
-                    inscricaoAcampamento.setStatusAprovacao(InscricaoAcampamentoStatus.PAGAMENTO_PENDENTE);
-                    inscricaoAcampamento.setDataRegistro(LocalDateTime.now());
-                    inscricaoAcampamentoService.save(inscricaoAcampamento);
-                    return ResponseEntity.status(HttpStatus.OK).body(inscricaoAcampamento);
+
+                String funcao = inscricaoAcampamento.getFuncaoAcampamento().toUpperCase(); // sempre grava em maiúsculas
+                if(!funcao.equals("CAMPISTA") && !funcao.equals("SERVO"))
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Função inválida: escolha CAMPISTA ou SERVO!");
+                // campista só se inscreve como campista e servo só como servo; os outros níveis podem escolher
+                String nivel = usuarioLogado.getNivelUsuario().name();
+                if((nivel.equals("CAMPISTA") || nivel.equals("SERVO")) && !nivel.equals(funcao))
+                    return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Este formulário é para " + funcao + ", mas o seu cadastro é de " + nivel + "!");
+                inscricaoAcampamento.setFuncaoAcampamento(funcao);
+
+                // Confere se ainda tem vaga: a capacidade fica no formulário do acampamento para aquela função
+                Long idAcampamento = inscricaoAcampamento.getAcampamento().getIdAcampamento();
+                Formulario formulario = formularioService.buscarFormularioAcampamentoTipo(idAcampamento, TipoFormulario.valueOf(funcao));
+                if(formulario != null && formulario.getCapacidadeFormulario() != null){ // formulário antigo sem capacidade não tem limite
+                    long inscritos = inscricaoAcampamentoService.contarInscritos(idAcampamento, funcao);
+                    if(inscritos >= formulario.getCapacidadeFormulario())
+                        return ResponseEntity.status(HttpStatus.CONFLICT).body("Inscrições esgotadas! Capacidade máxima: " + formulario.getCapacidadeFormulario() + " inscrito(s).");
                 }
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario não encontrado!");
+
+                // O servo precisa ser aprovado pela coordenação; o campista já vai direto para o pagamento
+                if(funcao.equals("SERVO"))
+                    inscricaoAcampamento.setStatusAprovacao(InscricaoAcampamentoStatus.AGUARDANDO_APROVACAO);
+                else
+                    inscricaoAcampamento.setStatusAprovacao(InscricaoAcampamentoStatus.PAGAMENTO_PENDENTE);
+                inscricaoAcampamento.setDataRegistro(LocalDateTime.now());
+                inscricaoAcampamentoService.save(inscricaoAcampamento);
+                return ResponseEntity.status(HttpStatus.OK).body(inscricaoAcampamento);
             }
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Inscrição de acampamento ja realizada");
         }
@@ -77,6 +113,29 @@ public class InscricaoAcampamentoRestControllers {
             inscricaoAcampamento.setEquipeAcampamento(equipe.isEmpty() ? null : equipe);
             inscricaoAcampamentoService.save(inscricaoAcampamento);
             return ResponseEntity.status(HttpStatus.OK).body("Equipe do servo alterada com sucesso!");
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Inscrição de acampamento não encontrada!");
+    }
+
+    // Aprovação do servo: o coordenador aprova ou reprova a inscrição que está aguardando
+    public record AvaliacaoDTO(boolean aprovado) {}
+    @PutMapping(value = "/avaliarInscricao/{id}")
+    public ResponseEntity<Object> avaliarInscricao(@PathVariable Long id, @RequestBody AvaliacaoDTO avaliacaoDto){
+        InscricaoAcampamento inscricaoAcampamento = inscricaoAcampamentoService.buscarInscricao(id);
+        if(inscricaoAcampamento != null){
+            if(inscricaoAcampamento.getStatusAprovacao() != InscricaoAcampamentoStatus.AGUARDANDO_APROVACAO)
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Essa inscrição não está aguardando aprovação!");
+
+            if(avaliacaoDto.aprovado())
+                inscricaoAcampamento.setStatusAprovacao(InscricaoAcampamentoStatus.APROVADO);
+            else{
+                inscricaoAcampamento.setStatusAprovacao(InscricaoAcampamentoStatus.REPROVADO);
+                inscricaoAcampamentoService.deletarInscricao(inscricaoAcampamento);
+            }
+
+            inscricaoAcampamentoService.save(inscricaoAcampamento);
+            return ResponseEntity.status(HttpStatus.OK).body("Inscrição de " + inscricaoAcampamento.getUsuario().getNomeUsuario()
+                    + (avaliacaoDto.aprovado() ? " aprovada!" : " reprovada!"));
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Inscrição de acampamento não encontrada!");
     }

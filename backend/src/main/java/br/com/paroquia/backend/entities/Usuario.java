@@ -2,6 +2,8 @@ package br.com.paroquia.backend.entities;
 
 import br.com.paroquia.backend.enums.UsuarioTipoNivel;
 import br.com.paroquia.backend.enums.UsuarioTipoStatus;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -28,6 +30,7 @@ public class Usuario implements UserDetails {
     @Column(name = "\"email_Usuario\"", unique = true)
     private String emailUsuario;
 
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(name = "\"senha_Usuario\"")
     private String senhaUsuario;
 
@@ -146,6 +149,7 @@ public class Usuario implements UserDetails {
         };
     }
 
+    @JsonIgnore
     @Override
     public String getPassword() {
         return this.senhaUsuario;

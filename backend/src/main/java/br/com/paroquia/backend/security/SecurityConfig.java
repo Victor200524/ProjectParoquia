@@ -31,35 +31,69 @@ public class SecurityConfig {
                 .cors(withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        // Essas rotas sao abertas devido elas nao precisarem de tokens
-                        .requestMatchers(HttpMethod.POST, "/autenticacao").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/usuario/**").permitAll()
-
                         // Deixei liberado devido as testes dos pix que estou fazendo
                         .requestMatchers("/pagamento/**").permitAll()
 
                         /*
                         * Nivel dos usuários
-                        * 0 - Coordenador Geral/Padre/Secreatária
-                        * 1 - Coordenador dos Acampamentos
-                        * 2 - Campistas / Servo
+                        * 0 - Coordenador Geral/Padre/Secreatária - ROLE_ADMIN
+                        * 1 - Coordenador dos Acampamentos - ROLE_COORDENADOR
+                        * 2 - Campistas / Servo - ROLE_USER
                         * */
 
                         // Rotas bloqueadas por nível
-                         .requestMatchers("/acampamento/**").permitAll()//.hasRole("COORDENADOR")
-                        .requestMatchers("/doacao/**").permitAll()
-                        .requestMatchers("/comunidade/**").permitAll()
-                        .requestMatchers("/pastoral/**").permitAll()
-                        .requestMatchers("/usuario/**").permitAll()
-                        .requestMatchers("/inscricao/**").permitAll()
-                        .requestMatchers("/movimentacaoEstoque/**").permitAll()
-                        .requestMatchers("/itemEstoque/**").permitAll()
-                        .requestMatchers("/muralFotos/**").permitAll()
-                        .requestMatchers("/formulario/**").permitAll()
-                        .requestMatchers("/pergunta/**").permitAll()
-                        .requestMatchers("/resposta/**").permitAll()
-                        .requestMatchers("/inscricaoAcampamento/**").permitAll()
+                        // --- Acampamento ---
+                        .requestMatchers(HttpMethod.GET,"/acampamento/publico").permitAll()
+                         .requestMatchers("/acampamento/**").hasRole("ADMIN")
+
+                        // --- Doação ---
+                        .requestMatchers("/doacao/**").hasAnyRole("ADMIN", "COORDENADOR")
+
+                        // --- Comunidade ---
+                        .requestMatchers(HttpMethod.GET,"/comunidade/**").permitAll()
+                        .requestMatchers("/comunidade/**").hasRole("ADMIN")
+
+                        // --- Pastoral ---
+                        .requestMatchers("/pastoral/**").hasRole("ADMIN")
+
+                        // --- Usuario ---
+                        .requestMatchers(HttpMethod.GET,"/usuario/validarToken").authenticated() // So entra quem tem o token validado
+                        .requestMatchers(HttpMethod.POST, "/usuario/cadastrarUsuario").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/usuario/loginUsuario").permitAll()
+                        .requestMatchers("/usuario/**").hasRole("ADMIN")
+
+                        // --- Movimentação Estoque ---
+                        .requestMatchers("/movimentacaoEstoque/**").hasAnyRole("ADMIN", "COORDENADOR")
+
+                        // --- Item Estoque ---
+                        .requestMatchers("/itemEstoque/**").hasAnyRole("ADMIN", "COORDENADOR")
+
+                        // --- Mural Fotos ---
+                        .requestMatchers(HttpMethod.GET,"/muralFotos/**").permitAll()
+                        .requestMatchers("/muralFotos/**").hasAnyRole("ADMIN", "COORDENADOR")
+
+                        // --- Formularios ---
+                        .requestMatchers(HttpMethod.GET,"/formulario/**").hasRole("USER")
+                        .requestMatchers("/formulario/**").hasAnyRole("ADMIN", "COORDENADOR")
+
+                        // --- Perguntas ---
+                        .requestMatchers(HttpMethod.GET,"/pergunta/**").hasRole("USER")
+                        .requestMatchers("/pergunta/**").hasAnyRole("ADMIN", "COORDENADOR")
+
+                        // --- Resposta ---
+                        .requestMatchers(HttpMethod.POST,"/resposta/gravarResposta").hasRole("USER")
+                        .requestMatchers(HttpMethod.GET, "/resposta/buscarRespostasPorInscricao/**").hasRole("USER")
+                        .requestMatchers(HttpMethod.PUT, "/resposta/alterarResposta/**").hasRole("USER")
+                        .requestMatchers("/resposta/**").hasAnyRole("ADMIN", "COORDENADOR")
+
+                        // --- Inscrição Acampamento ---
+                        .requestMatchers("/inscricaoAcampamento/minhasInscricoes").authenticated()
+                        .requestMatchers(HttpMethod.POST,"/inscricaoAcampamento/gravarInscricao").hasRole("USER")
+                        .requestMatchers("/inscricaoAcampamento/**").hasAnyRole("ADMIN", "COORDENADOR")
+
+                        // --- Erros ---
                         .requestMatchers("/error").permitAll() // Desmascara os erros internos
+
                         // Qualquer outra requisição precisa do Token (Usuário logado)
                         .anyRequest().authenticated()
                 )

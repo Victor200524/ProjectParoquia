@@ -26,19 +26,27 @@ public class Formulario {
     @Column(name = "\"dataFim_Formulario\"")
     private Date dataFimFormulario;
 
+    @Column(name = "\"capacidade_Formulario\"")
+    private Integer capacidadeFormulario; // quantas pessoas podem se inscrever por este formulário
+
     @ManyToOne
     @JoinColumn(name = "acampamento_id_acampamento")
     private Acampamento acampamento;
 
+    // Não vira coluna no banco: é calculado na hora pelo controller para a tela saber se esgotou
+    @Transient
+    private Long totalInscritos;
+
     public Formulario() {
     }
 
-    public Formulario(Long idFormulario, String tituloFormulario, TipoFormulario tipoFormulario, Date dataInicioFormulario, Date dataFimFormulario, Acampamento acampamento) {
+    public Formulario(Long idFormulario, String tituloFormulario, TipoFormulario tipoFormulario, Date dataInicioFormulario, Date dataFimFormulario, Integer capacidadeFormulario, Acampamento acampamento) {
         this.idFormulario = idFormulario;
         this.tituloFormulario = tituloFormulario;
         this.tipoFormulario = tipoFormulario;
         this.dataInicioFormulario = dataInicioFormulario;
         this.dataFimFormulario = dataFimFormulario;
+        this.capacidadeFormulario = capacidadeFormulario;
         this.acampamento = acampamento;
     }
 
@@ -82,11 +90,27 @@ public class Formulario {
         this.dataFimFormulario = dataFimFormulario;
     }
 
+    public Integer getCapacidadeFormulario() {
+        return capacidadeFormulario;
+    }
+
+    public void setCapacidadeFormulario(Integer capacidadeFormulario) {
+        this.capacidadeFormulario = capacidadeFormulario;
+    }
+
     public Acampamento getAcampamento() {
         return acampamento;
     }
 
     public void setAcampamento(Acampamento acampamento) {
         this.acampamento = acampamento;
+    }
+
+    public Long getTotalInscritos() {
+        return totalInscritos;
+    }
+
+    public void setTotalInscritos(Long totalInscritos) {
+        this.totalInscritos = totalInscritos;
     }
 }
