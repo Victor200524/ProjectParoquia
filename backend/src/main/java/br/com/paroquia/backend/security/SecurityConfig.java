@@ -31,9 +31,6 @@ public class SecurityConfig {
                 .cors(withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        // Deixei liberado devido as testes dos pix que estou fazendo
-                        .requestMatchers("/pagamento/**").permitAll()
-
                         /*
                         * Nivel dos usuários
                         * 0 - Coordenador Geral/Padre/Secreatária - ROLE_ADMIN
@@ -90,6 +87,11 @@ public class SecurityConfig {
                         .requestMatchers("/inscricaoAcampamento/minhasInscricoes").authenticated()
                         .requestMatchers(HttpMethod.POST,"/inscricaoAcampamento/gravarInscricao").hasRole("USER")
                         .requestMatchers("/inscricaoAcampamento/**").hasAnyRole("ADMIN", "COORDENADOR")
+
+                        // --- Pagamento ---
+                        .requestMatchers(HttpMethod.POST, "/pagamento/criarPreferencia").hasRole("USER")
+                        .requestMatchers(HttpMethod.POST, "/pagamento/verificarPagamento/**").hasRole("USER")
+                        .requestMatchers("/pagamento/**").hasAnyRole("ADMIN", "COORDENADOR")
 
                         // --- Erros ---
                         .requestMatchers("/error").permitAll() // Desmascara os erros internos

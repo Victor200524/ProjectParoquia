@@ -1,12 +1,17 @@
 package br.com.paroquia.backend.services;
 
+import br.com.paroquia.backend.entities.Formulario;
 import br.com.paroquia.backend.entities.InscricaoAcampamento;
 import br.com.paroquia.backend.entities.Usuario;
 import br.com.paroquia.backend.enums.InscricaoAcampamentoStatus;
+import br.com.paroquia.backend.enums.TipoFormulario;
+import br.com.paroquia.backend.repositories.FormularioRepository;
 import br.com.paroquia.backend.repositories.InscricaoAcampamentoRepository;
+import br.com.paroquia.backend.repositories.RespostaRepository;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -17,9 +22,24 @@ import java.util.List;
 public class InscricaoAcampamentoService {
     @Autowired
     InscricaoAcampamentoRepository inscricaoRepository;
+    @Autowired
+    FormularioRepository formularioRepository;
+    @Autowired
+    RespostaRepository respostaRepository;
 
     public InscricaoAcampamento buscarInscricao(Long idInscricao) {
         return inscricaoRepository.findById(idInscricao).orElse(null);
+    }
+
+    // Decide o status depois que a inscrição é aceita: se não tem nada a pagar, já confirma
+    public InscricaoAcampamentoStatus statusInicialPagamento(Long idAcampamento, String funcao) {
+        Formulario formulario = formularioRepository.findFirstByAcampamentoIdAcampamentoAndTipoFormulario(
+                idAcampamento, TipoFormulario.valueOf(funcao));
+
+        if (formulario != null && formulario.getPrecoFormulario() != null && formulario.getPrecoFormulario() == 0) {
+            return InscricaoAcampamentoStatus.CONFIRMADO;
+        }
+        return InscricaoAcampamentoStatus.PAGAMENTO_PENDENTE;
     }
 
     public List<InscricaoAcampamento> buscarInscricaoNome(String nome){
@@ -65,7 +85,7 @@ public class InscricaoAcampamentoService {
                     if(funcao.equals("SERVO"))
                         inscricao.setStatusAprovacao(InscricaoAcampamentoStatus.AGUARDANDO_APROVACAO);
                     else{
-                        inscricao.setStatusAprovacao(InscricaoAcampamentoStatus.PAGAMENTO_PENDENTE);
+                        inscricao.setStatusAprovacao(statusInicialPagamento(inscricao.getAcampamento().getIdAcampamento(), funcao));
                         inscricao.setEquipeAcampamento(null); // campista não tem equipe
                     }
                     inscricaoRepository.save(inscricao);
@@ -74,7 +94,11 @@ public class InscricaoAcampamentoService {
         }
     }
 
+    // A resposta do formulário aponta para a inscrição (FK sem cascade no banco), então as respostas saem antes.
+    // Inscrição com pagamento continua sendo barrada pelo banco de propósito: registro financeiro não se apaga.
+    @Transactional
     public void deletarInscricao(InscricaoAcampamento inscricaoAcampamento) {
+        respostaRepository.deleteAll(respostaRepository.findByInscricao(inscricaoAcampamento));
         inscricaoRepository.delete(inscricaoAcampamento);
     }
 }

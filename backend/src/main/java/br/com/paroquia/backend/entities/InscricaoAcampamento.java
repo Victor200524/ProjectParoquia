@@ -1,6 +1,7 @@
 package br.com.paroquia.backend.entities;
 
 import br.com.paroquia.backend.enums.InscricaoAcampamentoStatus;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
@@ -33,6 +34,7 @@ public class InscricaoAcampamento {
 
     @ManyToOne
     @JoinColumn(name = "acampamento_id_acampamento", nullable = false)
+    @JsonIgnoreProperties("fotoAcampamento") // a foto pesa centenas de KB e nenhuma tela de inscrição/pagamento usa
     private Acampamento acampamento;
 
 

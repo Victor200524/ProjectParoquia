@@ -175,6 +175,13 @@ public class Acampamento {
         this.tokenMercadoPagoAcampamento = tokenMercadoPagoAcampamento;
     }
 
+    // O token nunca sai no JSON (WRITE_ONLY); o front só fica sabendo SE existe, para mostrar o botão "Pagar online"
+    // Não é coluna do banco: é calculado na hora a partir do token
+    @JsonProperty(value = "aceitaPagamentoOnline", access = JsonProperty.Access.READ_ONLY)
+    public boolean isAceitaPagamentoOnline() {
+        return tokenMercadoPagoAcampamento != null && !tokenMercadoPagoAcampamento.isBlank();
+    }
+
     public Usuario getUsuario() {
         return usuario;
     }

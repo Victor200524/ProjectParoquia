@@ -79,6 +79,14 @@ public class AcampamentoRestControllers {
         if (acampamentoExistente != null) {
             try {
                 acampamentoAtualizado.setIdAcampamento(acampamentoExistente.getIdAcampamento());
+                // Token e usuário não voltam para o front (WRITE_ONLY); se vierem vazios, mantém os que já estão no banco
+                String tokenNovo = acampamentoAtualizado.getTokenMercadoPagoAcampamento();
+                if (tokenNovo == null || tokenNovo.isBlank()) {
+                    acampamentoAtualizado.setTokenMercadoPagoAcampamento(acampamentoExistente.getTokenMercadoPagoAcampamento());
+                }
+                if (acampamentoAtualizado.getUsuario() == null) {
+                    acampamentoAtualizado.setUsuario(acampamentoExistente.getUsuario());
+                }
                 Acampamento acampamentoSalvo = acampamentoService.saveAcampamento(acampamentoAtualizado);
                 return ResponseEntity.ok("Acampamento '" + acampamentoSalvo.getNomeAcampamento() + "' alterado com sucesso!");
             } catch (IllegalArgumentException e) {

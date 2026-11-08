@@ -29,6 +29,9 @@ public class Formulario {
     @Column(name = "\"capacidade_Formulario\"")
     private Integer capacidadeFormulario; // quantas pessoas podem se inscrever por este formulário
 
+    @Column(name = "\"preco_Formulario\"")
+    private Double precoFormulario;
+
     @ManyToOne
     @JoinColumn(name = "acampamento_id_acampamento")
     private Acampamento acampamento;
@@ -40,13 +43,14 @@ public class Formulario {
     public Formulario() {
     }
 
-    public Formulario(Long idFormulario, String tituloFormulario, TipoFormulario tipoFormulario, Date dataInicioFormulario, Date dataFimFormulario, Integer capacidadeFormulario, Acampamento acampamento) {
+    public Formulario(Long idFormulario, String tituloFormulario, TipoFormulario tipoFormulario, Date dataInicioFormulario, Date dataFimFormulario, Integer capacidadeFormulario, Double precoFormulario, Acampamento acampamento) {
         this.idFormulario = idFormulario;
         this.tituloFormulario = tituloFormulario;
         this.tipoFormulario = tipoFormulario;
         this.dataInicioFormulario = dataInicioFormulario;
         this.dataFimFormulario = dataFimFormulario;
         this.capacidadeFormulario = capacidadeFormulario;
+        this.precoFormulario = precoFormulario;
         this.acampamento = acampamento;
     }
 
@@ -96,6 +100,14 @@ public class Formulario {
 
     public void setCapacidadeFormulario(Integer capacidadeFormulario) {
         this.capacidadeFormulario = capacidadeFormulario;
+    }
+
+    public Double getPrecoFormulario() {
+        return precoFormulario;
+    }
+
+    public void setPrecoFormulario(Double precoFormulario) {
+        this.precoFormulario = precoFormulario;
     }
 
     public Acampamento getAcampamento() {

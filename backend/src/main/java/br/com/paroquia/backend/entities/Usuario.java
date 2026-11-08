@@ -3,6 +3,7 @@ package br.com.paroquia.backend.entities;
 import br.com.paroquia.backend.enums.UsuarioTipoNivel;
 import br.com.paroquia.backend.enums.UsuarioTipoStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -16,6 +17,8 @@ import java.util.List;
 
 @Entity
 @Table(name = "usuario")
+// Os métodos do UserDetails (Spring Security) não são dados do usuário: sem isso eles viram campos no JSON
+@JsonIgnoreProperties({"authorities", "username", "accountNonExpired", "accountNonLocked", "credentialsNonExpired", "enabled"})
 public class Usuario implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

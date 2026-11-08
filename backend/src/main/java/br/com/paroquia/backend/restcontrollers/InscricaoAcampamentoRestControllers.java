@@ -78,7 +78,7 @@ public class InscricaoAcampamentoRestControllers {
                 if(funcao.equals("SERVO"))
                     inscricaoAcampamento.setStatusAprovacao(InscricaoAcampamentoStatus.AGUARDANDO_APROVACAO);
                 else
-                    inscricaoAcampamento.setStatusAprovacao(InscricaoAcampamentoStatus.PAGAMENTO_PENDENTE);
+                    inscricaoAcampamento.setStatusAprovacao(inscricaoAcampamentoService.statusInicialPagamento(idAcampamento, funcao));
                 inscricaoAcampamento.setDataRegistro(LocalDateTime.now());
                 inscricaoAcampamentoService.save(inscricaoAcampamento);
                 return ResponseEntity.status(HttpStatus.OK).body(inscricaoAcampamento);
@@ -126,14 +126,15 @@ public class InscricaoAcampamentoRestControllers {
             if(inscricaoAcampamento.getStatusAprovacao() != InscricaoAcampamentoStatus.AGUARDANDO_APROVACAO)
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Essa inscrição não está aguardando aprovação!");
 
-            if(avaliacaoDto.aprovado())
-                inscricaoAcampamento.setStatusAprovacao(InscricaoAcampamentoStatus.APROVADO);
+            if(avaliacaoDto.aprovado()){
+                inscricaoAcampamento.setStatusAprovacao(inscricaoAcampamentoService.statusInicialPagamento(
+                        inscricaoAcampamento.getAcampamento().getIdAcampamento(),
+                        inscricaoAcampamento.getFuncaoAcampamento()));
+                inscricaoAcampamentoService.save(inscricaoAcampamento);
+            }
             else{
-                inscricaoAcampamento.setStatusAprovacao(InscricaoAcampamentoStatus.REPROVADO);
                 inscricaoAcampamentoService.deletarInscricao(inscricaoAcampamento);
             }
-
-            inscricaoAcampamentoService.save(inscricaoAcampamento);
             return ResponseEntity.status(HttpStatus.OK).body("Inscrição de " + inscricaoAcampamento.getUsuario().getNomeUsuario()
                     + (avaliacaoDto.aprovado() ? " aprovada!" : " reprovada!"));
         }

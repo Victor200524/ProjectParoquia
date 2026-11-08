@@ -1,4 +1,5 @@
 package br.com.paroquia.backend.entities;
+import br.com.paroquia.backend.enums.FormaPagamento;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -15,10 +16,14 @@ public class Pagamento {
     private Double valorPagamento;
 
     @Column(name = "\"forma_Pagamento\"")
-    private String formaPagamento;
+    @Enumerated(EnumType.STRING)
+    private FormaPagamento formaPagamento;
 
-    @Column(name = "\"status_Pagamento\"")
-    private int statusPagamento;
+    @Column(name = "\"data_Pagamento\"")
+    private LocalDateTime dataPagamento;
+
+    @Column(name = "\"idMercadoPago_Pagamento\"")
+    private String idMercadoPagoPagamento;
 
     @ManyToOne
     @JoinColumn(name = "inscricao_id_inscricao", nullable = false)
@@ -27,11 +32,12 @@ public class Pagamento {
     public Pagamento() {
     }
 
-    public Pagamento(Long idPagamento, Double valorPagamento, String formaPagamento, int statusPagamento, InscricaoAcampamento inscricaoAcampamento) {
+    public Pagamento(Long idPagamento, Double valorPagamento, FormaPagamento formaPagamento, LocalDateTime dataPagamento, String idMercadoPagoPagamento, InscricaoAcampamento inscricaoAcampamento) {
         this.idPagamento = idPagamento;
         this.valorPagamento = valorPagamento;
         this.formaPagamento = formaPagamento;
-        this.statusPagamento = statusPagamento;
+        this.dataPagamento = dataPagamento;
+        this.idMercadoPagoPagamento = idMercadoPagoPagamento;
         this.inscricaoAcampamento = inscricaoAcampamento;
     }
 
@@ -51,20 +57,28 @@ public class Pagamento {
         this.valorPagamento = valorPagamento;
     }
 
-    public String getFormaPagamento() {
+    public FormaPagamento getFormaPagamento() {
         return formaPagamento;
     }
 
-    public void setFormaPagamento(String formaPagamento) {
+    public void setFormaPagamento(FormaPagamento formaPagamento) {
         this.formaPagamento = formaPagamento;
     }
 
-    public int getStatusPagamento() {
-        return statusPagamento;
+    public LocalDateTime getDataPagamento() {
+        return dataPagamento;
     }
 
-    public void setStatusPagamento(int statusPagamento) {
-        this.statusPagamento = statusPagamento;
+    public void setDataPagamento(LocalDateTime dataPagamento) {
+        this.dataPagamento = dataPagamento;
+    }
+
+    public String getIdMercadoPagoPagamento() {
+        return idMercadoPagoPagamento;
+    }
+
+    public void setIdMercadoPagoPagamento(String idMercadoPagoPagamento) {
+        this.idMercadoPagoPagamento = idMercadoPagoPagamento;
     }
 
     public InscricaoAcampamento getInscricaoAcampamento() {
