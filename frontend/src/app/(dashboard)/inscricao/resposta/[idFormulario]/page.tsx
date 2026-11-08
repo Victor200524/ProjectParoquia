@@ -9,12 +9,16 @@ import styles from "./responder.module.css";
 import { Pergunta} from "@/types/pergunta";
 import { Resposta } from "@/types/resposta";
 import { Formulario } from "@/types/formulario";
+import { InscricaoAcampamento } from "@/types/inscricaoAcampamento";
 
 // Services
 import { respostaService } from "@/services/respostaService";
 import { formularioService } from "@/services/formularioService";
 import { perguntaService } from "@/services/perguntaService";
 import { inscricaoAcampamentoService } from "@/services/inscricaoAcampamentoService";
+
+// Components
+import { EtiquetaStatus, AcoesPagamento, conferirRetornoPagamento } from "@/components/pagamento/PagamentoInscricao";
 
 
 
@@ -32,6 +36,8 @@ export default function ResponderFormulario(){
 
     const [minhasRespostas, setMinhasRespostas] = useState<Resposta[]>([]); // respostas que o usuário logado já enviou
 
+    const [minhaInscricao, setMinhaInscricao] = useState<InscricaoAcampamento | null>(null); // para mostrar o status e o pagamento
+
     async function carregarDados(){
         try{
             const dadosFormulario = await formularioService.buscarFormularioPorId(idFormulario);
@@ -47,6 +53,7 @@ export default function ResponderFormulario(){
             if(minhaInscricao && minhaInscricao.idInscricao){
                 const dadosRespostas = await respostaService.buscarRespostasPorInscricao(minhaInscricao.idInscricao);
                 setMinhasRespostas(dadosRespostas);
+                setMinhaInscricao(minhaInscricao);
                 setJaInscrito(true);
             }
 
@@ -61,6 +68,7 @@ export default function ResponderFormulario(){
 
     useEffect(()=>{
         carregarDados();
+        conferirRetornoPagamento(carregarDados); // voltando do checkout do Mercado Pago?
     }, [idFormulario]);
 
     const handleChange = (idPergunta: number, valor: string) => {
@@ -130,6 +138,26 @@ export default function ResponderFormulario(){
                         <p className={styles.avisoObrigatoria}>* Indica uma pergunta obrigatória</p>
                     )}
                 </div>
+
+                {/* Situação da inscrição + pagamento, logo depois de enviar as respostas */}
+                {minhaInscricao && (
+                    <div className={styles.cardInscricao}>
+                        <div className={styles.inscricaoTopo}>
+                            <p className={styles.inscricaoTitulo}>Sua inscrição</p>
+                            <EtiquetaStatus status={minhaInscricao.statusAprovacao} />
+                        </div>
+                        {formulario?.precoFormulario != null && formulario.precoFormulario > 0 && (
+                            <p className={styles.inscricaoValor}>
+                                Valor: <strong>{formulario.precoFormulario.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</strong>
+                            </p>
+                        )}
+                        <AcoesPagamento
+                            inscricao={minhaInscricao}
+                            rotaRetorno={`/inscricao/resposta/${idFormulario}`}
+                            onAtualizar={carregarDados}
+                        />
+                    </div>
+                )}
 
                 {/* Quem já se inscreveu não vê o formulário, só as respostas que enviou */}
                 {jaInscrito ? (

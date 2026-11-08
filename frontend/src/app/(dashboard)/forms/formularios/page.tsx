@@ -18,6 +18,7 @@ function NovoFormulario() {
         dataInicioFormulario: "",
         dataFimFormulario: "",
         capacidadeFormulario: 0,
+        precoFormulario: null,
         acampamento: { idAcampamento: 0 },
     });
     const [listaAcampamentos, setListaAcampamentos] = useState<AcampamentoPublico[]>([]);
@@ -47,6 +48,11 @@ function NovoFormulario() {
             setFormData(prev => ({ ...prev, capacidadeFormulario: Number(value) })); // o input devolve texto, o banco espera número
             return;
         }
+        if (name === "precoFormulario") {
+            // campo vazio = preço ainda não informado (null); 0 = gratuito
+            setFormData(prev => ({ ...prev, precoFormulario: value === "" ? null : Number(value) }));
+            return;
+        }
         setFormData(prev => ({ ...prev, [name]: value })); // Ele atualiza o estado do formulário com os novos valores
     };
 
@@ -61,6 +67,7 @@ function NovoFormulario() {
                 dataInicioFormulario: "",
                 dataFimFormulario: "",
                 capacidadeFormulario: 0,
+                precoFormulario: null,
                 acampamento: { idAcampamento: 0 },
             });
         } catch (error) {
@@ -96,14 +103,14 @@ function NovoFormulario() {
                         <label className={styles.fieldLabel} htmlFor="tipoFormulario">Tipo *</label>
                         <select
                             className={styles.inputField}
-                            id="tipoFormulario" 
+                            id="tipoFormulario"
                             name="tipoFormulario"
                             value={formData.tipoFormulario}
                             onChange={handleChange} required
-                            >
+                        >
 
-                            <option value = "CAMPISTA">Campista</option>
-                            <option value = "SERVO">Servo</option>
+                            <option value="CAMPISTA">Campista</option>
+                            <option value="SERVO">Servo</option>
                         </select>
                     </div>
 
@@ -116,7 +123,7 @@ function NovoFormulario() {
                             value={formData.acampamento.idAcampamento}
                             onChange={handleChange}
                             required
-                            >
+                        >
                             <option value="">Selecione um acampamento...</option>
                             {listaAcampamentos.map(acampamento => (
                                 <option key={acampamento.idAcampamento} value={acampamento.idAcampamento}>
@@ -140,8 +147,24 @@ function NovoFormulario() {
                         />
                     </div>
 
+                    <div className={styles.fieldGroup}>
+                        <label className={styles.fieldLabel} htmlFor="precoFormulario">Valor da inscrição (R$) *</label>
+                        <input
+                            className={styles.inputField}
+                            id="precoFormulario"
+                            name="precoFormulario"
+                            type="number"
+                            min={0}
+                            step="0.01"
+                            placeholder="Ex: 150.00 (0 = gratuito)"
+                            value={formData.precoFormulario ?? ""}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+
                     <h3 className={styles.sectionTitle}>Período do Formulário</h3>
-                    <div className = {styles.grid2Col}>
+                    <div className={styles.grid2Col}>
                         <div className={styles.fieldGroup}>
                             <label className={styles.fieldLabel} htmlFor="dataInicioFormulario">Data de Início *</label>
                             <input
@@ -180,8 +203,8 @@ function NovoFormulario() {
     );
 }
 
-export default function FormsFormularios(){
-    return(
+export default function FormsFormularios() {
+    return (
         <ProtectedRoute niveisPermitidos={niveisPermitidos}>
             <NovoFormulario />
         </ProtectedRoute>

@@ -171,3 +171,40 @@
     padding: 1.25rem;
   }
 }
+
+/* Card "Sua inscrição": status e pagamento, entre o título e as respostas */
+.cardInscricao {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-left: 6px solid #cc2027;
+  border-radius: 0.75rem;
+  padding: 1.25rem 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.inscricaoTopo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.inscricaoTitulo {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.inscricaoValor {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.inscricaoValor strong {
+  color: var(--text-primary);
+}

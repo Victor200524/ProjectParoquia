@@ -150,3 +150,15 @@
   border: 2px dashed var(--border-color);
   border-radius: 1.25rem;
 }
+
+/* ===== Minhas inscrições (status + pagamento) ===== */
+.secaoInscricoes {
+  margin-bottom: 3rem;
+}
+
+/* Área do pagamento no fim do card (a etiqueta e os botões vêm do componente PagamentoInscricao) */
+.cardPagamento {
+  margin-top: auto; /* empurra para o fim do card */
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color);
+}

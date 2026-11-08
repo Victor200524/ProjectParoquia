@@ -3,13 +3,16 @@
 import React, { useState } from 'react';
 import styles from './comunidades.module.css';
 import { comunidadeService } from '@/services/comunidadeService'; // Ajuste o caminho se necessário
+import ProtectedRoute from '@/components/auth/ProtectedRoute';
+
+const niveisPermitidos = ['COORDENADOR_GERAL', 'PADRE', 'SECRETARIA'];
 
 interface HorarioMissa {
   semanaMissa: string;
   horarioMissa: string;
 }
 
-export default function CadastroComunidade() {
+function CadastroComunidade() {
   const [formData, setFormData] = useState({
     nomeComunidade: '',
     enderecoComunidade: '',
@@ -244,5 +247,13 @@ export default function CadastroComunidade() {
         </form>
       </div>
     </div>
+  );
+}
+
+export default function FormsComunidades() {
+  return (
+    <ProtectedRoute niveisPermitidos={niveisPermitidos}>
+      <CadastroComunidade />
+    </ProtectedRoute>
   );
 }

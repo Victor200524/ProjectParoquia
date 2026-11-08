@@ -11,7 +11,7 @@ import ProtectedRoute from "@/components/auth/ProtectedRoute";
 
 const niveisPermitidos = ['COORDENADOR_GERAL', 'PADRE', 'SECRETARIA', 'COORDENADOR_ACAMPAMENTO'];
 
-function VisualizarFormularios(){
+function VisualizarFormularios() {
 
     const [listaFormularios, setListaFormularios] = useState<Formulario[]>([]);
     const [listaAcampamentos, setListaAcampamentos] = useState<AcampamentoPublico[]>([]);
@@ -19,21 +19,21 @@ function VisualizarFormularios(){
     const [idEditando, setIdEditando] = useState<number | null>(null); // id do formulário que está sendo alterado (null = nenhum)
     const [formData, setFormData] = useState<CriarFormulario | null>(null); // dados do formulário de alteração
 
-    async function carregarFormularios(){
-        try{
+    async function carregarFormularios() {
+        try {
             const dados = await formularioService.listarFormularios();
             setListaFormularios(dados);
-        }catch(error){
+        } catch (error) {
             alert("Erro ao buscar os formulários: " + (error as Error).message);
         }
     }
 
-    useEffect(()=>{
-        async function carregarAcampamentos(){
-            try{
+    useEffect(() => {
+        async function carregarAcampamentos() {
+            try {
                 const dados = await acampamentoService.listarAcampamentosPublicos();
                 setListaAcampamentos(dados);
-            }catch(error){
+            } catch (error) {
                 alert("Erro ao buscar os acampamentos: " + (error as Error).message);
             }
         }
@@ -43,7 +43,7 @@ function VisualizarFormularios(){
 
     // copia os dados do card para o formulário de alteração
     // as datas vêm do banco com horário (2026-10-01T00:00:00...), o input date só aceita "2026-10-01"
-    function abrirAlteracao(formulario: Formulario){
+    function abrirAlteracao(formulario: Formulario) {
         setIdEditando(Number(formulario.idFormulario));
         setFormData({
             tituloFormulario: formulario.tituloFormulario,
@@ -51,12 +51,13 @@ function VisualizarFormularios(){
             dataInicioFormulario: formulario.dataInicioFormulario.slice(0, 10),
             dataFimFormulario: formulario.dataFimFormulario.slice(0, 10),
             capacidadeFormulario: formulario.capacidadeFormulario,
+            precoFormulario: formulario.precoFormulario,
             acampamento: { idAcampamento: Number(formulario.acampamento.idAcampamento) },
         });
         window.scrollTo({ top: 0, behavior: "smooth" }); // o formulário de alteração fica no topo da página
     }
 
-    function fecharAlteracao(){
+    function fecharAlteracao() {
         setIdEditando(null);
         setFormData(null);
     }
@@ -71,24 +72,28 @@ function VisualizarFormularios(){
             setFormData(prev => (prev ? { ...prev, capacidadeFormulario: Number(value) } : prev)); // o input devolve texto, o banco espera número
             return;
         }
+        if (name === "precoFormulario") {
+            setFormData(prev => (prev ? { ...prev, precoFormulario: value === "" ? null : Number(value) } : prev));
+            return;
+        }
         setFormData(prev => (prev ? { ...prev, [name]: value } : prev));
     };
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        if(idEditando === null || !formData)
+        if (idEditando === null || !formData)
             return;
-        try{
+        try {
             const mensagem = await formularioService.alterarFormulario(idEditando, formData);
             await carregarFormularios();
             fecharAlteracao();
             alert(mensagem);
-        }catch(error){
+        } catch (error) {
             alert("Erro ao alterar o formulário: " + (error as Error).message);
         }
     };
 
-    return(
+    return (
         <div className={styles.pageContainer}>
             <div className={styles.header}>
                 <h1 className={styles.pageTitulo}>Formulários</h1>
@@ -129,6 +134,12 @@ function VisualizarFormularios(){
                         </div>
 
                         <div className={styles.fieldGroup}>
+                            <label className={styles.fieldLabel} htmlFor="precoFormulario">Valor da inscrição (R$) *</label>
+                            <input className={styles.inputField} id="precoFormulario" name="precoFormulario" type="number" min={0} step="0.01"
+                                placeholder="0 = gratuito" value={formData.precoFormulario ?? ""} onChange={handleChange} required />
+                        </div>
+
+                        <div className={styles.fieldGroup}>
                             <label className={styles.fieldLabel} htmlFor="dataInicioFormulario">Data de Início *</label>
                             <input className={styles.inputField} id="dataInicioFormulario" name="dataInicioFormulario" type="date" value={formData.dataInicioFormulario} onChange={handleChange} required />
                         </div>
@@ -148,7 +159,7 @@ function VisualizarFormularios(){
 
             {listaFormularios.length === 0 ? (
                 <p className={styles.vazio}>Nenhum formulário encontrado.</p>
-            ):(
+            ) : (
                 <div className={styles.listaCards}>
                     {listaFormularios.map(formulario => (
                         <div key={formulario.idFormulario} className={styles.card}>
@@ -159,6 +170,8 @@ function VisualizarFormularios(){
                             <p className={styles.cardInfo}><strong>Data de Início:</strong> {new Date(formulario.dataInicioFormulario).toLocaleDateString('pt-BR', { timeZone: 'UTC' })}</p>
                             <p className={styles.cardInfo}><strong>Data de Fim:</strong> {new Date(formulario.dataFimFormulario).toLocaleDateString('pt-BR', { timeZone: 'UTC' })}</p>
                             <p className={styles.cardInfo}><strong>Capacidade:</strong> {formulario.capacidadeFormulario ?? "Sem limite"}</p>
+                            <p className={styles.cardInfo}><strong>Valor:</strong> {formulario.precoFormulario === null ? "Não informado" :
+                                formulario.precoFormulario === 0 ? "Gratuito" : `R$ ${formulario.precoFormulario.toFixed(2)}`}</p>
 
                             <div className={styles.cardAcoes}>
                                 <Link href={`/forms/pergunta/${formulario.idFormulario}`} className={styles.btnPrimario}>Perguntas</Link>
@@ -177,8 +190,8 @@ function VisualizarFormularios(){
 }
 
 
-export default function ViewsFormularios(){
-    return(
+export default function ViewsFormularios() {
+    return (
         <ProtectedRoute niveisPermitidos={niveisPermitidos}>
             <VisualizarFormularios />
         </ProtectedRoute>

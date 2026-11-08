@@ -1,7 +1,7 @@
 import { Acampamento } from "./acampamento";
 import { Usuario } from "./usuario";
 
-export type InscricaoAcampamentoStatus = 'AGUARDANDO_APROVACAO' | 'APROVADO' | 'PAGAMENTO_PENDENTE' | 'REPROVADO';
+export type InscricaoAcampamentoStatus = 'AGUARDANDO_APROVACAO' | 'APROVADO' | 'PAGAMENTO_PENDENTE' | 'REPROVADO' | 'CONFIRMADO';
 
 export interface InscricaoAcampamento {
     idInscricao?: number;

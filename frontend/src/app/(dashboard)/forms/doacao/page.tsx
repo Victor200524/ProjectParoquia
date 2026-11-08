@@ -6,8 +6,11 @@ import { acampamentoService } from '@/services/acampamentoService';
 import { doacaoService } from '@/services/doacaoService'; 
 import { Doacao } from '@/types/doacao';
 import { Acampamento, AcampamentoPublico } from '@/types/acampamento';
+import ProtectedRoute from '@/components/auth/ProtectedRoute';
 
-export default function NovaDoacao() {
+const niveisPermitidos = ['COORDENADOR_GERAL', 'PADRE', 'SECRETARIA', 'COORDENADOR_ACAMPAMENTO'];
+
+function NovaDoacao() {
   const [formData, setFormData] = useState<Doacao>({
     nomeDoacao: '',
     descricaoDoacao: '',
@@ -236,5 +239,13 @@ export default function NovaDoacao() {
 
       </form>
     </div>
+  );
+}
+
+export default function FormsDoacao() {
+  return (
+    <ProtectedRoute niveisPermitidos={niveisPermitidos}>
+      <NovaDoacao />
+    </ProtectedRoute>
   );
 }

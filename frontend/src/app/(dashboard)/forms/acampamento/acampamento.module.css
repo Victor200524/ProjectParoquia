@@ -90,6 +90,14 @@
   color: var(--text-secondary); /* Texto dinâmico */
 }
 
+/* Texto de ajuda pequeno embaixo de um campo */
+.fieldHint {
+  font-size: 0.78rem;
+  line-height: 1.4;
+  color: var(--text-secondary);
+  opacity: 0.85;
+}
+
 .inputField {
   width: 100%;
   padding: 0.85rem 1rem;

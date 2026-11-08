@@ -14,6 +14,7 @@ export interface Acampamento {
     informacoesAcampamento: string;
     fotoAcampamento: string;
     tokenMercadoPagoAcampamento: string;
+    aceitaPagamentoOnline?: boolean; // calculado pelo backend (o token em si nunca volta para o front)
     usuario: Usuario;
     comunidade: Comunidade;
 }

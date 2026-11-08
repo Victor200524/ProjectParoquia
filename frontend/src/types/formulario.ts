@@ -9,6 +9,7 @@ export interface Formulario {
     dataInicioFormulario: string;
     dataFimFormulario: string;
     capacidadeFormulario: number; // limite de inscritos deste formulário
+    precoFormulario: number | null; 
     acampamento: Acampamento;
     totalInscritos?: number; // calculado pelo backend: quantos já ocupam vaga (não existe no banco)
 }

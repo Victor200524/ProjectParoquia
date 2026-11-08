@@ -138,8 +138,15 @@
   white-space: nowrap;
 }
 
-/* Verde: pagou */
+/* Azul: servo aprovado, mas ainda sem passar pelo pagamento (status antigo) */
 .statusAprovado {
+  color: #1d4ed8;
+  background: rgba(37, 99, 235, 0.12);
+  border: 1px solid rgba(37, 99, 235, 0.4);
+}
+
+/* Verde: pagou (ou é gratuito) — inscrição garantida */
+.statusConfirmado {
   color: #15803d;
   background: rgba(22, 163, 74, 0.15);
   border: 1px solid rgba(22, 163, 74, 0.4);
@@ -254,4 +261,49 @@
   color: var(--text-secondary);
   background: transparent;
   border: 1px solid var(--border-color);
+}
+
+/* Registrar pagamento (dinheiro/PIX) e verificar no Mercado Pago, embaixo da etiqueta pendente */
+.pagamento {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.4rem;
+}
+
+.selectForma {
+  font-size: 0.75rem;
+  padding: 0.28rem 0.4rem;
+  border-radius: 0.5rem;
+  color: var(--text-primary);
+  background: var(--bg-body);
+  border: 1px solid var(--border-color);
+}
+
+.btnRegistrar,
+.btnVerificar {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.3rem 0.7rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+
+.btnRegistrar {
+  color: #fff;
+  background: #15803d;
+  border: 1px solid #15803d;
+}
+
+.btnVerificar {
+  color: #1d4ed8;
+  background: transparent;
+  border: 1px solid rgba(37, 99, 235, 0.5);
+}
+
+.btnRegistrar:disabled,
+.btnVerificar:disabled {
+  opacity: 0.6;
+  cursor: wait;
 }

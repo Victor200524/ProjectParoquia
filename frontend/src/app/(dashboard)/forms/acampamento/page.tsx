@@ -2,10 +2,10 @@
 
 import React, { useEffect, useState } from 'react';
 import styles from './acampamento.module.css';
-import {Acampamento} from '@/types/acampamento';
-import {Comunidade} from '@/types/comunidade';
-import {acampamentoService} from '@/services/acampamentoService';
-import {comunidadeService} from '@/services/comunidadeService';
+import { Acampamento } from '@/types/acampamento';
+import { Comunidade } from '@/types/comunidade';
+import { acampamentoService } from '@/services/acampamentoService';
+import { comunidadeService } from '@/services/comunidadeService';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 
 export default function NovoAcampamento() {
@@ -21,7 +21,7 @@ export default function NovoAcampamento() {
     informacoesAcampamento: '',
     fotoAcampamento: '',
     tokenMercadoPagoAcampamento: '',
-    usuario: { idUsuario: 0 }, 
+    usuario: { idUsuario: 0 },
     comunidade: { idComunidade: 0 }
   });
 
@@ -51,9 +51,9 @@ export default function NovoAcampamento() {
 
   }, []);
 
-const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
-    
+
     // Se o campo alterado for a comunidade, monta o objeto do jeito que o Java espera
     if (name === 'comunidade') {
       setFormData(prev => ({
@@ -64,16 +64,16 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElemen
     }
 
     // Outros inputs
-    setFormData(prev => ({ 
-      ...prev, 
-      [name]: type === 'number' ? (value === '' ? 0 : Number(value)) : value 
+    setFormData(prev => ({
+      ...prev,
+      [name]: type === 'number' ? (value === '' ? 0 : Number(value)) : value
     }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault(); // Ele impede recarregar a pagina inteira ao clicar em gravar
     console.log("Dados prontos para o Back-end:", formData);
-    try{
+    try {
       await acampamentoService.criarAcampamento(formData, fotoArquivo);
       alert("Acampamento salvo com sucesso!");
       // Aqui você pode redirecionar ou limpar o formulário, se necessário
@@ -89,11 +89,11 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElemen
         informacoesAcampamento: '',
         fotoAcampamento: '',
         tokenMercadoPagoAcampamento: '',
-        usuario: { idUsuario: 0 }, 
+        usuario: { idUsuario: 0 },
         comunidade: { idComunidade: 0 }
       });
       setFotoArquivo(null); // Limpa o arquivo de foto
-    }catch(error: any){
+    } catch (error: any) {
       alert("Erro ao salvar o acampamento: " + error.message);
     }
   };
@@ -101,14 +101,14 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElemen
   return (
     <ProtectedRoute niveisPermitidos={['COORDENADOR_GERAL', 'PADRE', 'SECRETARIA']}> {/* Apenas administradores e moderadores podem acessar */}
       <div className={styles.pageContainer}>
-        
+
         <div className={styles.header}>
           <h1 className={styles.pageTitle}>Novo Acampamento</h1>
           <p className={styles.pageSubtitle}>Preencha as informações estruturais do evento.</p>
         </div>
 
         <form className={styles.formCard} onSubmit={handleSubmit}>
-          
+
           {/* === SEÇÃO: DADOS GERAIS === */}
           <h3 className={styles.sectionTitle}>Dados Gerais</h3>
           <div className={styles.grid2Col}>
@@ -128,9 +128,9 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElemen
 
             <div className={styles.fieldGroup}>
               <label className={styles.fieldLabel} htmlFor="comunidade">Comunidade Responsável *</label>
-              <select 
-                className={styles.inputField} 
-                id="comunidade" 
+              <select
+                className={styles.inputField}
+                id="comunidade"
                 name="comunidade"
                 value={formData.comunidade.idComunidade}
                 onChange={handleChange}
@@ -193,23 +193,23 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElemen
           {/* === SEÇÃO: REGRAS E CAPACIDADE === */}
           <h3 className={styles.sectionTitle}>Regras e Capacidade</h3>
           <div className={styles.grid2Col}>
-            
+
             {/* Idades ocupam uma coluna dividida em duas menores no CSS ou em flex */}
             <div style={{ display: 'flex', gap: '1rem' }}>
               <div className={styles.fieldGroup} style={{ flex: 1 }}>
                 <label className={styles.fieldLabel} htmlFor="idadeMinAcampamento">Idade Mín. *</label>
-                <input 
-                    className={styles.inputField}
-                    id="idadeMinAcampamento"
-                    name="idadeMinAcampamento"
-                    type="number"
-                    placeholder="Ex: 18"
-                    value={formData.idadeMinAcampamento}
-                    onChange={handleChange}
-                    min="0"
-                    required
-                    onFocus={(e) => e.target.select()} 
-                  />
+                <input
+                  className={styles.inputField}
+                  id="idadeMinAcampamento"
+                  name="idadeMinAcampamento"
+                  type="number"
+                  placeholder="Ex: 18"
+                  value={formData.idadeMinAcampamento}
+                  onChange={handleChange}
+                  min="0"
+                  required
+                  onFocus={(e) => e.target.select()}
+                />
               </div>
               <div className={styles.fieldGroup} style={{ flex: 1 }}>
                 <label className={styles.fieldLabel} htmlFor="idadeMaxAcampamento">Idade Máx.</label>
@@ -221,7 +221,7 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElemen
                   placeholder="Ex: 30"
                   value={formData.idadeMaxAcampamento}
                   onChange={handleChange}
-                  min = "0"
+                  min="0"
                   required
                   onFocus={(e) => e.target.select()}
                 />
@@ -239,7 +239,7 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElemen
                   placeholder="Ex: 120"
                   value={formData.vagasAcampamento}
                   onChange={handleChange}
-                  min = "0"
+                  min="0"
                   required
                   onFocus={(e) => e.target.select()}
                 />
@@ -255,9 +255,9 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElemen
                   placeholder="0.00"
                   value={formData.taxaInscricaoAcampamento}
                   onChange={handleChange}
-                  min = "1.00"
+                  min="1.00"
                   required
-                  onFocus={(e) => e.target.select()} 
+                  onFocus={(e) => e.target.select()}
                 />
               </div>
             </div>
@@ -272,7 +272,7 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElemen
                 className={styles.inputField}
                 id="fotoAcampamento"
                 name="fotoAcampamento"
-                type="file" 
+                type="file"
                 accept="image/*"
                 onChange={(e) => {
                   if (e.target.files && e.target.files.length > 0) {
@@ -294,6 +294,28 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElemen
                 value={formData.informacoesAcampamento}
                 onChange={handleChange}
               />
+            </div>
+          </div>
+
+          {/* === SEÇÃO: PAGAMENTO ONLINE === */}
+          <h3 className={styles.sectionTitle}>Pagamento Online (opcional)</h3>
+          <div className={styles.grid2Col}>
+            <div className={styles.fieldGroupFull}>
+              <label className={styles.fieldLabel} htmlFor="tokenMercadoPagoAcampamento">Access Token do Mercado Pago</label>
+              <input
+                className={styles.inputField}
+                id="tokenMercadoPagoAcampamento"
+                name="tokenMercadoPagoAcampamento"
+                type="password"
+                placeholder="APP_USR-..."
+                value={formData.tokenMercadoPagoAcampamento}
+                onChange={handleChange}
+                autoComplete="off"
+              />
+              <span className={styles.fieldHint}>
+                Com o token preenchido, os inscritos podem pagar pelo Mercado Pago e o dinheiro cai na conta deste token.
+                Deixe em branco para receber só em dinheiro/PIX, registrado pela coordenação.
+              </span>
             </div>
           </div>
 

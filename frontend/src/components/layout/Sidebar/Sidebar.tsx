@@ -6,46 +6,15 @@ import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import logoParoquia from '@/images/logo_brasao_paroquia_sao_miguel.png'; 
 import styles from '@/components/layout/Sidebar/sidebar.module.css';
-
-interface ItemMenu {
-  nome: string;
-  rota?: string;
-  submenu?: {
-    nome: string;
-    rota: string;
-  }[];
-}
+import { itensMenuParaNivel} from '@/config/menuNavegacao';
+import { useUsuarioLogado } from '@/hooks/useUsuarioLogado';
 
 export default function Sidebar() {
   const pathname = usePathname();
   const [menuAberto, setMenuAberto] = useState<string | null>(null);
+  const {nivelUsuario} = useUsuarioLogado();
 
-  const menuItems: ItemMenu[] = [
-    { nome: 'Inicio', rota: '/' },
-    { nome: 'Painel', rota: '/painel' },
-    { nome: 'Acampamentos', submenu: [
-      { nome: 'Cadastrar', rota: '/forms/acampamento' },
-      { nome: 'Visualizar', rota: '/views/acampamento' },
-    ]},
-    { nome: 'Comunidades', rota: '/forms/comunidades' },
-    { nome: 'Estoque', rota: '/estoque' },
-    { nome: 'Doações', rota: '/forms/doacao'},
-    { nome: 'Mural de Fotos', rota: '/forms/muralFotos' },
-    { nome: 'Itens do Estoque', rota: '/forms/itemEstoque' },
-    { nome: 'Movimentos do Estoque', rota: '/forms/movimentoEstoque' },
-    { nome: 'Usuários', submenu: [
-      { nome: 'Cadastrar', rota: '/forms/usuarios' },
-      { nome: 'Visualizar', rota: '/views/usuarios' },
-    ]},
-    { nome: 'Formulários', submenu: [
-      { nome: 'Cadastrar Formulários', rota: '/forms/formularios' },
-      { nome: 'Visualizar', rota: '/views/formularios' },
-      { nome: 'Inscrever-se', rota: '/inscricao/resposta' },
-    ]},
-    { nome: 'Inscrições', rota: '/views/inscricoes' },
-    { nome: 'Equipes & Quadrante', rota: '/equipes' },
-    { nome: 'Financeiro', rota: '/financeiro' },
-  ];
+  const menuItems = nivelUsuario ? itensMenuParaNivel(nivelUsuario) : [];
 
   return (
     <aside className={styles.sidebar}>
@@ -67,7 +36,7 @@ export default function Sidebar() {
 
       <nav className={styles.nav}>
         {menuItems.map((item) => (
-          item.submenu ? (
+          item.subMenu ? (
               <div key={item.nome} className={styles.navGroup}>
                   <button
                       type="button"
@@ -78,7 +47,7 @@ export default function Sidebar() {
                   </button>
                   {menuAberto === item.nome && (
                       <div className={styles.navSubmenu}>
-                          {item.submenu.map((sub) => (
+                          {item.subMenu.map((sub) => (
                               <Link
                                   key={sub.rota}
                                   href={sub.rota}

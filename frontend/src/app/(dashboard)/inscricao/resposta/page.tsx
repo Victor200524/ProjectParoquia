@@ -8,6 +8,7 @@ import { respostaService } from "@/services/respostaService";
 import { formularioService } from "@/services/formularioService";
 import { InscricaoAcampamento } from "@/types/inscricaoAcampamento";
 import { inscricaoAcampamentoService } from "@/services/inscricaoAcampamentoService";
+import { EtiquetaStatus, AcoesPagamento, conferirRetornoPagamento } from "@/components/pagamento/PagamentoInscricao";
 import Link from "next/link";
 
 
@@ -15,6 +16,11 @@ export default function ResponderFormulario(){
 
     const [listaFormularios, setListaFormularios] = useState<Formulario[]>([]);
     const [minhasInscricoes, setMinhasInscricoes] = useState<InscricaoAcampamento[]>([]); // inscrições do usuário logado
+
+    async function carregarMinhasInscricoes(){
+        const dadosInscricoes = await inscricaoAcampamentoService.listarMinhasInscricoes();
+        setMinhasInscricoes(dadosInscricoes);
+    }
 
     useEffect(()=>{
         async function carregarFormularios(){
@@ -28,13 +34,14 @@ export default function ResponderFormulario(){
                     && (!ehCampistaOuServo || formulario.tipoFormulario === nivel));
                 setListaFormularios(abertos);
 
-                const dadosInscricoes = await inscricaoAcampamentoService.listarMinhasInscricoes();
-                setMinhasInscricoes(dadosInscricoes);
+                await carregarMinhasInscricoes();
             }catch(error){
                 alert("Erro ao buscar os formulários: " + (error as Error).message);
             }
         }
+
         carregarFormularios();
+        conferirRetornoPagamento(carregarMinhasInscricoes); // voltando do checkout do Mercado Pago?
     }, []);
 
     // verifica se o usuário logado já se inscreveu no acampamento daquele formulário
@@ -49,6 +56,32 @@ export default function ResponderFormulario(){
 
     return(
         <div className={styles.pageContainer}>
+            {/* === MINHAS INSCRIÇÕES (status e pagamento) === */}
+            {minhasInscricoes.length > 0 && (
+                <>
+                    <div className={styles.header}>
+                        <h1 className={styles.pageTitulo}>Minhas inscrições</h1>
+                        <p className={styles.pageSubtitle}>Acompanhe a situação das suas inscrições e faça o pagamento</p>
+                    </div>
+
+                    <div className={`${styles.listaCards} ${styles.secaoInscricoes}`}>
+                        {minhasInscricoes.map(inscricao => (
+                            <div key={inscricao.idInscricao} className={styles.card}>
+                                <h2 className={styles.cardTitle}>{inscricao.acampamento.nomeAcampamento}</h2>
+                                <EtiquetaStatus status={inscricao.statusAprovacao} />
+
+                                <p className={styles.cardInfo}><strong>Inscrito como:</strong> {inscricao.funcaoAcampamento === 'SERVO' ? "Servo" : "Campista"}</p>
+                                <p className={styles.cardInfo}><strong>Data da inscrição:</strong> {new Date(inscricao.dataRegistro).toLocaleDateString('pt-BR')}</p>
+
+                                <div className={styles.cardPagamento}>
+                                    <AcoesPagamento inscricao={inscricao} rotaRetorno="/inscricao/resposta" onAtualizar={carregarMinhasInscricoes} />
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </>
+            )}
+
             <div className={styles.header}>
                 <h1 className={styles.pageTitulo}>Formulários abertos</h1>
                 <p className={styles.pageSubtitle}>Lista de todos os formulários disponíveis</p>

@@ -1,0 +1,96 @@
+/* Etiqueta de status + botões de pagamento do campista/servo (usado em mais de uma tela) */
+
+.status {
+  align-self: flex-start;
+  display: inline-block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 0.25rem 0.7rem;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+/* Mesmas cores da tela de Inscrições da coordenação */
+.status_CONFIRMADO {
+  color: #15803d;
+  background: rgba(22, 163, 74, 0.15);
+  border: 1px solid rgba(22, 163, 74, 0.4);
+}
+
+.status_PAGAMENTO_PENDENTE {
+  color: #cc2027;
+  background: rgba(204, 32, 39, 0.12);
+  border: 1px solid rgba(204, 32, 39, 0.4);
+}
+
+.status_AGUARDANDO_APROVACAO {
+  color: #a16207;
+  background: rgba(234, 179, 8, 0.15);
+  border: 1px solid rgba(234, 179, 8, 0.45);
+}
+
+.status_APROVADO {
+  color: #1d4ed8;
+  background: rgba(37, 99, 235, 0.12);
+  border: 1px solid rgba(37, 99, 235, 0.4);
+}
+
+.status_REPROVADO {
+  color: var(--text-secondary);
+  background: var(--bg-body);
+  border: 1px solid var(--border-color);
+}
+
+/* Texto de orientação no lugar dos botões */
+.aviso {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.btnPagar,
+.btnVerificar {
+  flex: 1;
+  min-width: 140px;
+  text-align: center;
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 0.6rem 1rem;
+  border-radius: 0.6rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btnPagar {
+  background: linear-gradient(135deg, #cc2027, #a81a20);
+  color: #fff;
+  border: none;
+}
+
+.btnPagar:hover:not(:disabled) {
+  box-shadow: 0 8px 16px -8px rgba(204, 32, 39, 0.6);
+}
+
+.btnVerificar {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+}
+
+.btnVerificar:hover:not(:disabled) {
+  background: var(--bg-body);
+  color: var(--text-primary);
+}
+
+.btnPagar:disabled,
+.btnVerificar:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}

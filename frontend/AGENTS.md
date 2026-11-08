@@ -35,7 +35,8 @@ Entidades principais (existem nos dois lados, frontend em `src/types/*.ts` e bac
 - Login: `POST /usuario/loginUsuario` (por CPF — no banco o CPF fica **com máscara** `000.000.000-00`) devolve um **JWT real** (`TokenService.gerarToken`, subject = CPF, validade de 2h). Usuários inativos são barrados no login.
 - Todo service manda `Authorization: Bearer <token>`, exceto as rotas públicas (login, cadastro, `listarAcampamentosPublicos`).
 - Sessão: `src/components/auth/VerificarSessao.tsx` fica no layout do `(dashboard)` e, a cada troca de página, chama `GET /usuario/validarToken` com o Bearer; desloga e manda para `/login` só em 401/403 (servidor fora do ar/500 mantém logado). Reiniciar o backend **não** desloga mais.
-- Proteção por nível via `src/components/auth/ProtectedRoute.tsx`, aplicado **manualmente** por página — hoje em `painel`, `forms/acampamento`, `forms/formularios`, `forms/itemEstoque`, `forms/movimentoEstoque`, `forms/muralFotos`, `forms/usuarios`, `views/formularios`, `views/inscricoes` e `views/usuarios`. É só conveniência de tela; quem garante o acesso é o backend.
+- Menu: `src/config/menuNavegacao.ts` é a fonte única dos itens do Sidebar (com `subMenu`) e dos níveis de cada um (`nivelAcesso`, grupos `ADMIN`/`ADMIN_COORD`/`TODOS`); `itensMenuParaNivel(nivel)` filtra itens e subitens. O Sidebar usa `useUsuarioLogado` + essa função. Também deve alimentar o futuro widget `AtalhosRapidos` do painel.
+- Proteção por nível via `src/components/auth/ProtectedRoute.tsx`, aplicado **manualmente** por página — hoje em `painel`, `forms/acampamento`, `forms/comunidades`, `forms/doacao`, `forms/formularios`, `forms/itemEstoque`, `forms/movimentoEstoque`, `forms/muralFotos`, `forms/usuarios`, `views/formularios`, `views/inscricoes` e `views/usuarios`. É só conveniência de tela; quem garante o acesso é o backend.
 - Padrão **filho/pai** obrigatório nas telas protegidas que buscam dados: a lógica fica num componente filho (ex. `ListaInscricoes`) e o `export default` só envolve o filho no `ProtectedRoute`. Senão o `useEffect` da página dispara a busca antes da checagem de nível.
 - Campista/servo usam `inscricaoAcampamentoService.listarMinhasInscricoes` (`GET /inscricaoAcampamento/minhasInscricoes`) e `respostaService.buscarRespostasPorInscricao` — nunca baixar a lista inteira e filtrar no navegador.
 - `usuarioService.cadastrarUsuario` (público, só CAMPISTA/SERVO, status forçado ATIVO) vs. `cadastrarUsuarioAdmin` (`forms/usuarios`, qualquer nível, só ADMIN).
@@ -54,6 +55,5 @@ Entidades principais (existem nos dois lados, frontend em `src/types/*.ts` e bac
 
 ## Inconsistências conhecidas (não corrigidas ainda)
 
-1. Rotas do menu em `Sidebar.tsx` (`/equipes`, `/estoque`, `/financeiro`) não batem com os caminhos reais das páginas (que ficam sob `/forms/...`). O Sidebar não filtra itens por nível; o plano é criar `src/config/menuNavegacao.ts` (agora com suporte a submenus, que o Sidebar já usa).
-2. `/autenticacao` sobrando no backend (ver acima).
-3. `deletarPergunta` bloqueia (409) se houver respostas; o desejado é apagar as respostas junto.
+1. `/autenticacao` sobrando no backend (ver acima).
+2. `deletarPergunta` bloqueia (409) se houver respostas; o desejado é apagar as respostas junto.

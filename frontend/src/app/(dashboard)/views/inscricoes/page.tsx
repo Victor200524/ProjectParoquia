@@ -7,10 +7,14 @@ import ProtectedRoute from "@/components/auth/ProtectedRoute";
 // Types
 import { InscricaoAcampamento, InscricaoAcampamentoStatus } from "@/types/inscricaoAcampamento";
 import { Acampamento, AcampamentoPublico } from "@/types/acampamento";
+import { FormaPagamento } from "@/types/pagamento";
 
 // Services
 import { inscricaoAcampamentoService } from "@/services/inscricaoAcampamentoService";
 import { acampamentoService } from "@/services/acampamentoService";
+import { pagamentoService } from "@/services/pagamentoService";
+
+type FormaManual = Exclude<FormaPagamento, 'MERCADO_PAGO'>; // o coordenador só registra dinheiro ou PIX
 
 // Só esses níveis podem abrir esta tela
 const niveisPermitidos = ['COORDENADOR_GERAL', 'COORDENADOR_ACAMPAMENTO', 'PADRE', 'SECRETARIA'];
@@ -27,6 +31,8 @@ function ListaInscricoes(){
     const [filtroAcampamento, setFiltroAcampamento] = useState(0); // id do acampamento escolhido (0 = todos)
 
     const [equipes, setEquipes] = useState<Record<number, string>>({}); // "caderninho": a chave é o idInscricao e o valor é a equipe digitada
+    const [formas, setFormas] = useState<Record<number, FormaManual>>({}); // "caderninho" da forma de pagamento escolhida em cada linha
+    const [processando, setProcessando] = useState<number | null>(null); // idInscricao com pagamento em andamento (evita clique duplo)
 
     async function carregarDados(){
         try{
@@ -80,6 +86,43 @@ function ListaInscricoes(){
         }
     };
 
+    // Pagamento feito em mãos (dinheiro ou PIX direto para a paróquia)
+    const handleRegistrarPagamento = async (inscricao: InscricaoAcampamento) => {
+        const idInscricao = Number(inscricao.idInscricao);
+        const forma = formas[idInscricao] ?? 'DINHEIRO'; // se não mexeu no select, vale o que aparece nele
+        if(!confirm("Registrar pagamento em " + (forma === 'PIX' ? "PIX" : "dinheiro") + " para " + inscricao.usuario.nomeUsuario + "?"))
+            return;
+        setProcessando(idInscricao);
+        try{
+            const pagamento = await pagamentoService.registrarPagamentoManual(idInscricao, forma);
+            await carregarDados();
+            alert("Pagamento de R$ " + pagamento.valorPagamento.toFixed(2) + " registrado! Inscrição confirmada.");
+        }catch(error){
+            alert("Erro ao registrar o pagamento: " + (error as Error).message);
+        }finally{
+            setProcessando(null);
+        }
+    };
+
+    // Pergunta ao Mercado Pago se essa inscrição já foi paga online
+    const handleVerificarPagamento = async (inscricao: InscricaoAcampamento) => {
+        const idInscricao = Number(inscricao.idInscricao);
+        setProcessando(idInscricao);
+        try{
+            const confirmado = await pagamentoService.verificarPagamento(idInscricao);
+            if(confirmado){
+                await carregarDados();
+                alert("Pagamento de " + inscricao.usuario.nomeUsuario + " aprovado no Mercado Pago! Inscrição confirmada.");
+            }else{
+                alert("Ainda não há pagamento aprovado no Mercado Pago para " + inscricao.usuario.nomeUsuario + ".");
+            }
+        }catch(error){
+            alert("Erro ao verificar o pagamento: " + (error as Error).message);
+        }finally{
+            setProcessando(null);
+        }
+    };
+
     // fica só com as inscrições que passam nos dois filtros escolhidos
     const inscricoesFiltradas = listaInscricoes.filter(inscricao =>
         (filtroTipo === "TODOS" || inscricao.funcaoAcampamento === filtroTipo) &&
@@ -94,10 +137,12 @@ function ListaInscricoes(){
             return "Aprovado";
         if(status === 'PAGAMENTO_PENDENTE')
             return "Pagamento pendente";
+        if(status === 'CONFIRMADO')
+              return "Confirmado";
         return "Reprovado";
     }
 
-    // escolhe a cor da etiqueta: verde para quem pagou, vermelho para quem não pagou
+    // escolhe a cor da etiqueta: verde = confirmado, vermelho = falta pagar, amarelo = aguardando, azul = aprovado
     function classeStatus(status: InscricaoAcampamentoStatus){
         if(status === 'AGUARDANDO_APROVACAO')
             return styles.statusAguardando;
@@ -105,6 +150,8 @@ function ListaInscricoes(){
             return styles.statusAprovado;
         if(status === 'PAGAMENTO_PENDENTE')
             return styles.statusPendente;
+        if(status === 'CONFIRMADO')
+            return styles.statusConfirmado;
         return styles.statusReprovado;
     }
 
@@ -169,6 +216,37 @@ function ListaInscricoes(){
                                                 <div className={styles.avaliacao}>
                                                     <button type="button" className={styles.btnAprovar} onClick={() => handleAvaliar(inscricao, true)}>Aprovar</button>
                                                     <button type="button" className={styles.btnReprovar} onClick={() => handleAvaliar(inscricao, false)}>Reprovar</button>
+                                                </div>
+                                            )}
+                                            {/* Falta pagar: registrar em mãos ou conferir no Mercado Pago (se o acampamento aceita online) */}
+                                            {inscricao.statusAprovacao === 'PAGAMENTO_PENDENTE' && (
+                                                <div className={styles.pagamento}>
+                                                    <select
+                                                        className={styles.selectForma}
+                                                        value={formas[Number(inscricao.idInscricao)] ?? 'DINHEIRO'}
+                                                        onChange={(e) => setFormas(prev => ({ ...prev, [Number(inscricao.idInscricao)]: e.target.value as FormaManual }))}
+                                                    >
+                                                        <option value="DINHEIRO">Dinheiro</option>
+                                                        <option value="PIX">PIX</option>
+                                                    </select>
+                                                    <button
+                                                        type="button"
+                                                        className={styles.btnRegistrar}
+                                                        disabled={processando === inscricao.idInscricao}
+                                                        onClick={() => handleRegistrarPagamento(inscricao)}
+                                                    >
+                                                        Registrar pagamento
+                                                    </button>
+                                                    {inscricao.acampamento.aceitaPagamentoOnline && (
+                                                        <button
+                                                            type="button"
+                                                            className={styles.btnVerificar}
+                                                            disabled={processando === inscricao.idInscricao}
+                                                            onClick={() => handleVerificarPagamento(inscricao)}
+                                                        >
+                                                            Verificar Mercado Pago
+                                                        </button>
+                                                    )}
                                                 </div>
                                             )}
                                         </td>
