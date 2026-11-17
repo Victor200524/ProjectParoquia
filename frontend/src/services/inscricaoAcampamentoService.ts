@@ -1,4 +1,4 @@
-import {InscricaoAcampamento, CriarInscricaoAcampamento} from "@/types/inscricaoAcampamento";
+import {InscricaoAcampamento, CriarInscricaoAcampamento, QuadrantePessoa} from "@/types/inscricaoAcampamento";
 const BASE_URL = `${process.env.NEXT_PUBLIC_API_URL}/inscricaoAcampamento`;
 
 
@@ -17,6 +17,27 @@ export const inscricaoAcampamentoService = {
             if (!response.ok) {
                 const errorText = await response.text();
                 throw new Error(errorText || 'Erro ao criar inscrição');
+            }
+            return await response.json();
+        } catch (error) {
+            console.error('Erro na camada de serviço:', error);
+            throw error;
+        }
+    },
+
+    // Pessoas confirmadas do acampamento, com foto, para o relatório do quadrante
+    async listarQuadrante(idAcampamento: number): Promise<QuadrantePessoa[]> {
+        try {
+            const response = await fetch(`${BASE_URL}/quadrante/${idAcampamento}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${localStorage.getItem('token') || ''}`
+                }
+            });
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(errorText || 'Erro ao buscar o quadrante');
             }
             return await response.json();
         } catch (error) {

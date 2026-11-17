@@ -39,6 +39,8 @@ function ListaUsuarios(){
             cpfUsuario: usuario.cpfUsuario,
             emailUsuario: usuario.emailUsuario,
             contatoUsuario: usuario.contatoUsuario,
+            enderecoUsuario: usuario.enderecoUsuario,
+            dataNascimentoUsuario: usuario.dataNascimentoUsuario || undefined, // vazio vira "sem data" (undefined some do JSON)
             nivelUsuario: usuario.nivelUsuario,
             statusUsuario: status,
             senhaUsuario: senha
@@ -151,6 +153,16 @@ function ListaUsuarios(){
                             <div className={styles.fieldGroup}>
                                 <label className={styles.fieldLabel}>Contato</label>
                                 <input className={styles.inputField} type="text" name="contatoUsuario" value={usuarioEditando.contatoUsuario ?? ""} onChange={handleChange} placeholder="(00) 00000-0000" />                            </div>
+
+                            <div className={styles.fieldGroup}>
+                                <label className={styles.fieldLabel}>Endereço</label>
+                                <input className={styles.inputField} type="text" name="enderecoUsuario" value={usuarioEditando.enderecoUsuario ?? ""} onChange={handleChange} placeholder="Rua, número - Bairro" />
+                            </div>
+
+                            <div className={styles.fieldGroup}>
+                                <label className={styles.fieldLabel}>Data de nascimento</label>
+                                <input className={styles.inputField} type="date" name="dataNascimentoUsuario" value={usuarioEditando.dataNascimentoUsuario ?? ""} onChange={handleChange} />
+                            </div>
 
                             <div className={styles.fieldGroup}>
                                 <label className={styles.fieldLabel}>Nível de acesso</label>

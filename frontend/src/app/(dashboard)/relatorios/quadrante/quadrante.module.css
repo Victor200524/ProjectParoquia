@@ -1,0 +1,316 @@
+/* Quadrante: na tela mostra uma barra de controles + o documento como "folha branca";
+   na impressão sai só o documento, em A4 deitado */
+
+.pageContainer {
+  background-color: var(--bg-body);
+  padding: 2.5rem 2rem;
+  font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
+  color: var(--text-primary);
+}
+
+/* ===================== Barra de controles (só na tela) ===================== */
+.barra {
+  max-width: 1100px;
+  margin: 0 auto 1.5rem auto;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1rem;
+}
+
+.pageTitulo {
+  font-size: 2.2rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0 0 0.4rem 0;
+}
+
+.pageSubtitle {
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.controles {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.inputField {
+  padding: 0.7rem 1rem;
+  font-size: 0.95rem;
+  font-family: inherit;
+  color: var(--text-primary);
+  border: 1.5px solid var(--border-color);
+  border-radius: 0.6rem;
+  background: var(--bg-card);
+  min-width: 260px;
+}
+
+.btnImprimir {
+  background: linear-gradient(135deg, #cc2027, #a81a20);
+  color: #fff;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 0.7rem 1.4rem;
+  border-radius: 0.6rem;
+  border: none;
+  cursor: pointer;
+}
+
+.btnImprimir:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.resumo {
+  width: 100%;
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.aviso {
+  text-align: center;
+  color: var(--text-secondary);
+  padding: 2rem;
+}
+
+/* ===================== Documento (tela e impressão) ===================== */
+/* Sempre branco com texto escuro, igual ao papel, mesmo no tema escuro */
+.documento {
+  --vermelho: #b3141c;
+  --dourado: #c8a24a;
+  --cinza: #5b5b5b;
+
+  max-width: 1100px;
+  margin: 0 auto;
+  background: #fff;
+  color: #1f1f1f;
+  border-radius: 0.75rem;
+  padding: 2.5rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  print-color-adjust: exact;          /* imprime as cores de fundo (faixas, bordas) */
+  -webkit-print-color-adjust: exact;
+}
+
+/* ---------- Capa ---------- */
+.capa {
+  min-height: 170mm; /* quase uma página A4 deitada */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  border: 2px solid var(--dourado);
+  outline: 6px solid #fff;
+  box-shadow: 0 0 0 8px var(--vermelho);
+  border-radius: 1rem;
+  padding: 2rem;
+  margin: 8px 8px 3rem 8px;
+  break-after: page; /* depois da capa, começa outra página */
+}
+
+.capaParoquia {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--vermelho);
+}
+
+.capaRotulo {
+  margin: 1.25rem 0 0 0;
+  font-size: 0.85rem;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--cinza);
+}
+
+.capaNome {
+  margin: 0.4rem 0 0 0;
+  font-size: 2.6rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  line-height: 1.1;
+  color: #1f1f1f;
+}
+
+.capaTema {
+  margin: 0.75rem 0 0 0;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-style: italic;
+  font-size: 1.4rem;
+  color: var(--vermelho);
+}
+
+.capaFoto {
+  margin-top: 1.75rem;
+  max-width: 60%;
+  max-height: 85mm;
+  object-fit: contain;
+  border-radius: 0.75rem;
+}
+
+.capaDatas {
+  margin: 1.5rem 0 0 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.capaComunidade {
+  margin: 0.3rem 0 0 0;
+  color: var(--cinza);
+}
+
+/* ---------- Seções (cada equipe e os campistas) ---------- */
+.secao {
+  margin-bottom: 2rem;
+}
+
+.secaoCampistas {
+  break-before: page; /* campistas sempre começam numa página nova */
+}
+
+.secaoTitulo {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0 0 1rem 0;
+  padding: 0.55rem 1rem;
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #fff;
+  background: linear-gradient(90deg, var(--vermelho), #d6363d);
+  border-radius: 0.5rem;
+  break-after: avoid; /* o título não fica sozinho no fim da página */
+}
+
+.secaoQtde {
+  margin-left: auto;
+  font-size: 0.8rem;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.22);
+  border-radius: 999px;
+  padding: 0.1rem 0.6rem;
+}
+
+/* Dois cartões por linha, como no modelo */
+.grade {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+/* ---------- Cartão de cada pessoa ---------- */
+.cartao {
+  display: flex;
+  gap: 0.9rem;
+  align-items: center;
+  padding: 0.6rem;
+  border: 1px solid #e3e3e3;
+  border-left: 4px solid var(--dourado);
+  border-radius: 0.6rem;
+  background: #fcfbf8;
+  break-inside: avoid; /* um cartão nunca é cortado entre duas páginas */
+}
+
+.foto,
+.semFoto {
+  width: 30mm;
+  height: 30mm;
+  flex-shrink: 0;
+  border-radius: 0.5rem;
+}
+
+.foto {
+  object-fit: cover;
+}
+
+.semFoto {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--vermelho);
+  background: #f1e9e9;
+}
+
+.dados {
+  min-width: 0;
+}
+
+.nome {
+  margin: 0 0 0.35rem 0;
+  font-size: 0.95rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  line-height: 1.2;
+}
+
+.linha {
+  margin: 0.12rem 0 0 0;
+  font-size: 0.82rem;
+  line-height: 1.3;
+}
+
+.rotulo {
+  display: inline-block;
+  min-width: 5.6rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--cinza);
+}
+
+@media (max-width: 800px) {
+  .pageContainer {
+    padding: 1.5rem 1rem;
+  }
+
+  .documento {
+    padding: 1rem;
+  }
+
+  .grade {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ===================== Impressão ===================== */
+@media print {
+  /* o menu, o cabeçalho e o rodapé somem pelos módulos do layout; aqui some a barra de controles e os avisos */
+  .barra,
+  .aviso {
+    display: none !important;
+  }
+
+  .pageContainer {
+    padding: 0;
+    background: #fff;
+  }
+
+  .documento {
+    max-width: none;
+    padding: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .capa {
+    min-height: 170mm; /* cabe numa folha A4 deitada, já descontando as margens */
+    margin: 8px 8px 0 8px;
+  }
+
+  /* na impressão, sempre 2 cartões por linha */
+  .grade {
+    grid-template-columns: 1fr 1fr;
+  }
+}

@@ -1,0 +1,11 @@
+/* Regras de impressão do layout do dashboard (relatórios):
+   o rodapé some e o fundo escuro do tema vira branco no papel */
+@media print {
+  .fundo {
+    background: #fff !important;
+  }
+
+  .rodape {
+    display: none !important;
+  }
+}

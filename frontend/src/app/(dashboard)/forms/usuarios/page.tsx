@@ -16,7 +16,9 @@ function CadastroUsuario() {
     senhaUsuario: '',
     contatoUsuario: '',
     nivelUsuario: '', 
-    statusUsuario: ''
+    statusUsuario: '',
+    enderecoUsuario: '',
+    dataNascimentoUsuario: ''
   });
 
   // Estados para dar feedback visual ao usuário
@@ -48,7 +50,8 @@ function CadastroUsuario() {
 
     try {
       // Chama o serviço passando o objeto preenchido
-      const resposta = await usuarioService.cadastrarUsuarioAdmin(formData as any);
+      // data de nascimento vazia vai como "sem data" (undefined some do JSON)
+      const resposta = await usuarioService.cadastrarUsuarioAdmin({ ...formData, dataNascimentoUsuario: formData.dataNascimentoUsuario || undefined } as any);
       
       setMensagem({ tipo: 'sucesso', texto: resposta });
       
@@ -60,7 +63,9 @@ function CadastroUsuario() {
         senhaUsuario: '',
         contatoUsuario: '',
         nivelUsuario: '',
-        statusUsuario: ''
+        statusUsuario: '',
+        enderecoUsuario: '',
+        dataNascimentoUsuario: ''
       });
     } catch (error: any) {
       setMensagem({ tipo: 'erro', texto: error.message });
@@ -130,6 +135,31 @@ function CadastroUsuario() {
                 value={formData.contatoUsuario}
                 onChange={handleChange}
                 required
+              />
+            </div>
+
+            <div className={styles.fieldGroup}>
+              <label className={styles.fieldLabel} htmlFor="enderecoUsuario">Endereço</label>
+              <input
+                className={styles.inputField}
+                id="enderecoUsuario"
+                name="enderecoUsuario"
+                type="text"
+                placeholder="Rua, número - Bairro"
+                value={formData.enderecoUsuario}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className={styles.fieldGroup}>
+              <label className={styles.fieldLabel} htmlFor="dataNascimentoUsuario">Data de nascimento</label>
+              <input
+                className={styles.inputField}
+                id="dataNascimentoUsuario"
+                name="dataNascimentoUsuario"
+                type="date"
+                value={formData.dataNascimentoUsuario}
+                onChange={handleChange}
               />
             </div>
 

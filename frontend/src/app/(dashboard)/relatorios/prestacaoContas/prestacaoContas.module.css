@@ -1,0 +1,336 @@
+/* Prestação de contas: na tela, barra de controles + documento como "folha branca";
+   na impressão sai só o documento, em A4 em pé */
+
+.pageContainer {
+  background-color: var(--bg-body);
+  padding: 2.5rem 2rem;
+  font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
+  color: var(--text-primary);
+}
+
+/* ===================== Barra de controles (só na tela) ===================== */
+.barra {
+  max-width: 900px;
+  margin: 0 auto 1.5rem auto;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1rem;
+}
+
+.pageTitulo {
+  font-size: 2.2rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0 0 0.4rem 0;
+}
+
+.pageSubtitle {
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.controles {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.inputField {
+  padding: 0.7rem 1rem;
+  font-size: 0.95rem;
+  font-family: inherit;
+  color: var(--text-primary);
+  border: 1.5px solid var(--border-color);
+  border-radius: 0.6rem;
+  background: var(--bg-card);
+  min-width: 260px;
+}
+
+.btnImprimir {
+  background: linear-gradient(135deg, #cc2027, #a81a20);
+  color: #fff;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 0.7rem 1.4rem;
+  border-radius: 0.6rem;
+  border: none;
+  cursor: pointer;
+}
+
+.btnImprimir:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ===================== Documento ===================== */
+/* Sempre branco com texto escuro, igual ao papel, mesmo no tema escuro */
+.documento {
+  --vermelho: #b3141c;
+  --verde: #15803d;
+  --cinza: #5b5b5b;
+  --linha: #d9d9d9;
+
+  max-width: 900px;
+  margin: 0 auto;
+  background: #fff;
+  color: #1f1f1f;
+  border-radius: 0.75rem;
+  padding: 2.5rem 3rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  font-size: 0.9rem;
+  print-color-adjust: exact;
+  -webkit-print-color-adjust: exact;
+}
+
+/* ---------- Cabeçalho ---------- */
+.cabecalho {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 3px solid var(--vermelho);
+}
+
+.paroquia {
+  margin: 0;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--vermelho);
+}
+
+.titulo {
+  margin: 0.25rem 0 0 0;
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #1f1f1f;
+}
+
+.acampamento {
+  margin: 0.3rem 0 0 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.info,
+.emissao {
+  margin: 0.15rem 0 0 0;
+  color: var(--cinza);
+}
+
+.emissao {
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+/* ---------- Resumo (3 caixas) ---------- */
+.resumo {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+  margin: 1.25rem 0 0.5rem 0;
+}
+
+.resumoItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--linha);
+  border-radius: 0.5rem;
+}
+
+.resumoDestaque {
+  border: 2px solid var(--vermelho);
+  background: #fbf3f3;
+}
+
+.resumoRotulo {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--cinza);
+}
+
+.resumoValor {
+  font-size: 1.35rem;
+  font-weight: 800;
+}
+
+/* ---------- Partes e seções ---------- */
+.parteTitulo {
+  margin: 2rem 0 0 0;
+  padding: 0.45rem 0.9rem;
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #fff;
+  background: var(--vermelho);
+  border-radius: 0.4rem;
+  break-after: avoid;
+}
+
+.secao {
+  margin-top: 1.25rem;
+}
+
+.secaoTitulo {
+  margin: 0 0 0.5rem 0;
+  padding-bottom: 0.3rem;
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--vermelho);
+  border-bottom: 1px solid var(--linha);
+  break-after: avoid;
+}
+
+.semDados {
+  margin: 0.3rem 0;
+  font-style: italic;
+  color: var(--cinza);
+}
+
+.observacao {
+  color: var(--cinza);
+}
+
+.positivo {
+  color: var(--verde);
+  font-weight: 700;
+}
+
+.negativo {
+  color: var(--vermelho);
+  font-weight: 700;
+}
+
+/* ---------- Tabelas ---------- */
+.tabela {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.tabela th {
+  text-align: left;
+  padding: 0.45rem 0.6rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--cinza);
+  background: #f4f4f4;
+  border-bottom: 1px solid var(--linha);
+}
+
+.tabela td {
+  padding: 0.4rem 0.6rem;
+  border-bottom: 1px solid #eeeeee;
+  vertical-align: top;
+}
+
+.tabela tr {
+  break-inside: avoid; /* uma linha nunca fica cortada entre duas páginas */
+}
+
+.tabela tfoot td {
+  font-weight: 800;
+  border-top: 2px solid #1f1f1f;
+  border-bottom: none;
+}
+
+.numero {
+  text-align: right !important;
+  white-space: nowrap;
+}
+
+/* ---------- Total geral do dinheiro ---------- */
+.totalGeral {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+  padding: 0.7rem 1rem;
+  font-weight: 700;
+  border: 2px solid var(--vermelho);
+  border-radius: 0.5rem;
+  background: #fbf3f3;
+  break-inside: avoid;
+}
+
+.totalGeral strong {
+  font-size: 1.2rem;
+}
+
+.nota {
+  margin: 1.25rem 0 0 0;
+  font-size: 0.78rem;
+  font-style: italic;
+  color: var(--cinza);
+}
+
+/* ---------- Assinaturas ---------- */
+.assinaturas {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  margin-top: 4rem;
+  break-inside: avoid;
+}
+
+.assinatura {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  color: var(--cinza);
+  text-align: center;
+}
+
+.linhaAssinatura {
+  width: 100%;
+  border-top: 1px solid #1f1f1f;
+}
+
+@media (max-width: 800px) {
+  .pageContainer {
+    padding: 1.5rem 1rem;
+  }
+
+  .documento {
+    padding: 1.25rem;
+    overflow-x: auto;
+  }
+
+  .resumo {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ===================== Impressão ===================== */
+@media print {
+  /* o menu, o cabeçalho e o rodapé somem pelos módulos do layout; aqui some a barra de controles */
+  .barra {
+    display: none !important;
+  }
+
+  .pageContainer {
+    padding: 0;
+    background: #fff;
+  }
+
+  .documento {
+    max-width: none;
+    padding: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+}

@@ -24,7 +24,7 @@ export const itemEstoqueService = {
             throw error;
         }
     },
-    async alterarItemEstoque(idItemEstoque: number, itemEstoque: ItemEstoque): Promise<ItemEstoque> {
+    async alterarItemEstoque(idItemEstoque: number, itemEstoque: ItemEstoque): Promise<string> {
         try{
             const response = await fetch(`${BASE_URL}/alterarItemEstoque/${idItemEstoque}`, {
                 method: "PUT",
@@ -38,7 +38,7 @@ export const itemEstoqueService = {
             if (!response.ok) {
                 throw new Error(responseText || "Erro ao alterar item do estoque!");
             }
-            return await response.json();
+            return responseText;
         }catch (error){
             console.error("Erro na camada de serviço: ", error);
             throw error;

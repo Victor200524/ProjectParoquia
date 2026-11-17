@@ -81,8 +81,8 @@
 }
 
 .cardAcoes {
-  display: flex;
-  flex-wrap: wrap; /* se os 3 botões não couberem, quebra a linha em vez de vazar do card */
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* 4 botões em 2 linhas de 2, para o texto não se sobrepor */
   gap: 0.5rem;
   margin-top: auto; /* empurra os botões para o fim do card */
   padding-top: 1rem;
@@ -91,7 +91,8 @@
 
 /* Botões de ação (funcionam em <button> e em <Link>) */
 .btnPrimario,
-.btnSecundario {
+.btnSecundario,
+.btnExcluir {
   flex: 1;
   text-align: center;
   text-decoration: none;
@@ -125,6 +126,17 @@
 .btnSecundario:hover {
   background: var(--bg-body);
   color: var(--text-primary);
+}
+
+/* Excluir: vermelho só no contorno, para não chamar mais atenção que os outros */
+.btnExcluir {
+  background: transparent;
+  color: #cc2027;
+  border: 1px solid rgba(204, 32, 39, 0.4);
+}
+
+.btnExcluir:hover {
+  background: rgba(204, 32, 39, 0.1);
 }
 
 /* Mensagem quando a lista está vazia */

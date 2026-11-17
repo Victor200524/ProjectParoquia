@@ -1,4 +1,4 @@
-import { Usuario } from "../types/usuario";
+import { AlterarPerfil, Perfil, Usuario } from "../types/usuario";
 const BASE_URL = "http://localhost:8080/usuario";
 
 export const usuarioService = {
@@ -82,6 +82,48 @@ export const usuarioService = {
             const responseText = await response.text();
             if (!response.ok) {
                 throw new Error(responseText || "Erro ao criar usuário");
+            }
+            return responseText;
+        } catch (error) {
+            console.error("Erro na camada de serviço: ", error);
+            throw error;
+        }
+    },
+
+    // Perfil do próprio usuário logado (o backend descobre quem é pelo token)
+    async buscarMeuPerfil(): Promise<Perfil> {
+        try {
+            const response = await fetch(`${BASE_URL}/meuPerfil`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${localStorage.getItem('token') || ''}`
+                }
+            });
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(errorText || "Erro ao buscar o perfil!");
+            }
+            return await response.json();
+        } catch (error) {
+            console.error("Erro na camada de serviço: ", error);
+            throw error;
+        }
+    },
+
+    async alterarMeuPerfil(dados: AlterarPerfil): Promise<string> {
+        try {
+            const response = await fetch(`${BASE_URL}/meuPerfil`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${localStorage.getItem('token') || ''}`
+                },
+                body: JSON.stringify(dados)
+            });
+            const responseText = await response.text();
+            if (!response.ok) {
+                throw new Error(responseText || "Erro ao atualizar o perfil!");
             }
             return responseText;
         } catch (error) {

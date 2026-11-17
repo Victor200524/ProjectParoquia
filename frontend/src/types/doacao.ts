@@ -1,4 +1,4 @@
-export type TipoDoacao = 'PERECIVEL' | 'NAO_PERECIVEL';
+export type TipoDoacao = 'PERECIVEL' | 'NAO_PERECIVEL' | 'DINHEIRO';
 
 export interface Doacao {
     idDoacao?: number;
@@ -9,5 +9,6 @@ export interface Doacao {
     dataValidadeDoacao: string;
     tipoDoacao: TipoDoacao | '';
     qtdeDoacao: number;
-    acampamento: { idAcampamento: number | ''};
+    valorDoacao?: number | null; // só na doação em DINHEIRO (R$)
+    acampamento: { idAcampamento: number | ''; nomeAcampamento?: string }; // o nome só vem nas listagens
 }

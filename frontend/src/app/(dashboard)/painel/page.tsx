@@ -1,80 +1,55 @@
-// src/app/(dashboard)/painel/page.tsx
 "use client";
 
-import React, { useEffect, useState } from 'react';
-import styles from './painel.module.css';
-import ProtectedRoute from '@/components/auth/ProtectedRoute'; 
+import Link from "next/link";
+import styles from "./painel.module.css";
+import { useUsuarioLogado } from "@/hooks/useUsuarioLogado";
+import { itensMenuParaNivel } from "@/config/menuNavegacao";
+import { UsuarioTipoNivel } from "@/types/usuario";
+import DashboardAcampamento from "./DashboardAcampamento";
 
-export default function DashboardPainel() {
-  const [nivelUsuario, setNivelUsuario] = useState<string | null>(null);
-  const [nomeUsuario, setNomeUsuario] = useState<string>('Usuário');
-  
-  useEffect(() => {
-    const nivel = localStorage.getItem('nivelUsuario');
-    const nome = localStorage.getItem('nomeUsuario'); 
-    
-    if (nivel) setNivelUsuario(nivel);
-    if (nome) setNomeUsuario(nome);
-  }, []);
+// Painel (tela depois do login):
+// - administração e coordenação veem o Dashboard do acampamento;
+// - servos e campistas veem as boas-vindas e atalhos para o que eles podem acessar.
 
-  const niveisComAcessoAoPainel = [
-    'COORDENADOR_GERAL', 'PADRE', 'SECRETARIA', 'COORDENADOR_ACAMPAMENTO', 'SERVO', 'CAMPISTA'
-  ];
+const NIVEIS_DASHBOARD: UsuarioTipoNivel[] = ['COORDENADOR_GERAL', 'PADRE', 'SECRETARIA', 'COORDENADOR_ACAMPAMENTO'];
 
-  const ehAdministracao = ['COORDENADOR_GERAL', 'PADRE', 'SECRETARIA'].includes(nivelUsuario || '');
-  const ehGestaoOperacional = ['COORDENADOR_GERAL', 'COORDENADOR_ACAMPAMENTO', 'SECRETARIA'].includes(nivelUsuario || '');
-  const ehUsuarioComum = ['SERVO', 'CAMPISTA'].includes(nivelUsuario || '');
 
-  return (
-    <ProtectedRoute niveisPermitidos={niveisComAcessoAoPainel}>
-      <div className={styles.painelContainer}>
-        
-        <div className={styles.welcomeHeader}>
-          <h1 className={styles.welcomeTitle}>Olá, {nomeUsuario}!</h1>
-          <p className={styles.welcomeSubtitle}>
-            Bem-vindo ao sistema de gestão da Paróquia São Miguel Arcanjo.
-          </p>
+// Atalhos = os mesmos itens do menu lateral daquele nível (os submenus viram atalhos soltos)
+function AtalhosRapidos({ nivel }: { nivel: UsuarioTipoNivel }){
+    const atalhos: { nome: string; rota: string }[] = [];
+    for(const item of itensMenuParaNivel(nivel)){
+        if(item.rota && item.rota !== '/painel')
+            atalhos.push({ nome: item.nome, rota: item.rota });
+        for(const sub of item.subMenu ?? [])
+            atalhos.push({ nome: item.nome + " · " + sub.nome, rota: sub.rota });
+    }
+
+    return (
+        <div className={styles.atalhos}>
+            {atalhos.map(atalho => (
+                <Link key={atalho.rota} href={atalho.rota} className={styles.atalho}>{atalho.nome}</Link>
+            ))}
+            <Link href="/perfil" className={styles.atalho}>Meu perfil</Link>
         </div>
+    );
+}
 
-        <div className={styles.dashboardGrid}>
-          
-          {ehAdministracao && (
-            <div className={styles.dashCard}>
-              <h3 className={styles.cardTitle}>📊 Visão Paroquial</h3>
-              <p className={styles.placeholderMsg}>Resumo financeiro de doações, total de campistas inscritos no ano e quadro de comunidades.</p>
-            </div>
-          )}
 
-          {ehGestaoOperacional && (
-            <>
-              <div className={styles.dashCard}>
-                <h3 className={`${styles.cardTitle} ${styles.alertCritico}`}>
-                  ⚠️ Alertas de Estoque
-                </h3>
-                <p className={styles.placeholderMsg}>Você tem <strong>3 itens</strong> com estoque zerado e <strong>2 itens</strong> próximos do vencimento.</p>
-              </div>
+export default function Painel(){
+    const usuario = useUsuarioLogado();
 
-              <div className={styles.dashCard}>
-                <h3 className={styles.cardTitle}>📦 Últimas Movimentações</h3>
-                <p className={styles.placeholderMsg}>Lista rápida das últimas entradas, saídas e perdas do almoxarifado.</p>
-              </div>
-            </>
-          )}
+    // enquanto lê o localStorage, não mostra nada (evita piscar a tela errada)
+    if(!usuario.nivelUsuario)
+        return null;
 
-          <div className={styles.dashCard}>
-            <h3 className={styles.cardTitle}>⛺ Próximos Acampamentos</h3>
-            <p className={styles.placeholderMsg}>Fique por dentro das datas dos próximos retiros, histórico e links de inscrição.</p>
-          </div>
+    if(NIVEIS_DASHBOARD.includes(usuario.nivelUsuario))
+        return <DashboardAcampamento />;
 
-          {ehUsuarioComum && (
-            <div className={styles.dashCard}>
-              <h3 className={styles.cardTitle}>📸 Mural de Lembranças</h3>
-              <p className={styles.placeholderMsg}>Confira as últimas fotos postadas e os próximos eventos das comunidades.</p>
-            </div>
-          )}
-
+    return (
+        <div className={styles.boasVindas}>
+            <h1 className={styles.titulo}>Olá, {usuario.nomeUsuario}!</h1>
+            <p className={styles.boasVindasTexto}>Bem-vindo ao sistema da Paróquia São Miguel Arcanjo. Por onde quer começar?</p>
+            <AtalhosRapidos nivel={usuario.nivelUsuario} />
         </div>
-      </div>
-    </ProtectedRoute>
-  );
+    );
 }

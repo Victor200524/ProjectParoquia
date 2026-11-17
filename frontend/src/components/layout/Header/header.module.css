@@ -63,6 +63,8 @@
   font-weight: bold;
   font-size: 1rem;
   box-shadow: 0 4px 10px rgba(204, 32, 39, 0.2);
+  object-fit: cover; /* quando o avatar é a foto (<img>), recorta sem achatar */
+  border: 2px solid #cc2027;
 }
 
 /* === ESTILOS DO MENU DROPDOWN === */
@@ -110,4 +112,10 @@
 
 .logoutText:hover {
   background-color: rgba(204, 32, 39, 0.05); /* Fundo avermelhado bem clarinho no hover */
+}
+/* Ao imprimir um relatório, o cabeçalho não sai no papel */
+@media print {
+  .header {
+    display: none !important;
+  }
 }

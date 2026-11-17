@@ -16,6 +16,7 @@
   gap: 0.75rem;
   padding: 0 1.5rem;
   border-bottom: 1px solid var(--border-color); /* Borda dinâmica */
+  flex-shrink: 0; /* o logo nunca é espremido quando o menu cresce */
 }
 
 .logoIcon {
@@ -36,6 +37,8 @@
 
 .nav {
   flex: 1;
+  min-height: 0; /* deixa o menu encolher dentro da sidebar em vez de vazar para fora */
+  overflow-y: auto; /* com muitos itens/submenus abertos, o menu rola por dentro */
   padding: 1.5rem 1rem;
   display: flex;
   flex-direction: column;
@@ -123,4 +126,10 @@
   background-color: var(--bg-body);
   color: #cc2027;
   border-left-color: #cc2027;
+}
+/* Ao imprimir um relatório, o menu lateral não sai no papel */
+@media print {
+  .sidebar {
+    display: none !important;
+  }
 }

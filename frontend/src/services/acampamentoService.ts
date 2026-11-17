@@ -33,7 +33,7 @@ export const acampamentoService = {
         }
     },
 
-    async alterarAcampamento(idAcampamento: number, acampamento: Acampamento): Promise<Acampamento> {
+    async alterarAcampamento(idAcampamento: number, acampamento: Acampamento): Promise<string> {
         try {
             const response = await fetch(`${BASE_URL}/alterarAcampamento/${idAcampamento}`, {
                 method: "PUT",
@@ -45,10 +45,10 @@ export const acampamentoService = {
             })
 
             if (!response.ok) {
-                const errorData = await response.json().catch(() => null)
-                throw new Error(errorData?.message || "Erro ao alterar acampamento!");
+                const errorText = await response.text();
+                throw new Error(errorText || "Erro ao alterar acampamento!");
             }
-            return await response.json();
+            return await response.text();
         } catch (error) {
             console.error("Erro na camade de serviço: ", error);
             throw error;
@@ -66,8 +66,8 @@ export const acampamentoService = {
             });
             
             if (!response.ok) {
-                const errorData = await response.json().catch(() => null);
-                throw new Error(errorData?.message || "Erro ao listar os acampamentos!");
+                const errorText = await response.text();
+                throw new Error(errorText || "Erro ao listar os acampamentos!");
             }
             return await response.json();
         } catch (error) {
@@ -86,8 +86,8 @@ export const acampamentoService = {
             });
             
             if (!response.ok) {
-                const errorData = await response.json().catch(() => null);
-                throw new Error(errorData?.message || "Erro ao listar os acampamentos públicos!");
+                const errorText = await response.text();
+                throw new Error(errorText || "Erro ao listar os acampamentos públicos!");
             }
             return await response.json();
         } catch (error) {
@@ -107,8 +107,8 @@ export const acampamentoService = {
             })
 
             if (!response.ok) {
-                const errorData = await response.json().catch(() => null)
-                throw new Error(errorData?.message || "Erro ao buscar acampamento por nome!");
+                const errorText = await response.text();
+                throw new Error(errorText || "Erro ao buscar acampamento por nome!");
             }
             return await response.json();
         } catch (error) {
@@ -128,8 +128,8 @@ export const acampamentoService = {
             })
 
             if (!response.ok) {
-                const errorData = await response.json().catch(() => null)
-                throw new Error(errorData?.message || "Erro ao deletar acampamento!");
+                const errorText = await response.text();
+                throw new Error(errorText || "Erro ao deletar acampamento!");
             }
 
         } catch (error) {

@@ -1,61 +1,409 @@
-.painelContainer {
-  padding: 2rem;
-  background-color: var(--bg-body);
+/* Painel: Dashboard do acampamento (admin/coordenação) e boas-vindas com atalhos (servo/campista) */
+
+.dashboard,
+.boasVindas {
+  --verde: #16a34a;          /* o que já foi feito (rosquinhas e dinheiro em mãos) */
+  --azul: #2563eb;           /* Mercado Pago */
+  --vermelho: #cc2027;       /* cor da paróquia: títulos e destaques */
+  --trilho: var(--border-color);
+
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2.5rem 2rem;
+  font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
   color: var(--text-primary);
-  min-height: calc(100vh - 60px); /* Ajuste se o seu header/sidebar ocupar espaço */
 }
 
-.welcomeHeader {
+/* no tema escuro o azul precisa ser mais claro para aparecer no fundo */
+:global([data-theme="dark"]) .dashboard {
+  --azul: #60a5fa;
+}
+
+/* ===================== Topo ===================== */
+.topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 1rem;
   margin-bottom: 2rem;
-  border-bottom: 2px solid var(--border-color);
-  padding-bottom: 1rem;
 }
 
-.welcomeTitle {
-  font-size: 2.2rem;
-  color: #cc2027;
+.paroquia {
+  margin: 0;
+  font-size: 0.85rem;
   font-weight: 800;
-  margin: 0 0 0.5rem 0;
-}
-
-.welcomeSubtitle {
-  font-size: 1.1rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
   color: var(--text-secondary);
 }
 
-.dashboardGrid {
+.paroquia span {
+  color: var(--vermelho);
+}
+
+.titulo {
+  margin: 0.2rem 0 0 0;
+  font-size: 2.1rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+}
+
+.controles {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.seletor {
+  min-width: 280px;
+  padding: 0.7rem 1rem;
+  font-size: 0.95rem;
+  font-family: inherit;
+  color: var(--text-primary);
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-color);
+  border-radius: 999px;
+}
+
+.contagem {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(135deg, #cc2027, #a81a20);
+  padding: 0.45rem 0.9rem;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.vazio {
+  text-align: center;
+  color: var(--text-secondary);
+  padding: 2rem;
+}
+
+/* ===================== Rosquinhas ===================== */
+.linhaRosquinhas {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.rosquinhaCard,
+.numeroCard,
+.painel {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 0.9rem;
+}
+
+.rosquinhaCard {
+  padding: 1.25rem 1rem;
+  text-align: center;
+}
+
+.rosquinha {
+  width: 130px;
+  height: 130px;
+}
+
+.rosquinhaTrilho,
+.rosquinhaArco {
+  fill: none;
+  stroke-width: 12;
+}
+
+.rosquinhaTrilho {
+  stroke: var(--trilho);
+}
+
+.rosquinhaArco {
+  stroke: var(--verde);
+  stroke-linecap: round;
+  transition: stroke-dasharray 0.6s ease;
+}
+
+.rosquinhaValor {
+  fill: var(--text-primary);
+  font-size: 1.6rem;
+  font-weight: 800;
+  text-anchor: middle;
+  dominant-baseline: central;
+}
+
+.rosquinhaTitulo {
+  margin: 0.6rem 0 0 0;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.rosquinhaDetalhe {
+  margin: 0.2rem 0 0 0;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+
+/* ===================== Números grandes ===================== */
+.linhaNumeros {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.numeroCard {
+  padding: 1.25rem 1.5rem;
+  border-top: 4px solid var(--vermelho);
+}
+
+.numero {
+  margin: 0;
+  font-size: 2.2rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.numeroLegenda {
+  margin: 0.2rem 0 0 0;
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.numeroDetalhe {
+  margin: 0.15rem 0 0 0;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+
+/* ===================== Pendências ===================== */
+.secaoTitulo {
+  margin: 2rem 0 0.75rem 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.linhaPendencias {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+
+.pendencia {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.9rem 1rem;
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  text-decoration: none;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 0.75rem;
+}
+
+/* pendência com algo a fazer: borda e número em destaque */
+.pendenciaAtiva {
+  border-color: rgba(245, 158, 11, 0.6);
+  color: var(--text-primary);
+}
+
+.pendenciaAtiva:hover {
+  background: rgba(245, 158, 11, 0.08);
+}
+
+.pendenciaNumero {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  min-width: 2.2rem;
+  text-align: center;
+}
+
+.pendenciaAtiva .pendenciaNumero {
+  color: #d97706;
+}
+
+/* ===================== Painéis de baixo ===================== */
+.linhaPaineis {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
   margin-top: 2rem;
 }
 
-/* Esqueleto de Card Genérico para o Dashboard */
-.dashCard {
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: 1rem;
-  padding: 1.5rem;
-  box-shadow: 0 4px 15px -5px rgba(0,0,0,0.1);
+.painel {
+  padding: 1.25rem 1.5rem;
 }
 
-.cardTitle {
-  font-size: 1.2rem;
+.painelTitulo {
+  margin: 0;
+  font-size: 1.05rem;
   font-weight: 700;
-  color: var(--text-primary);
-  margin-bottom: 1rem;
+}
+
+.painelSub {
+  margin: 0.25rem 0 1rem 0;
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+}
+
+.painelNota {
+  margin: 1rem 0 0 0;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+/* Barra do dinheiro: Mercado Pago | dinheiro/PIX | (o resto do trilho = falta receber) */
+.barraDinheiro {
+  display: flex;
+  gap: 2px; /* espaço entre as fatias */
+  height: 22px;
+  background: var(--trilho);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.fatiaMercadoPago {
+  background: var(--azul);
+}
+
+.fatiaManual {
+  background: var(--verde);
+}
+
+.fatiaFalta {
+  background: var(--trilho);
+}
+
+.legenda {
+  list-style: none;
+  margin: 1rem 0 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+}
+
+.legenda li {
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
 
-/* Modificadores de Alertas */
-.alertCritico {
-  color: #cc2027;
+.legenda strong {
+  margin-left: auto;
+  color: var(--text-primary);
 }
 
-.placeholderMsg {
+.legendaCor {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+/* Barras de servos por equipe */
+.listaEquipes {
+  list-style: none;
+  margin: 1rem 0 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.equipeLinha {
+  display: grid;
+  grid-template-columns: 9rem 1fr 2rem;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.82rem;
+}
+
+.equipeNome {
+  font-weight: 600;
   color: var(--text-secondary);
-  font-style: italic;
-  font-size: 0.95rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.equipeTrilho {
+  height: 14px;
+  background: var(--trilho);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.equipeBarra {
+  display: block;
+  height: 100%;
+  background: var(--vermelho);
+  border-radius: 4px;
+}
+
+.equipeQtde {
+  font-weight: 700;
+  text-align: right;
+}
+
+/* ===================== Boas-vindas (servo/campista) ===================== */
+.boasVindasTexto {
+  margin: 0.4rem 0 1.75rem 0;
+  color: var(--text-secondary);
+}
+
+.atalhos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.atalho {
+  padding: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-decoration: none;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-left: 4px solid var(--vermelho);
+  border-radius: 0.75rem;
+  transition: transform 0.15s ease;
+}
+
+.atalho:hover {
+  transform: translateY(-2px);
+}
+
+/* ===================== Telas menores ===================== */
+@media (max-width: 1000px) {
+  .linhaRosquinhas,
+  .linhaPendencias {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .linhaPaineis,
+  .linhaNumeros {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .dashboard,
+  .boasVindas {
+    padding: 1.5rem 1rem;
+  }
+
+  .linhaRosquinhas,
+  .linhaPendencias {
+    grid-template-columns: 1fr;
+  }
 }

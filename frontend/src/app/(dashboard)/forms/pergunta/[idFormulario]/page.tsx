@@ -16,6 +16,7 @@ export default function CadastrarPerguntas(){
     const [formulario, setFormulario] = useState<Formulario | null>(null);
     const [listaPerguntas, setListaPerguntas] = useState<Pergunta[]>([]);
     const [mostrarPergunta, setMostrarPergunta] = useState(false); // colquei pois serve para controlar quando estou dentro ou fora de um card que estao sendo criado a pergunta
+    const [idEditando, setIdEditando] = useState<number | null>(null); // null = criando pergunta nova; número = alterando essa pergunta
     const [novaPergunta, setNovaPergunta] = useState<CriarPergunta>({
         textoPergunta: "",
         tipoPergunta: "TEXTO",
@@ -53,8 +54,21 @@ export default function CadastrarPerguntas(){
         setNovaPergunta(prev => ({ ...prev, condicaoPergunta: condicao }));
     };
 
+    // abre o mesmo card de criação, já preenchido com a pergunta escolhida
+    function abrirAlteracao(pergunta: Pergunta){
+        setIdEditando(pergunta.idPergunta);
+        setNovaPergunta(prev => ({ ...prev, textoPergunta: pergunta.textoPergunta, tipoPergunta: pergunta.tipoPergunta, condicaoPergunta: pergunta.condicaoPergunta }));
+        setMostrarPergunta(true);
+    }
+
+    function fecharPergunta(){
+        setIdEditando(null);
+        setNovaPergunta(prev => ({ ...prev, textoPergunta: "", condicaoPergunta: "OBRIGATORIA" }));
+        setMostrarPergunta(false);
+    }
+
     const handleExcluir = async (idPergunta: number) =>{
-        if(!confirm("Deseja excluir a pergunta?"))
+        if(!confirm("Deseja excluir a pergunta? As respostas dadas a ela também serão apagadas."))
             return;
         try{
             await perguntaService.deletarPergunta(idPergunta);
@@ -67,10 +81,12 @@ export default function CadastrarPerguntas(){
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
-            await perguntaService.criarPergunta(novaPergunta);
+            if(idEditando === null)
+                await perguntaService.criarPergunta(novaPergunta);
+            else
+                await perguntaService.alterarPergunta(idEditando, novaPergunta);
             await carregarDados(); // recarrega a lista, pois o backend devolve só um texto, não a pergunta criada
-            setNovaPergunta(prev => ({ ...prev, textoPergunta: "" }));
-            setMostrarPergunta(false);
+            fecharPergunta();
         } catch (error) {
             alert("Erro ao salvar a pergunta: " + (error as Error).message);
         }
@@ -102,7 +118,8 @@ export default function CadastrarPerguntas(){
                             </p>
                             <div className={styles.respostaFalsa}>Resposta curta</div>
                             <div className={styles.rodapePergunta}>
-                                <button type="button" className={styles.btnExcluir} onClick={() => handleExcluir(pergunta.idPergunta)}>🗑️</button>
+                                <button type="button" className={styles.btnExcluir} onClick={() => abrirAlteracao(pergunta)} title="Alterar">✏️</button>
+                                <button type="button" className={styles.btnExcluir} onClick={() => handleExcluir(pergunta.idPergunta)} title="Excluir">🗑️</button>
                             </div>
                         </div>
                     ))
@@ -114,7 +131,7 @@ export default function CadastrarPerguntas(){
                     </button>
                 )}
 
-                {/* Só mostra quando a pergunta está sendo criada, ou seja, quando o usuário clicou no botão de adicionar pergunta */}
+                {/* Só mostra quando a pergunta está sendo criada ou alterada (botão de adicionar ou o lápis de uma pergunta) */}
                 {mostrarPergunta && (
                     <form className={`${styles.cardPergunta} ${styles.cardPerguntaAtiva}`} onSubmit={handleSubmit}>
 
@@ -137,7 +154,7 @@ export default function CadastrarPerguntas(){
                                 />
                             </label>
 
-                            <button type="button" className={styles.btnCancel} onClick={() => setMostrarPergunta(false)}>Cancelar</button>
+                            <button type="button" className={styles.btnCancel} onClick={fecharPergunta}>Cancelar</button>
                             <button type="submit" className={styles.btnSubmit}>Salvar</button>
                         </div>
 

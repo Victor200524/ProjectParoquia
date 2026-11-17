@@ -158,6 +158,19 @@ export default function NovoAcampamento() {
                 required
               />
             </div>
+
+            <div className={styles.fieldGroupFull}>
+              <label className={styles.fieldLabel} htmlFor="temaAcampamento">Tema / Lema</label>
+              <input
+                className={styles.inputField}
+                id="temaAcampamento"
+                name="temaAcampamento"
+                type="text"
+                placeholder='Ex: "Eu sou um sonho de Deus" (aparece na capa do quadrante)'
+                value={formData.temaAcampamento ?? ''}
+                onChange={handleChange}
+              />
+            </div>
           </div>
 
           {/* === SEÇÃO: DATAS === */}

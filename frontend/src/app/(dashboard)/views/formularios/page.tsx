@@ -57,6 +57,17 @@ function VisualizarFormularios() {
         window.scrollTo({ top: 0, behavior: "smooth" }); // o formulário de alteração fica no topo da página
     }
 
+    const handleExcluir = async (formulario: Formulario) => {
+        if (!confirm("Deseja excluir o formulário " + formulario.tituloFormulario + "?"))
+            return;
+        try {
+            await formularioService.deletarFormulario(Number(formulario.idFormulario));
+            await carregarFormularios();
+        } catch (error) {
+            alert("Erro ao excluir o formulário: " + (error as Error).message);
+        }
+    };
+
     function fecharAlteracao() {
         setIdEditando(null);
         setFormData(null);
@@ -177,6 +188,7 @@ function VisualizarFormularios() {
                                 <Link href={`/forms/pergunta/${formulario.idFormulario}`} className={styles.btnPrimario}>Perguntas</Link>
                                 <Link href={`/views/formulariosPerguntasRespostas/${formulario.idFormulario}`} className={styles.btnSecundario}>Respostas</Link>
                                 <button type="button" className={styles.btnSecundario} onClick={() => abrirAlteracao(formulario)}>Alterar</button>
+                                <button type="button" className={styles.btnExcluir} onClick={() => handleExcluir(formulario)}>Excluir</button>
                             </div>
 
                         </div>

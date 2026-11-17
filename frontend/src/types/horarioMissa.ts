@@ -4,5 +4,5 @@ export interface HorarioMissa {
     idHorarioMissa?: number;
     semanaMissa: string;
     horarioMissa: string;
-    comunidade: Comunidade;
+    comunidade?: Comunidade; // o backend não manda (JsonIgnore); o horário vai dentro da comunidade
 }

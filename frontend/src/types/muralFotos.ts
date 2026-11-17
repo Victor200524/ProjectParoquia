@@ -5,5 +5,6 @@ export interface MuralFotos {
     linkDriveMuralFotos: string;
     acampamento: {
         idAcampamento: number;
+        nomeAcampamento?: string; // o nome só vem nas listagens
     };
 }

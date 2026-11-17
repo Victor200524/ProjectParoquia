@@ -5,7 +5,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import styles from './cadastro.module.css';
 import { formatarCPF, formatarTelefone } from '@/utils/formatters';
-import { usuarioService } from '@/services/usuarioService'; 
+import { usuarioService } from '@/services/usuarioService';
+import RecorteFoto from '@/components/foto/RecorteFoto';
 
 export default function CadastroPage() {
   const router = useRouter();
@@ -17,8 +18,26 @@ export default function CadastroPage() {
     emailUsuario: '',
     contatoUsuario: '',
     senhaUsuario: '',
-    nivelUsuario: ''
+    nivelUsuario: '',
+    enderecoUsuario: '',
+    dataNascimentoUsuario: ''
   });
+
+  // Foto: primeiro a pessoa escolhe o arquivo (imagemParaRecortar), ajusta o recorte
+  // e só então a foto final (fotoUsuario, em base64) fica guardada para enviar
+  const [imagemParaRecortar, setImagemParaRecortar] = useState<string | null>(null);
+  const [fotoUsuario, setFotoUsuario] = useState<string | null>(null);
+
+  const handleEscolherFoto = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const arquivo = e.target.files?.[0];
+    if (!arquivo)
+      return;
+    // lê o arquivo como "data:image/...;base64,..." para mostrar na tela de recorte
+    const leitor = new FileReader();
+    leitor.onload = () => setImagemParaRecortar(leitor.result as string);
+    leitor.readAsDataURL(arquivo);
+    e.target.value = ''; // permite escolher o mesmo arquivo de novo depois
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -39,7 +58,7 @@ export default function CadastroPage() {
     setCarregando(true);
 
     try {
-      await usuarioService.cadastrarUsuario(formData as any);
+      await usuarioService.cadastrarUsuario({ ...formData, fotoUsuario } as any);
       alert('Cadastro realizado com sucesso! Faça seu login.');
       router.push('/login');
     } catch (error: any) {
@@ -59,7 +78,29 @@ export default function CadastroPage() {
 
         {erro && <div className={styles.errorMsg}>{erro}</div>}
 
+        {/* Janela de recorte: aparece depois de escolher o arquivo da foto */}
+        {imagemParaRecortar && (
+          <RecorteFoto
+            imagem={imagemParaRecortar}
+            onConfirmar={(foto) => { setFotoUsuario(foto); setImagemParaRecortar(null); }}
+            onCancelar={() => setImagemParaRecortar(null)}
+          />
+        )}
+
         <form onSubmit={handleSubmit}>
+          {/* Foto (opcional): aparece no quadrante dos acampamentos */}
+          <div className={styles.fotoArea}>
+            {fotoUsuario ? (
+              <img className={styles.fotoPreview} src={`data:image/jpeg;base64,${fotoUsuario}`} alt="Sua foto" />
+            ) : (
+              <div className={styles.fotoVazia}>Sem foto</div>
+            )}
+            <label className={styles.btnFoto}>
+              {fotoUsuario ? 'Trocar foto' : 'Escolher foto'}
+              <input type="file" accept="image/*" onChange={handleEscolherFoto} hidden />
+            </label>
+          </div>
+
           <div className={styles.formGrid}>
             
             <div className={`${styles.inputGroup} ${styles.fullWidth}`}>
@@ -102,6 +143,31 @@ export default function CadastroPage() {
             </div>
 
             <div className={`${styles.inputGroup} ${styles.fullWidth}`}>
+              <label className={styles.label}>Endereço</label>
+              <input
+                type="text"
+                name="enderecoUsuario"
+                value={formData.enderecoUsuario}
+                onChange={handleChange}
+                className={styles.input}
+                required
+                placeholder="Rua, número - Bairro"
+              />
+            </div>
+
+            <div className={styles.inputGroup}>
+              <label className={styles.label}>Data de nascimento</label>
+              <input
+                type="date"
+                name="dataNascimentoUsuario"
+                value={formData.dataNascimentoUsuario}
+                onChange={handleChange}
+                className={styles.input}
+                required
+              />
+            </div>
+
+            <div className={styles.inputGroup}>
               <label className={styles.label}>E-mail</label>
               <input 
                 type="email" 

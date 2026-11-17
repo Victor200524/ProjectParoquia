@@ -26,7 +26,7 @@ export const doacaoService = {
         }
     },
 
-    async alterarDoacao(idDoacao: number, doacao: Doacao): Promise<Doacao> {
+    async alterarDoacao(idDoacao: number, doacao: Doacao): Promise<string> {
         try{
             const response = await fetch(`${BASE_URL}/alterarDoacao/${idDoacao}`, {
                 method: "PUT",
@@ -38,17 +38,17 @@ export const doacaoService = {
             });
 
             if (!response.ok) {
-                const errorData = await response.json().catch(() => null);
-                throw new Error(errorData?.message || "Erro ao alterar doação!");
+                const errorText = await response.text();
+                throw new Error(errorText || "Erro ao alterar doação!");
             }
-            return await response.json();
+            return await response.text();
         }catch (error){
             console.error("Erro na camada de serviço: ", error);
             throw error;
         }
     },
 
-    async listarDoacaoes() {
+    async listarDoacaoes(): Promise<Doacao[]> {
         try{
             const response = await fetch(`${BASE_URL}/todasDoacoes`, {
                 method: "GET",
@@ -59,8 +59,8 @@ export const doacaoService = {
             });
 
             if (!response.ok) {
-                const errorData = await response.json().catch(() => null);
-                throw new Error(errorData?.message || "Erro ao listar doações!");
+                const errorText = await response.text();
+                throw new Error(errorText || "Erro ao listar doações!");
             }
             return await response.json();   
         }catch (error) {
@@ -80,8 +80,8 @@ export const doacaoService = {
             });
 
             if (!response.ok) {
-                const errorData = await response.json().catch(() => null);
-                throw new Error(errorData?.message || "Erro ao buscar doação!");
+                const errorText = await response.text();
+                throw new Error(errorText || "Erro ao buscar doação!");
             }
             return await response.json();
         }catch (error) {
@@ -101,8 +101,8 @@ export const doacaoService = {
             });
 
             if (!response.ok) {
-                const errorData = await response.json().catch(() => null);
-                throw new Error(errorData?.message || "Erro ao deletar doação!");
+                const errorText = await response.text();
+                throw new Error(errorText || "Erro ao deletar doação!");
             }
         }catch (error) {
             console.error("Erro na camada de serviço: ", error);

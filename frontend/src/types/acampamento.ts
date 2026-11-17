@@ -12,6 +12,7 @@ export interface Acampamento {
     dataInicioAcampamento: string;
     dataFimAcampamento: string;
     informacoesAcampamento: string;
+    temaAcampamento?: string; // lema da capa do quadrante (opcional)
     fotoAcampamento: string;
     tokenMercadoPagoAcampamento: string;
     aceitaPagamentoOnline?: boolean; // calculado pelo backend (o token em si nunca volta para o front)
@@ -30,6 +31,7 @@ export interface AcampamentoPublico {
     dataInicioAcampamento: string;
     dataFimAcampamento: string;
     informacoesAcampamento: string;
+    temaAcampamento?: string; // lema da capa do quadrante (opcional)
     fotoAcampamento: string;
     comunidade: Comunidade;
 }

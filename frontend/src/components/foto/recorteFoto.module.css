@@ -1,0 +1,85 @@
+/* Janela por cima da tela, com fundo escurecido */
+.fundo {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.janela {
+  background: var(--bg-card, #fff);
+  color: var(--text-primary, #111);
+  border-radius: 0.9rem;
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 460px;
+}
+
+.titulo {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin: 0 0 0.25rem 0;
+}
+
+.dica {
+  font-size: 0.85rem;
+  color: var(--text-secondary, #555);
+  margin: 0 0 1rem 0;
+}
+
+/* O Cropper ocupa todo esse quadro (ele precisa de um pai com position relative e altura) */
+.areaCorte {
+  position: relative;
+  width: 100%;
+  height: 320px;
+  background: #222;
+  border-radius: 0.6rem;
+  overflow: hidden;
+}
+
+.zoomLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.zoomLabel input {
+  flex: 1;
+  accent-color: #cc2027;
+}
+
+.botoes {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+.btnCancelar,
+.btnConfirmar {
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 0.6rem 1.2rem;
+  border-radius: 0.6rem;
+  cursor: pointer;
+}
+
+.btnCancelar {
+  background: transparent;
+  color: var(--text-secondary, #555);
+  border: 1px solid var(--border-color, #ccc);
+}
+
+.btnConfirmar {
+  background: linear-gradient(135deg, #cc2027, #a81a20);
+  color: #fff;
+  border: none;
+}

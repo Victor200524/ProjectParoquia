@@ -182,3 +182,50 @@
   border-color: rgba(204, 32, 39, 0.3);
   color: #ff6b6b;
 }
+/* Foto do cadastro: prévia redonda + botão para escolher */
+.fotoArea {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.75rem;
+}
+
+.fotoPreview,
+.fotoVazia {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #cc2027;
+}
+
+.fotoVazia {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  color: #888;
+  background: #f1f1f1;
+  border-style: dashed;
+}
+
+.btnFoto {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #cc2027;
+  border: 1px solid #cc2027;
+  border-radius: 999px;
+  padding: 0.4rem 1rem;
+  cursor: pointer;
+}
+
+.btnFoto:hover {
+  background: rgba(204, 32, 39, 0.08);
+}
+
+:global(.dark) .fotoVazia,
+:global([data-theme="dark"]) .fotoVazia {
+  background: #2a2a2a;
+  color: #aaa;
+}

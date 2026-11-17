@@ -24,9 +24,9 @@ export const MuralFotosService = {
             throw error;
         }
     },
-    async alterarMuralFotos(idMuralFotos: number, muralFotos: MuralFotos): Promise<MuralFotos> {
+    async alterarMuralFotos(idMuralFotos: number, muralFotos: MuralFotos): Promise<string> {
         try{
-            const response = await fetch(`${BASE_URL}/alterarMuralFotos/${idMuralFotos}`, {
+            const response = await fetch(`${BASE_URL}/alterarMural/${idMuralFotos}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
@@ -38,23 +38,23 @@ export const MuralFotosService = {
             if (!response.ok) {
                 throw new Error(responseText || "Erro ao alterar mural de fotos!");
             }
-            return await response.json();
+            return responseText;
         }catch (error){
             console.error("Erro na camada de serviço: ", error);
             throw error;
         }
     },
-    async listarMuralFotos() {
+    async listarMuralFotos(): Promise<MuralFotos[]> {
         try{
-            const response = await fetch(`${BASE_URL}/todasMuralFotos`, {
+            const response = await fetch(`${BASE_URL}/getAllMurais`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${localStorage.getItem('token') || ''}`
                 }
             });
-            const responseText = await response.text();
             if (!response.ok) {
+                const responseText = await response.text();
                 throw new Error(responseText || "Erro ao listar mural de fotos");
             }
             return await response.json();
@@ -65,7 +65,7 @@ export const MuralFotosService = {
     },
     async deletarMuralFotos(idMuralFotos: number): Promise<string> {
         try{
-            const response = await fetch(`${BASE_URL}/deletarMuralFotos/${idMuralFotos}`, {
+            const response = await fetch(`${BASE_URL}/deletarMural/${idMuralFotos}`, {
                 method: "DELETE",
                 headers: {
                     "Content-Type": "application/json",

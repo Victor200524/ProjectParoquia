@@ -2,10 +2,11 @@ import React from 'react';
 import Sidebar from '@/components/layout/Sidebar/Sidebar'; // ou o caminho que vc usou
 import Header from '@/components/layout/Header/Header';    // ou o caminho que vc usou
 import VerificarSessao from '@/components/auth/VerificarSessao';
+import styles from './layout.module.css';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: 'var(--bg-body)' }}>
+    <div className={styles.fundo} style={{ display: 'flex', minHeight: '100vh', backgroundColor: 'var(--bg-body)' }}>
       
       <VerificarSessao />
 
@@ -19,7 +20,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           {children}
         </main>
 
-        <footer style={{ padding: '1.5rem', textAlign: 'center', color: '#94a3b8', fontSize: '0.85rem', borderTop: '1px solid #e2e8f0' }}>
+        <footer className={styles.rodape} style={{ padding: '1.5rem', textAlign: 'center', color: '#94a3b8', fontSize: '0.85rem', borderTop: '1px solid #e2e8f0' }}>
           © 2026 Paróquia São Miguel Arcanjo. Todos os direitos reservados.
         </footer>
 

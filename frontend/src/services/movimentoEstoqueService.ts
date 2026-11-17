@@ -24,7 +24,7 @@ export const movimentoEstoqueService = {
             throw error;
         }
     },
-    async alterarMovimentoEstoque(idMovimentoEstoque: number, movimentoEstoque: MovimentacaoEstoque): Promise<string> {
+    async alterarMovimentoEstoque(idMovimentoEstoque: number, movimentoEstoque: CriarMovimentacaoEstoque): Promise<string> {
         try{
             const response = await fetch(`${BASE_URL}/alterarMovimentoEstoque/${idMovimentoEstoque}`, {
                 method: "PUT",

@@ -17,3 +17,13 @@ export type CriarInscricaoAcampamento = Omit<InscricaoAcampamento, 'idInscricao'
     usuario: { idUsuario: number };
     acampamento: { idAcampamento: number };
 };
+// Uma pessoa do quadrante (GET /inscricaoAcampamento/quadrante/{idAcampamento}): só confirmados
+export interface QuadrantePessoa {
+    nome: string;
+    telefone: string | null;
+    endereco: string | null;
+    dataNascimento: string | null; // "2000-12-31"
+    funcao: string;                // CAMPISTA ou SERVO
+    equipe: string | null;
+    foto: string | null;           // base64 (sem o "data:image/jpeg;base64,")
+}

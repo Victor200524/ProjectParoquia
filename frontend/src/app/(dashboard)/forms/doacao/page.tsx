@@ -81,6 +81,7 @@ function NovaDoacao() {
         dataValidadeDoacao: '',
         tipoDoacao: '',
         qtdeDoacao: 0,
+        valorDoacao: null,
         acampamento: { idAcampamento: '' } 
       });
     }catch(error: any){
@@ -128,24 +129,44 @@ function NovaDoacao() {
               <option value="">Selecione o tipo...</option>
               <option value="PERECIVEL">Perecivel</option>
               <option value="NAO_PERECIVEL">Não Perecivel</option>
+              <option value="DINHEIRO">Dinheiro</option>
             </select>
           </div>
 
-          <div className={styles.fieldGroup}>
-            <label className={styles.fieldLabel} htmlFor="qtdeDoacao">Quantidade *</label>
-            <input
-              className={styles.inputField}
-              id="qtdeDoacao"
-              name="qtdeDoacao"
-              type="number"
-              placeholder="Ex: 10"
-              value={formData.qtdeDoacao}
-              onChange={handleChange}
-              min="1"
-              required
-              onFocus={(e) => e.target.select()} 
-            />
-          </div>
+          {/* Doação em dinheiro tem valor em R$; doação de produto tem quantidade */}
+          {formData.tipoDoacao === 'DINHEIRO' ? (
+            <div className={styles.fieldGroup}>
+              <label className={styles.fieldLabel} htmlFor="valorDoacao">Valor (R$) *</label>
+              <input
+                className={styles.inputField}
+                id="valorDoacao"
+                name="valorDoacao"
+                type="number"
+                step="0.01"
+                placeholder="Ex: 150,00"
+                value={formData.valorDoacao ?? ''}
+                onChange={handleChange}
+                min="0.01"
+                required
+              />
+            </div>
+          ) : (
+            <div className={styles.fieldGroup}>
+              <label className={styles.fieldLabel} htmlFor="qtdeDoacao">Quantidade *</label>
+              <input
+                className={styles.inputField}
+                id="qtdeDoacao"
+                name="qtdeDoacao"
+                type="number"
+                placeholder="Ex: 10"
+                value={formData.qtdeDoacao}
+                onChange={handleChange}
+                min="1"
+                required
+                onFocus={(e) => e.target.select()} 
+              />
+            </div>
+          )}
 
           <div className={styles.fieldGroupFull}>
             <label className={styles.fieldLabel} htmlFor="descricaoDoacao">Descrição Detalhada</label>
