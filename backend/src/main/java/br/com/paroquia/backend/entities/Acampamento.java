@@ -42,6 +42,9 @@ public class Acampamento {
     @Column(name = "\"informacoes_Acampamento\"", columnDefinition = "TEXT")
     private String informacoesAcampamento;
 
+    @Column(name = "\"tema_Acampamento\"")
+    private String temaAcampamento; // lema que aparece na capa do quadrante (opcional)
+
     @JdbcTypeCode(SqlTypes.BINARY) // 👈 Isso obriga o Hibernate a respeitar o formato de bytes do Postgres!
     @Column(name = "\"foto_Acampamento\"", columnDefinition = "bytea")
     private byte[] fotoAcampamento;
@@ -149,6 +152,14 @@ public class Acampamento {
 
     public void setDataFimAcampamento(Date dataFimAcampamento) {
         this.dataFimAcampamento = dataFimAcampamento;
+    }
+
+    public String getTemaAcampamento() {
+        return temaAcampamento;
+    }
+
+    public void setTemaAcampamento(String temaAcampamento) {
+        this.temaAcampamento = temaAcampamento;
     }
 
     public String getInformacoesAcampamento() {

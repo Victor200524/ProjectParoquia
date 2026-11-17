@@ -35,6 +35,9 @@ public class Doacao {
     @Column(name = "\"qtde_Doacao\"")
     private Integer qtdeDoacao;
 
+    @Column(name = "\"valor_Doacao\"")
+    private Double valorDoacao; // só para doação em DINHEIRO; nas doações de produto fica vazio
+
     @ManyToOne
     @JoinColumn(name = "acampamento_id_acampamento")
     private Acampamento acampamento;
@@ -108,6 +111,14 @@ public class Doacao {
 
     public void setTipoDoacao(TipoDoacao tipoDoacao) {
         this.tipoDoacao = tipoDoacao;
+    }
+
+    public Double getValorDoacao() {
+        return valorDoacao;
+    }
+
+    public void setValorDoacao(Double valorDoacao) {
+        this.valorDoacao = valorDoacao;
     }
 
     public Integer getQtdeDoacao() {

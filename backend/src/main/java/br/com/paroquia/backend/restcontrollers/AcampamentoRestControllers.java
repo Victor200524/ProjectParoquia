@@ -22,9 +22,8 @@ public class AcampamentoRestControllers {
     @GetMapping(value = "/todosAcampamentos")
     public ResponseEntity<Object> getAllAcampamentos() {
         List<Acampamento> acampamentoList = acampamentoService.getAllAcampamentos();
-        if (acampamentoList != null && !acampamentoList.isEmpty())
-            return ResponseEntity.ok(acampamentoList);
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhum acampamento cadastrado");
+        // lista vazia volta como [] (e não como erro), para a tela mostrar "nenhum cadastrado"
+        return ResponseEntity.ok(acampamentoList);
     }
 
     @GetMapping(value = "/publico")
@@ -41,6 +40,7 @@ public class AcampamentoRestControllers {
                 a.getDataInicioAcampamento(),
                 a.getDataFimAcampamento(),
                 a.getInformacoesAcampamento(),
+                a.getTemaAcampamento(),
                 a.getFotoAcampamento(),
                 a.getComunidade()
         )).toList();

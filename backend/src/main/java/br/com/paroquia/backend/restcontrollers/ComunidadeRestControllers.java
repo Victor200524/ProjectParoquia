@@ -24,9 +24,8 @@ public class ComunidadeRestControllers {
     @GetMapping(value ="/todasComunidades")
     public ResponseEntity<Object> buscarTodasComunidades(){
         List<Comunidade> comunidadeList = comunidadeService.getAllComunidades();
-        if(comunidadeList != null && !comunidadeList.isEmpty())
-            return ResponseEntity.ok(comunidadeList);
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhuma comunidade cadastrada.");
+        // lista vazia volta como [] (e não como erro), para a tela mostrar "nenhum cadastrado"
+        return ResponseEntity.ok(comunidadeList);
     }
 
     @GetMapping(value = "/buscarComunidade/{nomeComunidade}")

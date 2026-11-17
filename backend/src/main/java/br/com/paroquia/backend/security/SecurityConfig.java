@@ -46,6 +46,12 @@ public class SecurityConfig {
                         // --- Doação ---
                         .requestMatchers("/doacao/**").hasAnyRole("ADMIN", "COORDENADOR")
 
+                        // --- Dashboard do acampamento ---
+                        .requestMatchers("/dashboard/**").hasAnyRole("ADMIN", "COORDENADOR")
+
+                        // --- Relatórios de saída (prestação de contas) ---
+                        .requestMatchers("/relatorio/**").hasAnyRole("ADMIN", "COORDENADOR")
+
                         // --- Comunidade ---
                         .requestMatchers(HttpMethod.GET,"/comunidade/**").permitAll()
                         .requestMatchers("/comunidade/**").hasRole("ADMIN")
@@ -55,6 +61,7 @@ public class SecurityConfig {
 
                         // --- Usuario ---
                         .requestMatchers(HttpMethod.GET,"/usuario/validarToken").authenticated() // So entra quem tem o token validado
+                        .requestMatchers("/usuario/meuPerfil").authenticated() // qualquer logado vê/edita o PRÓPRIO perfil (o controller usa o usuário do token)
                         .requestMatchers(HttpMethod.POST, "/usuario/cadastrarUsuario").permitAll()
                         .requestMatchers(HttpMethod.POST, "/usuario/loginUsuario").permitAll()
                         .requestMatchers("/usuario/**").hasRole("ADMIN")

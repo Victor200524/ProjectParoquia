@@ -20,10 +20,8 @@ public class MuralFotosRestControllers {
     @GetMapping(value = "/getAllMurais")
     public ResponseEntity<Object> getAllMurais() {
         List<MuralFotos> muralList = muralFotosService.getAllMurais();
-        if (muralList != null && !muralList.isEmpty()) {
-            return ResponseEntity.ok(muralList);
-        }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nenhum mural de fotos cadastrado.");
+        // lista vazia volta como [] (e não como erro), para a tela mostrar "nenhum cadastrado"
+        return ResponseEntity.ok(muralList);
     }
 
     @GetMapping(value = "/buscarMural/{idMuralFotos}")

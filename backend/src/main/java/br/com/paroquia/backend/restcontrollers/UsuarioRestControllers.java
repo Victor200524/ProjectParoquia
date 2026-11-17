@@ -1,5 +1,7 @@
 package br.com.paroquia.backend.restcontrollers;
 
+import br.com.paroquia.backend.dtos.AlterarPerfilDTO;
+import br.com.paroquia.backend.dtos.PerfilDTO;
 import br.com.paroquia.backend.entities.InscricaoAcampamento;
 import br.com.paroquia.backend.entities.Usuario;
 import br.com.paroquia.backend.enums.UsuarioTipoNivel;
@@ -10,6 +12,7 @@ import br.com.paroquia.backend.services.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -107,6 +110,64 @@ public class UsuarioRestControllers {
         return null;
     }
 
+    // ============================== Meu perfil (o próprio usuário logado) ==============================
+    // Os dois usam o usuário do token (@AuthenticationPrincipal), nunca um id vindo da tela:
+    // assim ninguém consegue ver ou alterar o perfil de outra pessoa.
+
+    @GetMapping(value = "/meuPerfil")
+    public ResponseEntity<Object> meuPerfil(@AuthenticationPrincipal Usuario usuarioLogado) {
+        Usuario usuario = usuarioService.getUserId(usuarioLogado.getIdUsuario());
+        return ResponseEntity.ok(new PerfilDTO(
+                usuario.getNomeUsuario(),
+                usuario.getEmailUsuario(),
+                usuario.getCpfUsuario(),
+                usuario.getContatoUsuario(),
+                usuario.getEnderecoUsuario(),
+                usuario.getDataNascimentoUsuario(),
+                usuario.getNivelUsuario().toString(),
+                usuario.getFotoUsuario()
+        ));
+    }
+
+    @PutMapping(value = "/meuPerfil")
+    public ResponseEntity<Object> alterarMeuPerfil(@AuthenticationPrincipal Usuario usuarioLogado, @RequestBody AlterarPerfilDTO dados) {
+        Usuario usuario = usuarioService.getUserId(usuarioLogado.getIdUsuario());
+
+        // --- validações ---
+        if (dados.nome() == null || dados.nome().isBlank())
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Informe o nome!");
+        if (!usuarioService.isFormatoEmailValido(dados.email()))
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Formato de E-MAIL inválido: " + dados.email());
+        Usuario donoDoEmail = usuarioService.getUserEmail(dados.email());
+        if (donoDoEmail != null && !donoDoEmail.getIdUsuario().equals(usuario.getIdUsuario()))
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("E-mail já cadastrado!");
+        if (!usuarioService.isTelefoneValido(dados.contato()))
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Formato de telefone inválido: " + dados.contato());
+
+        // --- troca de senha (opcional): precisa confirmar a senha atual ---
+        if (dados.novaSenha() != null && !dados.novaSenha().isBlank()) {
+            if (dados.senhaAtual() == null || !encoder.matches(dados.senhaAtual(), usuario.getSenhaUsuario()))
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Senha atual incorreta!");
+            usuario.setSenhaUsuario(encoder.encode(dados.novaSenha()));
+        }
+
+        // --- dados que o usuário pode mudar ---
+        usuario.setNomeUsuario(dados.nome());
+        usuario.setEmailUsuario(dados.email());
+        usuario.setContatoUsuario(dados.contato());
+        usuario.setEnderecoUsuario(dados.endereco());
+        usuario.setDataNascimentoUsuario(dados.dataNascimento());
+
+        // --- foto: remover, trocar ou manter ---
+        if (Boolean.TRUE.equals(dados.removerFoto()))
+            usuario.setFotoUsuario(null);
+        else if (dados.foto() != null)
+            usuario.setFotoUsuario(dados.foto());
+
+        usuarioService.alterarUsuario(usuario);
+        return ResponseEntity.ok("Perfil atualizado com sucesso!");
+    }
+
     @PostMapping(value = "/cadastrarUsuario")
     public ResponseEntity<Object> cadastrarUsuario(@RequestBody Usuario usuario) {
         try {
@@ -179,6 +240,10 @@ public class UsuarioRestControllers {
                     usuarioAtualizado.setSenhaUsuario(usuarioExistente.getSenhaUsuario());
                 else
                     usuarioAtualizado.setSenhaUsuario(encoder.encode(usuarioAtualizado.getSenhaUsuario()));
+
+                // A foto não volta para a tela de alteração (WRITE_ONLY); se não veio foto nova, mantém a atual
+                if (usuarioAtualizado.getFotoUsuario() == null)
+                    usuarioAtualizado.setFotoUsuario(usuarioExistente.getFotoUsuario());
 
                 // guarda o nível antigo antes de salvar: o save copia os dados novos para cima do usuarioExistente
                 UsuarioTipoNivel nivelAntigo = usuarioExistente.getNivelUsuario();

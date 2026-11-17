@@ -43,6 +43,12 @@ public class InscricaoAcampamentoRestControllers {
 
     // Devolve só as inscrições do usuário dono do token
     // Sem inscrição devolve lista vazia, pois é normal para quem acabou de se cadastrar
+    // Pessoas confirmadas do acampamento, para imprimir o quadrante (ADMIN/COORDENADOR pela regra geral do SecurityConfig)
+    @GetMapping(value = "/quadrante/{idAcampamento}")
+    public ResponseEntity<Object> quadrante(@PathVariable Long idAcampamento){
+        return ResponseEntity.ok(inscricaoAcampamentoService.montarQuadrante(idAcampamento));
+    }
+
     @GetMapping(value = "/minhasInscricoes")
     public ResponseEntity<Object> minhaInscricao(@AuthenticationPrincipal Usuario usuarioLogado){
         List<InscricaoAcampamento> inscricoes = inscricaoAcampamentoService.buscarInscricaoUsuario(usuarioLogado.getIdUsuario());

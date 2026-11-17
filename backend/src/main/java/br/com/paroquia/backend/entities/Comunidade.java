@@ -26,7 +26,7 @@ public class Comunidade {
     private byte[] fotoComunidade;
 
     // Relacionamento do 1:N com HorarioMissa
-    @OneToMany(mappedBy = "comunidade", cascade = CascadeType.ALL) // CascadeType.ALL -> Se salvar a comunidade salva os horários juntos
+    @OneToMany(mappedBy = "comunidade", cascade = CascadeType.ALL, orphanRemoval = true) // CascadeType.ALL -> Se salvar a comunidade salva os horários juntos
     private List<HorarioMissa> horariosMissa = new ArrayList<>();
 
     public Comunidade() {

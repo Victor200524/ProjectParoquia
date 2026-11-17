@@ -48,17 +48,17 @@ public class ItemEstoqueRestControllers {
         }
     }
 
-    @PutMapping(value = "/atualizarItemEstoque")
-    public ResponseEntity<Object> atualizarItemEstoque(@RequestBody ItemEstoque itemEstoque){
-        try {
-            if(itemEstoque != null){
-                ItemEstoque itemAtualizado = itemEstoqueService.save(itemEstoque);
-                return ResponseEntity.status(HttpStatus.ACCEPTED).body("Item atualizado com sucesso!");
-            }
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Falta informações para atualizar o item em estoque!");
-        }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao alterar o Item de Estoque!");
-        }
+    @PutMapping(value = "/alterarItemEstoque/{id}")
+    public ResponseEntity<Object> alterarItemEstoque(@PathVariable Long id, @RequestBody ItemEstoque itemEstoque){
+        ItemEstoque itemExistente = itemEstoqueService.getItemEstoqueId(id);
+        if(itemExistente == null)
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Item em estoque não encontrado!");
+
+        itemEstoque.setIdItemEstoque(id);
+        // A quantidade só muda pelas movimentações do estoque, então mantém a que já está no banco
+        itemEstoque.setQtdeItemEstoque(itemExistente.getQtdeItemEstoque());
+        itemEstoqueService.save(itemEstoque);
+        return ResponseEntity.status(HttpStatus.OK).body("Item atualizado com sucesso!");
     }
 
     @DeleteMapping(value = "/deletarItemEstoque/{id}")

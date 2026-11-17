@@ -6,12 +6,15 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 
@@ -50,6 +53,19 @@ public class Usuario implements UserDetails {
 
     @Column(name = "\"cpf_Usuario\"", unique = true)
     private String cpfUsuario;
+
+    @Column(name = "\"endereco_Usuario\"")
+    private String enderecoUsuario;
+
+    @Column(name = "\"dataNascimento_Usuario\"")
+    private LocalDate dataNascimentoUsuario; // LocalDate = só a data, sem horário (vai e volta no JSON como "2000-12-31")
+
+    // A foto só entra (no cadastro); não volta nas respostas, senão todo JSON que tem um usuário dentro
+    // (inscrições, movimentações...) ficaria pesado. Quem precisa da foto usa um endpoint próprio (ex.: quadrante).
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @JdbcTypeCode(SqlTypes.BINARY)
+    @Column(name = "\"foto_Usuario\"", columnDefinition = "bytea")
+    private byte[] fotoUsuario;
 
     public Usuario() {
     }
@@ -127,6 +143,30 @@ public class Usuario implements UserDetails {
 
     public void setCpfUsuario(String cpfUsuario) {
         this.cpfUsuario = cpfUsuario;
+    }
+
+    public String getEnderecoUsuario() {
+        return enderecoUsuario;
+    }
+
+    public void setEnderecoUsuario(String enderecoUsuario) {
+        this.enderecoUsuario = enderecoUsuario;
+    }
+
+    public LocalDate getDataNascimentoUsuario() {
+        return dataNascimentoUsuario;
+    }
+
+    public void setDataNascimentoUsuario(LocalDate dataNascimentoUsuario) {
+        this.dataNascimentoUsuario = dataNascimentoUsuario;
+    }
+
+    public byte[] getFotoUsuario() {
+        return fotoUsuario;
+    }
+
+    public void setFotoUsuario(byte[] fotoUsuario) {
+        this.fotoUsuario = fotoUsuario;
     }
 
     @Override

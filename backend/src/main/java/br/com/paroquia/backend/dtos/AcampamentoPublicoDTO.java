@@ -15,6 +15,7 @@ public record AcampamentoPublicoDTO(
         Date dataInicioAcampamento,
         Date dataFimAcampamento,
         String informacoesAcampamento,
+        String temaAcampamento,
         byte[] fotoAcampamento,
         Comunidade comunidade
 ) {

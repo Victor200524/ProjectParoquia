@@ -36,8 +36,8 @@ public class MovimentoEstoqueRestControllers {
     @GetMapping(value = "/todasMovimentacoes")
     public ResponseEntity<Object> getAllMovimentacoesEstoque(){
         List<MovimentacaoEstoque> movimentacaoEstoqueList = movimentoEstoqueService.getAllMovimentacoesEstoque();
-        return !movimentacaoEstoqueList.isEmpty() ? ResponseEntity.status(HttpStatus.OK).body(movimentacaoEstoqueList):
-                ResponseEntity.status(HttpStatus.OK).body("Não tem movimentações feitas no estoque!");
+        // lista vazia volta como [] (e não como erro), para a tela mostrar "nenhum cadastrado"
+        return ResponseEntity.ok(movimentacaoEstoqueList);
     }
 
 // =========================== BUSCAS ESPECIFICAS ===================================================== \\

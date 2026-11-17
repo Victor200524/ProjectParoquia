@@ -12,5 +12,9 @@ public interface InscricaoAcampamentoRepository extends JpaRepository<InscricaoA
     List<InscricaoAcampamento> findByUsuarioNomeUsuarioContainingIgnoreCase(String nomeUsuario);
     InscricaoAcampamento findByUsuarioIdUsuarioAndAcampamentoIdAcampamento(Long idUsuario, Long idAcampamento);
     List<InscricaoAcampamento> findByUsuarioIdUsuario(Long id);
+
+    List<InscricaoAcampamento> findByAcampamentoIdAcampamento(Long idAcampamento);
+
+    List<InscricaoAcampamento> findByAcampamentoIdAcampamentoAndStatusAprovacao(Long idAcampamento, InscricaoAcampamentoStatus status);
     long countByAcampamentoIdAcampamentoAndFuncaoAcampamentoAndStatusAprovacaoNot(Long idAcampamento, String funcaoAcampamento, InscricaoAcampamentoStatus statusAprovacao);
 }

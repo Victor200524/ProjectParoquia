@@ -35,13 +35,9 @@ public class ComunidadeService {
     }
 
     public boolean excluirComunidade(Long idComunidade) {
-        try{
-            comunidadeRepository.deleteById(idComunidade);
-            return true;
-        } catch (Exception e) {
-            System.err.println("Erro ao deletar: " + e.getMessage());
-        }
-        return false;
+        // se a comunidade tiver acampamentos, o banco recusa e o TratadorErrosGlobal devolve 409
+        comunidadeRepository.deleteById(idComunidade);
+        return true;
     }
 
     // --- Validar Contato ---

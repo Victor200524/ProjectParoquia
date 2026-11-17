@@ -15,4 +15,8 @@ public interface MovimentacaoEstoqueRepository extends JpaRepository<Movimentaca
     List<MovimentacaoEstoque> findByItemEstoqueNomeItemEstoqueContainingIgnoreCase(String itemEstoque);
 
     List<MovimentacaoEstoque> findByTipoMovimentacaoEstoqueContainingIgnoreCase(String tipo);
+
+    List<MovimentacaoEstoque> findByAcampamentoIdAcampamento(Long idAcampamento);
+
+    List<MovimentacaoEstoque> findByAcampamentoDestinoIdAcampamento(Long idAcampamento);
 }

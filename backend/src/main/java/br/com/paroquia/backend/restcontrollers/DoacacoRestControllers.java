@@ -1,6 +1,7 @@
 package br.com.paroquia.backend.restcontrollers;
 
 import br.com.paroquia.backend.entities.Doacao;
+import br.com.paroquia.backend.enums.TipoDoacao;
 import br.com.paroquia.backend.services.DoacaoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -32,9 +33,27 @@ public class DoacacoRestControllers {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Doação não encontrada!");
     }
 
+    // Doação em DINHEIRO precisa de valor e não tem quantidade/validade (a quantidade fica 1, porque a coluna é obrigatória).
+    // Doação de produto não tem valor. Devolve a mensagem de erro, ou null se está tudo certo.
+    private String prepararDoacao(Doacao doacao){
+        if(doacao.getTipoDoacao() == TipoDoacao.DINHEIRO){
+            if(doacao.getValorDoacao() == null || doacao.getValorDoacao() <= 0)
+                return "Informe o valor da doação em dinheiro!";
+            doacao.setQtdeDoacao(1);
+            doacao.setDataValidadeDoacao(null);
+        } else {
+            doacao.setValorDoacao(null);
+        }
+        return null;
+    }
+
     @PostMapping(value = "/gravarDoacao")
     ResponseEntity<Object> gravarDoacao(@RequestBody Doacao doacao){
         try {
+            String erro = prepararDoacao(doacao);
+            if(erro != null)
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(erro);
+
             Doacao doacaoAux = doacaoService.buscarNomeDoacao(doacao.getNomeDoacao());
             if(doacaoAux == null){ // se nao existe o doacao com o mesmo nome
                 if(doacao.getQtdeDoacao() > 0) { // verifico se a quantidade colocada é maior do que 0
@@ -57,6 +76,9 @@ public class DoacacoRestControllers {
         try {
             Doacao doacao = doacaoService.buscarIdDoacao(idDoacao);
             if(doacao != null){
+                String erro = prepararDoacao(doacaoAtualizada);
+                if(erro != null)
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(erro);
                 doacaoAtualizada.setIdDoacao(doacao.getIdDoacao());
                 if(doacaoAtualizada.getQtdeDoacao() > 0){
                     doacaoService.gravarDoacao(doacaoAtualizada);

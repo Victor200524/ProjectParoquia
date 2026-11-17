@@ -38,16 +38,12 @@ public class AcampamentoService {
     }
 
     public boolean excluirAcampamento(Long idAcampamento) {
-        try {
-            if (acampamentoRepository.existsById(idAcampamento)) {
-                acampamentoRepository.deleteById(idAcampamento);
-                return true;
-            }
-            return false;
-        } catch (Exception e) {
-            System.err.println("Erro ao deletar acampamento: " + e.getMessage());
-            return false;
+        // se o acampamento tiver inscrições, formulários etc., o banco recusa e o TratadorErrosGlobal devolve 409
+        if (acampamentoRepository.existsById(idAcampamento)) {
+            acampamentoRepository.deleteById(idAcampamento);
+            return true;
         }
+        return false;
     }
 
 }

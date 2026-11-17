@@ -73,9 +73,8 @@ public class PerguntaRestControllers {
     public ResponseEntity<Object> deletarPergunta(@PathVariable Long id){
         Pergunta pergunta = perguntaService.getPerguntaId(id);
         if(pergunta != null){
-            if(perguntaService.deletarPergunta(pergunta))
-                return ResponseEntity.status(HttpStatus.OK).body("Pergunta deletada com sucesso!");
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Não é possível excluir: existem respostas cadastradas para esta pergunta!");
+            perguntaService.deletarPergunta(pergunta); // apaga as respostas dela junto
+            return ResponseEntity.status(HttpStatus.OK).body("Pergunta deletada com sucesso!");
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Pergunta não encontrada!");
     }

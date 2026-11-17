@@ -5,6 +5,7 @@ import br.com.paroquia.backend.entities.InscricaoAcampamento;
 import br.com.paroquia.backend.entities.Usuario;
 import br.com.paroquia.backend.enums.InscricaoAcampamentoStatus;
 import br.com.paroquia.backend.enums.TipoFormulario;
+import br.com.paroquia.backend.dtos.QuadrantePessoaDTO;
 import br.com.paroquia.backend.repositories.FormularioRepository;
 import br.com.paroquia.backend.repositories.InscricaoAcampamentoRepository;
 import br.com.paroquia.backend.repositories.RespostaRepository;
@@ -48,6 +49,22 @@ public class InscricaoAcampamentoService {
 
     public InscricaoAcampamento buscarInscricaoUsuarioAcampamento(Long idUsuario, Long idAcampamento){
         return inscricaoRepository.findByUsuarioIdUsuarioAndAcampamentoIdAcampamento(idUsuario, idAcampamento);
+    }
+
+    // Quadrante: só quem está CONFIRMADO no acampamento, já no formato que vai impresso
+    public List<QuadrantePessoaDTO> montarQuadrante(Long idAcampamento){
+        List<InscricaoAcampamento> confirmados = inscricaoRepository.findByAcampamentoIdAcampamentoAndStatusAprovacao(
+                idAcampamento, InscricaoAcampamentoStatus.CONFIRMADO);
+
+        return confirmados.stream().map(inscricao -> new QuadrantePessoaDTO(
+                inscricao.getUsuario().getNomeUsuario(),
+                inscricao.getUsuario().getContatoUsuario(),
+                inscricao.getUsuario().getEnderecoUsuario(),
+                inscricao.getUsuario().getDataNascimentoUsuario(),
+                inscricao.getFuncaoAcampamento(),
+                inscricao.getEquipeAcampamento(),
+                inscricao.getUsuario().getFotoUsuario()
+        )).toList();
     }
 
     public List<InscricaoAcampamento> buscarInscricaoUsuario(Long idUsuario){

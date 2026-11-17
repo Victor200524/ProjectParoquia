@@ -13,4 +13,6 @@ public interface RespostaRepository extends JpaRepository<Resposta, Long> {
     List<Resposta> findByInscricao(InscricaoAcampamento inscricao);
 
     boolean existsByPergunta(Pergunta pergunta);
+
+    List<Resposta> findByPergunta(Pergunta pergunta);
 }

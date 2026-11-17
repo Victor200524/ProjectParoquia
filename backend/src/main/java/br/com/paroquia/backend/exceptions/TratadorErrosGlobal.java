@@ -1,5 +1,6 @@
 package br.com.paroquia.backend.exceptions;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -23,5 +24,13 @@ public class TratadorErrosGlobal {
             mensagem += ". Use: " + String.join(", ", Arrays.stream(tipo.getEnumConstants()).map(Object::toString).toList());
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(mensagem);
+    }
+
+    // Quando o banco recusa uma exclusão porque o registro ainda é usado em outra tabela
+    // (ex.: excluir uma comunidade que tem acampamentos), devolve 409 com uma mensagem curta
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<Object> registroEmUso(DataIntegrityViolationException e) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body("Não é possível concluir: este registro está ligado a outros cadastros do sistema. Remova os vínculos primeiro.");
     }
 }

@@ -19,9 +19,8 @@ public class PastoralRestControllers {
     @GetMapping(value ="/todasPastoral")
     public ResponseEntity<Object> buscarTodasPastorais(){
         List<Pastoral> pastoralList = pastoralService.getAllPastoral();
-        if(pastoralList != null && !pastoralList.isEmpty())
-            return ResponseEntity.ok(pastoralList);
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Pastorais não cadastradas");
+        // lista vazia volta como [] (e não como erro), para a tela mostrar "nenhum cadastrado"
+        return ResponseEntity.ok(pastoralList);
     }
 
     @GetMapping(value = "/buscarPastoral/{nomePastoral}")

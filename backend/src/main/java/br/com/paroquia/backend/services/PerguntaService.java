@@ -6,6 +6,7 @@ import br.com.paroquia.backend.repositories.PerguntaRepository;
 import br.com.paroquia.backend.repositories.RespostaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -33,10 +34,10 @@ public class PerguntaService {
         perguntaRepository.save(pergunta);
     }
 
+    // Apaga primeiro as respostas dessa pergunta e depois a pergunta
+    @Transactional
     public boolean deletarPergunta(Pergunta pergunta) {
-        if (respostaRepository.existsByPergunta(pergunta)) {
-            return false;
-        }
+        respostaRepository.deleteAll(respostaRepository.findByPergunta(pergunta));
         perguntaRepository.delete(pergunta);
         return true;
     }
