@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import styles from './comunidades.module.css';
 import { comunidadeService } from '@/services/comunidadeService'; // Ajuste o caminho se necessário
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
+import PreviaFoto from '@/components/foto/PreviaFoto';
 
 const niveisPermitidos = ['COORDENADOR_GERAL', 'PADRE', 'SECRETARIA'];
 
@@ -38,6 +39,8 @@ function CadastroComunidade() {
   const handleFotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       setArquivoFoto(e.target.files[0]);
+    } else {
+      setArquivoFoto(null);
     }
   };
 
@@ -169,6 +172,7 @@ function CadastroComunidade() {
                   accept="image/*"
                   onChange={handleFotoChange}
                 />
+                <PreviaFoto arquivo={arquivoFoto} />
               </div>
             </div>
           </div>

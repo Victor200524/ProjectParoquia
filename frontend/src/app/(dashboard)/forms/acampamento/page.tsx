@@ -7,6 +7,7 @@ import { Comunidade } from '@/types/comunidade';
 import { acampamentoService } from '@/services/acampamentoService';
 import { comunidadeService } from '@/services/comunidadeService';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
+import PreviaFoto from '@/components/foto/PreviaFoto';
 
 export default function NovoAcampamento() {
   const [formData, setFormData] = useState<Acampamento>({
@@ -295,6 +296,7 @@ export default function NovoAcampamento() {
                   }
                 }}
               />
+              <PreviaFoto arquivo={fotoArquivo} />
             </div>
 
             <div className={styles.fieldGroupFull}>

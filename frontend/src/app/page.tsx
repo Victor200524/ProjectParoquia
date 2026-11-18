@@ -5,12 +5,28 @@ import Link from 'next/link';
 import Image from 'next/image';
 import styles from './home.module.css';
 import ThemeToggle from '@/components/layout/ThemeToogle/ThemeToggle';
-import { comunidadeService } from '@/services/comunidadeService'; 
-import { Comunidade } from '@/types/comunidade'; 
-// Importe a service e o tipo de Acampamento (Ajuste o caminho se necessário)
-import { acampamentoService } from '@/services/acampamentoService'; 
-import { Acampamento, AcampamentoPublico } from '@/types/acampamento'; 
+import { comunidadeService } from '@/services/comunidadeService';
+import { Comunidade } from '@/types/comunidade';
+import { acampamentoService } from '@/services/acampamentoService';
+import { AcampamentoPublico } from '@/types/acampamento';
 import { verificarSessao } from '@/services/authService';
+import { dataParaInput, formatarData } from '@/utils/formatters';
+import { ModalComunidade, ModalAcampamento } from '@/components/home/ModalDetalhes';
+import { MuralFotosService } from '@/services/muralFotosService';
+import { MuralFotos } from '@/types/muralFotos';
+
+// Hoje no formato "2026-11-17" (fuso do navegador), para comparar com as datas dos acampamentos
+function hojeComoTexto() {
+  const hoje = new Date();
+  return hoje.getFullYear() + '-' + String(hoje.getMonth() + 1).padStart(2, '0') + '-' + String(hoje.getDate()).padStart(2, '0');
+}
+
+// Só aceita links que começam com http:// ou https:// (evita um "javascript:..." salvo no banco virar um botão)
+function linkSeguro(link: string | undefined) {
+  if (!link) return false;
+  const texto = link.trim().toLowerCase();
+  return texto.startsWith('http://') || texto.startsWith('https://');
+}
 
 export default function LandingPage() {
   const [comunidades, setComunidades] = useState<Comunidade[]>([]);
@@ -19,7 +35,14 @@ export default function LandingPage() {
   const [acampamentos, setAcampamentos] = useState<AcampamentoPublico[]>([]);
   const [carregandoAcampamentos, setCarregandoAcampamentos] = useState(true);
 
+  const [murais, setMurais] = useState<MuralFotos[]>([]);
+  const [carregandoMurais, setCarregandoMurais] = useState(true);
+
   const [logado, setLogado] = useState(false); // se o usuário já está logado, o cabeçalho mostra o botão do painel
+
+  // Janela de detalhes aberta no momento (null = fechada)
+  const [comunidadeAberta, setComunidadeAberta] = useState<Comunidade | null>(null);
+  const [acampamentoAberto, setAcampamentoAberto] = useState<AcampamentoPublico | null>(null);
 
   useEffect(() => {
     async function conferirLogin() {
@@ -31,7 +54,6 @@ export default function LandingPage() {
   useEffect(() => {
     async function carregarDados() {
       try {
-        // Busca as comunidades
         const dadosComunidades = await comunidadeService.listarComunidades();
         setComunidades(dadosComunidades);
       } catch (error) {
@@ -41,23 +63,30 @@ export default function LandingPage() {
       }
 
       try {
-        // Busca os acampamentos (Ajuste o nome da função se a sua service usar outro nome, ex: getAllAcampamentos)
-        const dadosAcampamentos = await acampamentoService.listarAcampamentosPublicos(); 
-        setAcampamentos(dadosAcampamentos);
+        // Só os acampamentos que ainda não começaram (os que já aconteceram não aceitam mais inscrição)
+        const dadosAcampamentos = await acampamentoService.listarAcampamentosPublicos();
+        const hoje = hojeComoTexto();
+        setAcampamentos(dadosAcampamentos.filter(a => dataParaInput(a.dataInicioAcampamento) >= hoje));
       } catch (error) {
         console.error('Erro ao buscar acampamentos:', error);
       } finally {
         setCarregandoAcampamentos(false);
       }
+
+      try {
+        // Todos os álbuns, inclusive de acampamentos que já passaram (é um mural de lembranças),
+        // do mais recente para o mais antigo. Comparar "2026-10-12" com "2026-09-01" como texto já funciona.
+        const dadosMurais = await MuralFotosService.listarMuralFotosPublico();
+        dadosMurais.sort((a, b) => dataParaInput(b.dataEventoMuralFotos).localeCompare(dataParaInput(a.dataEventoMuralFotos)));
+        setMurais(dadosMurais);
+      } catch (error) {
+        console.error('Erro ao buscar mural de fotos:', error);
+      } finally {
+        setCarregandoMurais(false);
+      }
     }
     carregarDados();
   }, []);
-
-  const formatarData = (dataString: string | undefined) => {
-    if (!dataString) return '';
-    const data = new Date(dataString);
-    return data.toLocaleDateString('pt-BR', { timeZone: 'UTC' });
-  };
 
   const renderizarFoto = (fotoBase64: string | undefined) => {
     if (!fotoBase64) {
@@ -84,7 +113,7 @@ export default function LandingPage() {
         <nav className={styles.navLinks}>
           <a href="#comunidades">Comunidades</a>
           <a href="#acampamentos">Acampamentos</a>
-          <a href="#doacoes">Doações</a>
+          <a href="#mural">Mural de Fotos</a>
         </nav>
 
         <div className={styles.authButtons}>
@@ -137,7 +166,7 @@ export default function LandingPage() {
                 <div key={comunidade.idComunidade} className={styles.cardComunidade}>
                   <div 
                     className={styles.cardComunidadeFoto} 
-                    style={{ backgroundImage: `url(${renderizarFoto(comunidade.fotoComunidade as any)})` }}
+                    style={{ backgroundImage: `url(${renderizarFoto(comunidade.fotoComunidade)})` }}
                   />
                   <div className={styles.cardComunidadeContent}>
                     <h3>{comunidade.nomeComunidade}</h3>
@@ -161,6 +190,10 @@ export default function LandingPage() {
                         <p className={styles.semHorario}>Horários não informados.</p>
                       )}
                     </div>
+
+                    <button type="button" className={styles.btnDetalhes} onClick={() => setComunidadeAberta(comunidade)}>
+                      Ver detalhes
+                    </button>
                   </div>
                 </div>
               ))}
@@ -172,7 +205,15 @@ export default function LandingPage() {
         <section id="acampamentos" className={`${styles.section} ${styles.bgAlt}`}>
           <div className={styles.sectionHeader}>
             <h2 className={styles.sectionTitle}>Acampamentos</h2>
-            <p className={styles.sectionDesc}>Viva uma experiência profunda com Deus. Inscreva-se nos próximos retiros.</p>
+            <p className={styles.sectionDesc}>Viva uma experiência profunda com Deus. Conheça os próximos retiros.</p>
+            {/* A inscrição é feita dentro do sistema, depois do login */}
+            <p className={styles.avisoLogin}>
+              {logado ? (
+                <>Para se inscrever, acesse o <Link href="/painel">painel</Link> e vá em <strong>Inscrições</strong>.</>
+              ) : (
+                <>Para se inscrever, <Link href="/login">faça login no site</Link>. Ainda não tem conta? <Link href="/cadastro">Cadastre-se</Link>.</>
+              )}
+            </p>
           </div>
           
           {carregandoAcampamentos ? (
@@ -183,25 +224,21 @@ export default function LandingPage() {
                 <div key={acampamento.idAcampamento} className={styles.cardComunidade}>
                   <div 
                     className={styles.cardComunidadeFoto} 
-                    style={{ backgroundImage: `url(${renderizarFoto(acampamento.fotoAcampamento as any)})` }}
+                    style={{ backgroundImage: `url(${renderizarFoto(acampamento.fotoAcampamento)})` }}
                   />
                   <div className={styles.cardComunidadeContent}>
                     <h3>{acampamento.nomeAcampamento}</h3>
                     {(acampamento.dataInicioAcampamento || acampamento.dataFimAcampamento) && (
                     <p className={styles.endereco}>
-                        🗓️ Data: {formatarData(acampamento.dataInicioAcampamento as string)} até {formatarData(acampamento.dataFimAcampamento as string)}
+                        🗓️ Data: {formatarData(acampamento.dataInicioAcampamento)} até {formatarData(acampamento.dataFimAcampamento)}
                     </p>
                     )}
                     
-                    <div className={styles.horariosContainer} style={{ marginTop: '1.5rem' }}>
-                      <Link 
-                        href={`/cadastro`} 
-                        className={styles.btnPrimary} 
-                        style={{ display: 'block', textAlign: 'center' }}
-                      >
-                        Inscrever-se
-                      </Link>
-                    </div>
+                    {acampamento.localAcampamento && <p className={styles.endereco}>📍 {acampamento.localAcampamento}</p>}
+
+                    <button type="button" className={styles.btnDetalhes} onClick={() => setAcampamentoAberto(acampamento)}>
+                      Ver detalhes
+                    </button>
                   </div>
                 </div>
               ))}
@@ -211,21 +248,59 @@ export default function LandingPage() {
           )}
         </section>
 
-        {/* PORTAL DE DOAÇÕES */}
-        <section id="doacoes" className={styles.section}>
+        {/* MURAL DE FOTOS (álbuns do Google Drive) */}
+        <section id="mural" className={styles.section}>
           <div className={styles.sectionHeader}>
-            <h2 className={styles.sectionTitle}>Apoie Nossos Acampamentos</h2>
-            <p className={styles.sectionDesc}>Sua doação ajuda a transformar vidas e manter a estrutura dos nossos retiros.</p>
+            <h2 className={styles.sectionTitle}>Mural de Fotos</h2>
+            <p className={styles.sectionDesc}>Reviva os momentos dos nossos acampamentos.</p>
           </div>
-          <div className={styles.donationBox}>
-             <div className={styles.placeholderCard}>Informações de Doação (Em Breve)</div>
-          </div>
+
+          {carregandoMurais ? (
+            <p style={{ textAlign: 'center' }}>Carregando mural...</p>
+          ) : murais.length > 0 ? (
+            <div className={styles.gridContainer}>
+              {murais.map((mural) => (
+                <div key={mural.idMuralFotos} className={styles.cardComunidade}>
+                  {/* O álbum não tem foto própria: o topo do card é um bloco colorido com um ícone */}
+                  <div className={styles.muralCapa} aria-hidden="true">📷</div>
+                  <div className={styles.cardComunidadeContent}>
+                    <h3>{mural.tituloMuralFotos}</h3>
+                    {mural.acampamento?.nomeAcampamento && (
+                      <p className={styles.endereco}>⛺ {mural.acampamento.nomeAcampamento}</p>
+                    )}
+                    <p className={styles.endereco}>🗓️ {formatarData(mural.dataEventoMuralFotos)}</p>
+
+                    {linkSeguro(mural.linkDriveMuralFotos) && (
+                      <a
+                        href={mural.linkDriveMuralFotos.trim()}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`${styles.btnDetalhes} ${styles.btnFotos}`}
+                      >
+                        Ver fotos ↗
+                      </a>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p style={{ textAlign: 'center' }}>Nenhum álbum publicado ainda.</p>
+          )}
         </section>
+
       </main>
+
+      {/* Janelas de detalhes (só aparecem depois de clicar em "Ver detalhes") */}
+      {comunidadeAberta && (
+        <ModalComunidade comunidade={comunidadeAberta} acampamentos={acampamentos} onFechar={() => setComunidadeAberta(null)} />
+      )}
+      {acampamentoAberto && (
+        <ModalAcampamento acampamento={acampamentoAberto} logado={logado} onFechar={() => setAcampamentoAberto(null)} />
+      )}
 
       {/* RODAPÉ INFORMATIVO */}
       <footer className={styles.footer}>
-        {/* Restante do Footer igual ao anterior */}
         <div className={styles.footerContent}>
           <div className={styles.footerInfo}>
             <h3>Secretaria Paroquial</h3>

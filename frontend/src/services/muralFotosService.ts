@@ -63,6 +63,20 @@ export const MuralFotosService = {
             throw error;
         }
     },
+    // Versão pública da listagem, usada na página inicial (visitante sem login).
+    // Não manda o header Authorization: o GET de /muralFotos é liberado no backend,
+    // e um token vencido guardado no navegador poderia atrapalhar a busca.
+    async listarMuralFotosPublico(): Promise<MuralFotos[]> {
+        const response = await fetch(`${BASE_URL}/getAllMurais`, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" }
+        });
+        if (!response.ok) {
+            const responseText = await response.text();
+            throw new Error(responseText || "Erro ao listar mural de fotos");
+        }
+        return await response.json();
+    },
     async deletarMuralFotos(idMuralFotos: number): Promise<string> {
         try{
             const response = await fetch(`${BASE_URL}/deletarMural/${idMuralFotos}`, {

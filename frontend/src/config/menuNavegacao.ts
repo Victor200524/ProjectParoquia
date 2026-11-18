@@ -65,6 +65,7 @@ export const menuNavegacao: MenuItem[] = [
     { nome: 'Relatórios', nivelAcesso: ADMIN_COORD, subMenu: [
         { nome: 'Quadrante', rota: '/relatorios/quadrante', nivelAcesso: ADMIN_COORD },
         { nome: 'Prestação de Contas', rota: '/relatorios/prestacaoContas', nivelAcesso: ADMIN_COORD },
+        { nome: 'Pagamentos Pendentes', rota: '/relatorios/pagamentosPendentes', nivelAcesso: ADMIN_COORD },
     ]},
 ];
 

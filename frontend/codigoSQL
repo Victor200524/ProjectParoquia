@@ -1,0 +1,175 @@
+create table Usuario (
+    "id_Usuario" SERIAL primary key,
+    "nome_Usuario" VARCHAR(45) not null,
+    "email_Usuario" VARCHAR(45) not null UNIQUE,
+    "senha_Usuario" VARCHAR(255) not null,
+    "nivel_Usuario" VARCHAR(255) not null,
+    "status_Usuario" VARCHAR(255) not null,
+    "cpf_Usuario" VARCHAR(20) not null UNIQUE,
+    "endereco_Usuario" VARCHAR(150),
+    "dataNascimento_Usuario" DATE,
+    "foto_Usuario" BYTEA,
+    "contato_Usuario" VARCHAR(45)
+);
+
+create table Pastoral (
+	"id_Pastoral" SERIAL primary key,
+	"nome_Pastoral" VARCHAR(45) not null
+);
+
+create table Pastoral_has_Usuario (
+    usuario_id_usuario INT not null,
+    pastoral_id_pastoral INT not null,
+    constraint pk_pastoral_usuario primary key (usuario_id_usuario, pastoral_id_pastoral),
+    constraint fk_pu_usuario foreign key (usuario_id_usuario) references Usuario("id_Usuario"),
+    constraint fk_pu_pastoral foreign key (pastoral_id_pastoral) references Pastoral("id_Pastoral")
+);
+
+create table Comunidade (
+    "id_Comunidade" SERIAL primary key,
+    "nome_Comunidade" VARCHAR(45) not null,
+    "endereco_Comunidade" VARCHAR(150) not null,
+    "foto_Comunidade" BYTEA not null,
+    "contato_Comunidade" VARCHAR(45) not null
+);
+
+create table Horario_Missa (
+    "id_HorarioMissa" SERIAL primary key,
+    "semana_Missa" VARCHAR(45) not null,
+    "horario_Missa" VARCHAR(45) not null,
+    comunidade_id_comunidade INT not null,
+    constraint fk_horario_comunidade foreign key (comunidade_id_comunidade) REFERENCES comunidade("id_Comunidade")
+);
+
+create table Acampamento (
+  "id_Acampamento" SERIAL primary key,
+  "nome_Acampamento" VARCHAR(100) not null,
+  "local_Acampamento" VARCHAR(100) not null,
+  "idadeMinima_Acampamento" INT not null,
+  "idadeMaxima_Acampamento" INT not null,
+  "taxaInscricao_Acampamento" NUMERIC(10,2) not null,
+  "vagas_Acampamento" INT not null,
+  "dataInicio_Acampamento" DATE not null,
+  "dataFim_Acampamento" DATE not null,
+  "informacoes_Acampamento" TEXT not null,
+  "foto_Acampamento" BYTEA not null,
+  "tema_Acampamento" VARCHAR(150),
+  "tokenMercadoPago_Acampamento" TEXT,
+  "lembreteAtivo_Acampamento" BOOLEAN not null default false,
+  "lembreteIntervaloDias_Acampamento" INT,
+  "lembreteUltimoEnvio_Acampamento" DATE,
+
+  usuario_id_usuario INT not null, 
+      comunidade_id_comunidade INT not null,
+      constraint fk_acampamento_usuario foreign key (usuario_id_usuario) references Usuario("id_Usuario"),
+      constraint fk_acampamento_comunidade foreign key (comunidade_id_comunidade) references Comunidade("id_Comunidade")
+);
+
+create table Inscricao_Acampamento (
+    "id_Inscricao" SERIAL primary key,
+    "funcao_Acampamento" VARCHAR(45) not null,
+    "status_Aprovacao" VARCHAR(45) not null,
+    "data_Registro" TIMESTAMP not null,
+    "equipe_Acampamento" VARCHAR(45),
+    usuario_id_usuario INT not null,
+    acampamento_id_acampamento INT not null,
+    constraint fk_inscricao_usuario foreign key (usuario_id_usuario) references Usuario("id_Usuario"),
+    constraint fk_inscricao_acampamento foreign key (acampamento_id_acampamento) references Acampamento("id_Acampamento")
+);
+
+create table mural_Fotos(
+	"id_muralFotos" SERIAL primary key,
+	"titulo_muralFotos" VARCHAR(100) not null,
+    "dataEvento_muralFotos" DATE not null,
+	"linkDrive_muralFotos" TEXT not null,
+	acampamento_id_acampamento INT not null,
+    constraint fk_mural_acampamento foreign key (acampamento_id_acampamento) references Acampamento("id_Acampamento")
+);
+
+CREATE TABLE pagamento (
+    "id_Pagamento"            BIGSERIAL PRIMARY KEY,
+    "valor_Pagamento"         NUMERIC(10,2) NOT NULL,
+    "forma_Pagamento"         VARCHAR(45)   NOT NULL,
+    "data_Pagamento"          TIMESTAMP     NOT NULL,
+    "idMercadoPago_Pagamento" VARCHAR(100)  UNIQUE,
+    inscricao_id_inscricao    BIGINT        NOT NULL,
+    CONSTRAINT fk_pagamento_inscricao FOREIGN KEY (inscricao_id_inscricao)
+        REFERENCES inscricao_acampamento("id_Inscricao")
+);
+
+create table Item_Estoque(
+	"id_ItemEstoque" SERIAL primary key,
+	"nome_ItemEstoque" VARCHAR(45) not null,
+	"qtde_ItemEstoque" INT not null,
+	"categoria_ItemEstoque" VARCHAR not null,
+	"tipo_ItemEstoque" VARCHAR(45) not null,
+	"dataValidade_ItemEstoque" DATE
+);
+
+create table Movimentacao_Estoque(
+	"id_MovEstoque" SERIAL primary key,
+	"tipoMovimentacao_MovEstoque" VARCHAR(45) not null,
+	"qtdeMovimentacao_MovEstoque" INT not null,
+	"dataMovimentacao_MovEstoque" TIMESTAMP,
+	"observacao_MovEstoque" TEXT not null,
+	itemEstoque_id_ItemEstoque INT not null,
+	Usuario_id_Usuario INT not null,
+	Acampamento_id_Acampamento INT not null,
+	AcampamentoDestino_id_Acampamento INT,
+	
+	constraint fk_MovEstoque_ItemEstoque foreign key (itemEstoque_id_ItemEstoque) references Item_Estoque ("id_ItemEstoque"),
+	constraint fk_MovEstoque_Usuario foreign key (Usuario_id_Usuario) references Usuario ("id_Usuario"),
+	
+	-- Chaves estrangeiras origem e destino
+	constraint fk_MovEstoque_AcampamentoOrigem foreign key (Acampamento_id_Acampamento) references Acampamento ("id_Acampamento"),
+	constraint fk_MovEstoque_AcampamentoDestino foreign key (AcampamentoDestino_id_Acampamento) references Acampamento ("id_Acampamento")
+);
+
+create table doacao(
+	"id_Doacao" SERIAL primary key,
+	"nome_Doacao" VARCHAR(45) not null,
+	"descricao_Doacao" TEXT not null,
+	"nomeDoador_Doacao" VARCHAR(45) not null,
+	"data_Doacao" DATE not null,
+	"dataValidade_Doacao" DATE,
+	"tipo_Doacao" VARCHAR(45) not null,
+	"qtde_Doacao" INT not null,
+	"valor_Doacao" NUMERIC(10,2),
+	Acampamento_id_Acampamento INT not null,
+	
+	constraint fk_Doacao_Acampamento foreign key (Acampamento_id_Acampamento) references Acampamento("id_Acampamento")
+);
+
+create table Formulario (
+    "id_Formulario" serial primary key,
+    "titulo_Formulario" VARCHAR(100) not null,
+    "tipo_Formulario" VARCHAR(45) not null, -- Campista ou servos
+    "dataInicio_Formulario" DATE not null,
+    "dataFim_Formulario" DATE not null,
+    "capacidade_Formulario" INT,
+    "preco_Formulario" NUMERIC(10,2),
+    Acampamento_id_Acampamento INT not null,
+    constraint fk_Formulario_Acampamento foreign key (Acampamento_id_Acampamento) references Acampamento("id_Acampamento")
+);
+
+create table Pergunta(
+	"id_Pergunta" SERIAL primary key,
+	"texto_Pergunta" TEXT not null,
+	"tipo_Pergunta" VARCHAR(45) not null,
+	"condicao_Pergunta" VARCHAR(45) not null,
+	Formulario_id_Formulario int not null,
+	constraint fk_Pergunta_Formulario foreign key (Formulario_id_Formulario) references Formulario("id_Formulario")
+);
+
+create table Resposta(
+    "id_Resposta" SERIAL primary key,
+    "texto_Resposta" TEXT not null,
+    "data_Resposta" DATE not null,
+    Pergunta_id_Pergunta int not null,
+    inscricao_id_inscricao int not null,
+    constraint fk_Resposta_Pergunta foreign key (Pergunta_id_Pergunta) references Pergunta("id_Pergunta"),
+    constraint fk_Resposta_Inscricao_Acampamento foreign key(inscricao_id_inscricao) references Inscricao_Acampamento("id_Inscricao"),
+    constraint uq_Resposta_Pergunta_Inscricao unique (Pergunta_id_Pergunta, inscricao_id_inscricao)
+);
+
+

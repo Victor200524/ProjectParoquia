@@ -157,26 +157,17 @@
 }
 
 .gridContainer {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  /* flex com quebra de linha: os cards dividem a linha, mas nunca passam de 360px
+     (com poucos cards eles ficam centralizados em vez de esticar na tela toda) */
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 2rem;
 }
 
-.placeholderCard {
-  background: #eaeaea;
-  height: 250px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 12px;
-  color: #888;
-  border: 1px dashed #ccc;
-  transition: background-color 0.3s, border-color 0.3s;
-}
-
-.donationBox {
-  max-width: 800px;
-  margin: 0 auto;
+.gridContainer > * {
+  flex: 1 1 280px;
+  max-width: 360px;
 }
 
 /* CARDS DE COMUNIDADE */
@@ -196,7 +187,7 @@
 }
 
 .cardComunidadeFoto {
-  height: 200px;
+  aspect-ratio: 16 / 9; /* mesmo formato recomendado no cadastro (1920 x 1080) */
   background-size: cover;
   background-position: center;
   background-color: #f0f0f0; 
@@ -266,6 +257,48 @@
   font-size: 0.85rem;
   color: #999;
   font-style: italic;
+}
+
+/* Botão "Ver detalhes" dos cards (comunidade e acampamento) */
+.btnDetalhes {
+  margin-top: 1.25rem;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  border: 1.5px solid #cc2027;
+  background: transparent;
+  color: #cc2027;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.btnDetalhes:hover {
+  background: #cc2027;
+  color: #fff;
+}
+
+/* Aviso "Para se inscrever, faça login" acima dos acampamentos */
+.avisoLogin {
+  display: inline-block;
+  margin-top: 1rem;
+  padding: 0.6rem 1.1rem;
+  border-radius: 999px;
+  background: rgba(204, 32, 39, 0.08);
+  border: 1px solid rgba(204, 32, 39, 0.35);
+  font-size: 0.9rem;
+}
+
+.avisoLogin a {
+  color: #cc2027;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.avisoLogin a:hover {
+  text-decoration: underline;
 }
 
 /* FOOTER */
@@ -367,11 +400,6 @@
   color: #ddd;
 }
 
-:global(.dark) .placeholderCard {
-  background: #2a2a2a;
-  border-color: #444;
-}
-
 /* RESPONSIVIDADE */
 @media (max-width: 768px) {
   .navLinks { display: none; }
@@ -444,8 +472,30 @@
   color: #ddd;
 }
 
-:global(.dark) .placeholderCard,
-:global([data-theme="dark"]) .placeholderCard {
-  background: #2a2a2a;
-  border-color: #444;
+
+/* =========================================
+   MURAL DE FOTOS
+   ========================================= */
+
+/* Topo do card do mural: o álbum não tem foto própria, então usamos um gradiente com um ícone.
+   Mantém a mesma proporção 16:9 das fotos dos outros cards. */
+.muralCapa {
+  aspect-ratio: 16 / 9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  background: linear-gradient(135deg, #cc2027 0%, #8e1419 100%);
+}
+
+/* O botão "Ver fotos" é um link (<a>), então precisa de alguns ajustes para ficar igual ao .btnDetalhes */
+.btnFotos {
+  display: block;
+  text-align: center;
+  text-decoration: none;
+}
+
+:global(.dark) .muralCapa,
+:global([data-theme="dark"]) .muralCapa {
+  background: linear-gradient(135deg, #9e1a20 0%, #5a0d10 100%);
 }

@@ -194,7 +194,7 @@ export default function DashboardAcampamento(){
                             <span className={styles.pendenciaNumero}>{dados.servosAguardandoAprovacao}</span>
                             <span>servo(s) aguardando aprovação</span>
                         </Link>
-                        <Link href="/views/inscricoes" className={`${styles.pendencia} ${dados.pagamentosPendentes > 0 ? styles.pendenciaAtiva : ""}`}>
+                        <Link href={`/relatorios/pagamentosPendentes?acampamento=${idAcampamento}`} className={`${styles.pendencia} ${dados.pagamentosPendentes > 0 ? styles.pendenciaAtiva : ""}`}>
                             <span className={styles.pendenciaNumero}>{dados.pagamentosPendentes}</span>
                             <span>inscrição(ões) com pagamento pendente</span>
                         </Link>

@@ -1,0 +1,72 @@
+/* Dica de resolução + prévia da foto (formulários de acampamento e comunidade) */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.dica {
+  margin: 0;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.previa {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.previaRotulo {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+/* Mesmo formato do site: 16:9, preenchendo e cortando o que sobrar */
+.moldura {
+  width: 100%;
+  max-width: 420px;
+  aspect-ratio: 16 / 9;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1.5px solid var(--border-color);
+  background: #f0f0f0;
+}
+
+.imagem {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.medida {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+
+.ok {
+  color: #15803d;
+  font-weight: 700;
+}
+
+.aviso {
+  font-size: 0.82rem;
+  line-height: 1.45;
+  color: #b45309;
+  font-weight: 600;
+}
+
+:global([data-theme="dark"]) .ok {
+  color: #4ade80;
+}
+
+:global([data-theme="dark"]) .aviso {
+  color: #fbbf24;
+}
