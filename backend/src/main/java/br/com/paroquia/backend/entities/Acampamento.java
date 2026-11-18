@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
@@ -52,6 +53,16 @@ public class Acampamento {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(name = "\"tokenMercadoPago_Acampamento\"")
     private String tokenMercadoPagoAcampamento;
+
+    // --- Lembrete automático de pagamento pendente (por e-mail) ---
+    @Column(name = "\"lembreteAtivo_Acampamento\"")
+    private Boolean lembreteAtivoAcampamento; // true = o sistema reenvia sozinho
+
+    @Column(name = "\"lembreteIntervaloDias_Acampamento\"")
+    private Integer lembreteIntervaloDiasAcampamento; // de quantos em quantos dias
+
+    @Column(name = "\"lembreteUltimoEnvio_Acampamento\"")
+    private LocalDate lembreteUltimoEnvioAcampamento; // dia do último envio (manual ou automático)
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @ManyToOne
@@ -191,6 +202,30 @@ public class Acampamento {
     @JsonProperty(value = "aceitaPagamentoOnline", access = JsonProperty.Access.READ_ONLY)
     public boolean isAceitaPagamentoOnline() {
         return tokenMercadoPagoAcampamento != null && !tokenMercadoPagoAcampamento.isBlank();
+    }
+
+    public Boolean getLembreteAtivoAcampamento() {
+        return lembreteAtivoAcampamento;
+    }
+
+    public void setLembreteAtivoAcampamento(Boolean lembreteAtivoAcampamento) {
+        this.lembreteAtivoAcampamento = lembreteAtivoAcampamento;
+    }
+
+    public Integer getLembreteIntervaloDiasAcampamento() {
+        return lembreteIntervaloDiasAcampamento;
+    }
+
+    public void setLembreteIntervaloDiasAcampamento(Integer lembreteIntervaloDiasAcampamento) {
+        this.lembreteIntervaloDiasAcampamento = lembreteIntervaloDiasAcampamento;
+    }
+
+    public LocalDate getLembreteUltimoEnvioAcampamento() {
+        return lembreteUltimoEnvioAcampamento;
+    }
+
+    public void setLembreteUltimoEnvioAcampamento(LocalDate lembreteUltimoEnvioAcampamento) {
+        this.lembreteUltimoEnvioAcampamento = lembreteUltimoEnvioAcampamento;
     }
 
     public Usuario getUsuario() {

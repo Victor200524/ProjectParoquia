@@ -95,6 +95,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST,"/inscricaoAcampamento/gravarInscricao").hasRole("USER")
                         .requestMatchers("/inscricaoAcampamento/**").hasAnyRole("ADMIN", "COORDENADOR")
 
+                        // --- Alertas de pagamento pendente (e-mail) ---
+                        .requestMatchers("/alertaPagamento/**").hasAnyRole("ADMIN", "COORDENADOR")
+
                         // --- Pagamento ---
                         .requestMatchers(HttpMethod.POST, "/pagamento/criarPreferencia").hasRole("USER")
                         .requestMatchers(HttpMethod.POST, "/pagamento/verificarPagamento/**").hasRole("USER")

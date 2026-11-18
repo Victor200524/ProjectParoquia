@@ -87,6 +87,10 @@ public class AcampamentoRestControllers {
                 if (acampamentoAtualizado.getUsuario() == null) {
                     acampamentoAtualizado.setUsuario(acampamentoExistente.getUsuario());
                 }
+                // A programação do lembrete de pagamento só muda pela tela de alertas: aqui sempre mantém a do banco
+                acampamentoAtualizado.setLembreteAtivoAcampamento(acampamentoExistente.getLembreteAtivoAcampamento());
+                acampamentoAtualizado.setLembreteIntervaloDiasAcampamento(acampamentoExistente.getLembreteIntervaloDiasAcampamento());
+                acampamentoAtualizado.setLembreteUltimoEnvioAcampamento(acampamentoExistente.getLembreteUltimoEnvioAcampamento());
                 Acampamento acampamentoSalvo = acampamentoService.saveAcampamento(acampamentoAtualizado);
                 return ResponseEntity.ok("Acampamento '" + acampamentoSalvo.getNomeAcampamento() + "' alterado com sucesso!");
             } catch (IllegalArgumentException e) {

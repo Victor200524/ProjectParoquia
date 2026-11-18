@@ -12,7 +12,7 @@ public class Resposta {
     @Column(name = "\"id_Resposta\"")
     private Long idResposta;
 
-    @Column(name = "\"texto_Resposta\"")
+    @Column(name = "\"texto_Resposta\"", columnDefinition = "TEXT")
     private String textoResposta;
 
     @Column(name = "\"data_Resposta\"")

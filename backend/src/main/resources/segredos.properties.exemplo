@@ -1,0 +1,11 @@
+# Copie este arquivo para segredos.properties (mesma pasta) e preencha com os valores reais.
+# O segredos.properties NÃO vai para o GitHub.
+
+# Senha do PostgreSQL
+spring.datasource.password=SENHA_DO_POSTGRES
+
+# Chave que assina os tokens de login (JWT): uma frase longa e aleatória
+api.security.token.secret=TROQUE_POR_UMA_CHAVE_LONGA_E_ALEATORIA
+
+# Senha de app do Gmail (Conta Google > Segurança > Senhas de app)
+spring.mail.password=SENHA_DE_APP_DO_GMAIL

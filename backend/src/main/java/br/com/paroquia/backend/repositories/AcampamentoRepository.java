@@ -10,4 +10,5 @@ public interface AcampamentoRepository extends JpaRepository<Acampamento, Long> 
     Optional<Acampamento> findByNomeAcampamento(String nomeAcampamento);
     Acampamento findByNomeAcampamentoContainingIgnoreCase(String nomeAcampamento);
     List<Acampamento> findByComunidade_IdComunidade(Long idComunidade);
+    List<Acampamento> findByLembreteAtivoAcampamentoTrue(); // acampamentos com lembrete automático ligado
 }

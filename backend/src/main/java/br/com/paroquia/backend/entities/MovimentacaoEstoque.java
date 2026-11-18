@@ -25,7 +25,7 @@ public class MovimentacaoEstoque {
     @Column(name = "\"dataMovimentacao_MovEstoque\"")
     private LocalDateTime dataMovimentacaoEstoque;
 
-    @Column(name = "\"observacao_MovEstoque\"")
+    @Column(name = "\"observacao_MovEstoque\"", columnDefinition = "TEXT")
     private String obsMovimentacaoEstoque;
 
     @ManyToOne

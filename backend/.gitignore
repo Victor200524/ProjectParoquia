@@ -31,3 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Senhas (ver src/main/resources/segredos.properties.exemplo) ###
+src/main/resources/segredos.properties

@@ -16,7 +16,7 @@ public class Doacao {
     @Column(name = "\"nome_Doacao\"")
     private String nomeDoacao;
 
-    @Column(name = "\"descricao_Doacao\"")
+    @Column(name = "\"descricao_Doacao\"", columnDefinition = "TEXT")
     private String descricaoDoacao;
 
     @Column(name = "\"nomeDoador_Doacao\"")
